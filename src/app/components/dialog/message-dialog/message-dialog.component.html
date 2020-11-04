@@ -1,0 +1,22 @@
+<div tdMessageContainer></div>
+<ng-template>
+  <div class="td-message-wrapper">
+    <mat-icon class="td-message-icon">{{icon}}</mat-icon>
+    <div class="td-message-labels">
+      <div *ngIf="title" class="td-message-label">{{title}}</div>
+      <div *ngIf="message" class="td-message-sublabel">
+        <div *ngFor="let it of message">{{it}}</div>
+      </div>
+      <div *ngIf="confirm" style="text-align: right; padding-top: 8px;">
+        <button type="button" class="push-right-xs" mat-raised-button color="primary" (click)="onCancel()">Отмена
+        </button>
+        <button type="button" class="push-right-xs" mat-raised-button color="primary" (click)="onContinue()">
+          Продолжить
+        </button>
+      </div>
+    </div>
+    <button type="button" *ngIf="!confirm" td-message-actions mat-icon-button (click)="onClose()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,61 @@
+app-login td-loading .td-loading-wrapper {height: 100%;}
+@mixin login-page-theme($theme) {
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+
+  .login-page {
+    display: flex; height: 100%; justify-content: center; align-items: center; box-sizing: border-box;
+    .login-card {width: 450px; overflow:hidden; padding:50px 20px;}
+    .center-box {
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    .login-logo {width: 160px; margin:0!important;}
+    .build-info-wrapper {margin:5px 0 5px;}
+    .login-title {
+      font-size: 20px;
+      line-height: 23px;
+      margin: 27px 0 29px;
+    }
+
+    .mat-error {
+      margin: 0 0 15px;
+      font-size: 12px;
+    }
+    .wrapper-windows-login-link a {
+      cursor: pointer; text-transform:uppercase;
+      &:hover {text-decoration:underline;}
+    }
+
+    .mat-form-field {
+      .mat-form-field-label {
+        color: #8CA0B3;
+      }
+      .mat-form-field-underline {
+        background-color: #EFF0F2;
+      }
+    }
+    .login-card {
+      background-color: mat-color($primary, 50);
+      box-shadow: 0px 6.82px 50px rgba(30, 135, 240, 0.5);
+    }
+    .login-input-container {
+      width: 290px;
+      padding-bottom: 10px;
+    }
+    .wrapper-windows-login-link {
+      background-color: mat-color($primary, 400);
+      a {
+        color: mat-color($primary, "400-contrast");
+      }
+    }
+    .mat-icon-button {
+      .material-icons.mat-grey:hover {
+        color: #515A60;
+      }
+    }
+  }
+}

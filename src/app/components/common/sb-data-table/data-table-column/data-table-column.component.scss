@@ -1,0 +1,102 @@
+@import '../styles/rtl';
+
+:host {
+  white-space: nowrap;
+  position: relative;
+  padding: 0;
+
+  mat-icon {
+    height: 16px;
+    width: 16px;
+    font-size: 16px !important;
+    line-height: 16px !important;
+
+    &.sb-data-table-filter-icon {
+      position: relative;
+      opacity: 0;
+      height: 12px;
+      bottom: 8px;
+      color: #8CA0B3 !important;
+
+      &.active, &.opened {
+        opacity: 1;
+        color: #1e87f0 !important;
+      }
+
+      &.opened {
+        bottom: 7px;
+      }
+    }
+
+    &.sb-data-table-sort-icon {
+      opacity: 0;
+      transition: transform 0.25s;
+      bottom: 1px;
+      color: #000;
+      &.display-numeric {
+        right: 0;
+      }
+      &.mat-asc {
+        transform: rotate(0deg);
+      }
+
+      &.mat-desc {
+        transform: rotate(180deg);
+      }
+    }
+  }
+  &:hover.mat-sortable:not(.mat-active) mat-icon.sb-data-table-sort-icon {
+    color: #8CA0B3;
+  }
+  &:hover.mat-sortable mat-icon.sb-data-table-sort-icon,
+  &:hover.mat-sortable mat-icon.sb-data-table-filter-icon,
+  &.mat-active.mat-sortable mat-icon.sb-data-table-sort-icon {
+    opacity: 1;
+  }
+
+  .sb-data-table-column-filter {
+    position: relative;
+    border-radius: 4px 4px 0 0;
+
+    &.opened {
+      background-color: white;
+      box-shadow: 0 0 4px -1px #222;
+      -moz-box-shadow: 0 0 4px -1px #222;
+      -webkit-box-shadow: 0 0 4px -1px #222;
+    }
+  }
+
+  vertical-align: middle;
+  @include rtl(text-align, left, right);
+
+  > * {
+    vertical-align: middle;
+  }
+
+  &.mat-clickable {
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+    }
+  }
+  .sb-data-table-heading {
+    display: inline-block;
+    position: relative;
+    color: #8CA0B3;
+    font-weight: normal;
+  }
+  &.mat-numeric {
+    @include rtl(text-align, right, left);
+    mat-icon.sb-data-table-sort-icon {
+      @include rtl(margin-left, -22px, initial);
+      @include rtl(margin-right, initial, -22px);
+    }
+  }
+  &:not(.mat-numeric) {
+    mat-icon.sb-data-table-sort-icon {
+      @include rtl(margin-left, 6px, initial);
+      @include rtl(margin-right, initial, 6px);
+    }
+  }
+}

@@ -1,0 +1,37 @@
+<span #columnContent class="sb-data-table-heading">
+  <mat-icon
+    class="sb-data-table-sort-icon"
+    *ngIf="sortable && numeric"
+    [class.mat-asc]="isAscending()"
+    [class.mat-desc]="isDescending()"
+  >
+    arrow_upward
+  </mat-icon>
+  <span>
+    <ng-content></ng-content>
+  </span>
+  <span
+    *ngIf="checkHaveFilters()"
+    class="sb-data-table-column-filter"
+    [class.opened]="isFilterOpen"
+  >
+    <mat-icon
+      class="sb-data-table-filter-icon material-icons mat-18"
+      (click)="handleOpenFilter($event)"
+      [class.active]="checkHaveActiveFilters()"
+      [class.opened]="isFilterOpen"
+      svgIcon="filter-list-filtered"
+      color="grey"
+    ></mat-icon>
+  </span>
+  <mat-icon
+    class="sb-data-table-sort-icon"
+    *ngIf="sortable && !numeric"
+    [class.mat-asc]="isAscending()"
+    [class.mat-desc]="isDescending()"
+    [class.display-numeric]="isColumnSortOrder"
+  >
+    arrow_upward
+  </mat-icon>
+</span>
+<ng-content select="[sb-column-resizer]"></ng-content>

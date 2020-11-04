@@ -1,0 +1,19 @@
+<app-main-header></app-main-header>
+<div class="main-content">
+  <div class="main-content-container fullheight">
+    <mat-sidenav-container class="sidenav-container fullheight">
+      <mat-sidenav-content>
+        <div class="text-center" layout="column" layout-align="start stretch" layout-fill>
+          <div flex="auto" class="pad-lg pad-top-xxl">
+            <div class="mat-display-3 pad-top-xxl push-bottom-xl">{{errorCode}}</div>
+            <div class="mat-display-1 push-bottom-xl">{{errorMessage}}</div>
+            <div class="mat-title weight-300">Вы можете перейти в основное меню Системы по <a href="/">ссылке</a></div>
+          </div>
+          <div *ngIf="errorDetails" flex="grow" class="pad-lg">
+            <textarea readonly="readonly" class="error-textarea" flex-gt-sm="75" flex-gt-md="75" flex-gt-lg="75" layout-fill>{{errorDetails}}</textarea>
+          </div>
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
+</div>

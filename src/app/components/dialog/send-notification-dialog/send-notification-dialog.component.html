@@ -1,0 +1,60 @@
+<td-dialog>
+  <td-dialog-title>Отправка уведомлений</td-dialog-title>
+  <td-dialog-content>
+    <div flex="grow" class="simple-fields">
+      <div *ngIf="form">
+        <form [formGroup]="form">
+          <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
+            <mat-form-field class="fullwidth push-bottom-sm">
+              <mat-label>Заголовок уведомления</mat-label>
+              <input matInput tdAutoTrim autocomplete="off"
+                     type="text"
+                     formControlName="title"
+                     [maxlength]="500"/>
+              <span class="error-label" *ngIf="isInvalid('title')" matTooltip="{{getError('title')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+            </mat-form-field>
+
+            <mat-form-field class="fullwidth push-bottom-sm">
+              <mat-label>Текст уведомления</mat-label>
+              <input matInput tdAutoTrim autocomplete="off"
+                     type="text"
+                     formControlName="message"
+                     [maxlength]="500"/>
+              <span class="error-label" *ngIf="isInvalid('message')" matTooltip="{{getError('message')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="currentMode === mode.GROUP && dicts && dicts.languages" class="fullwidth push-bottom-sm">
+              <mat-label>Язык пользователей</mat-label>
+              <mat-select formControlName="language">
+                <mat-option *ngFor="let lang of dicts.languages" [value]="lang.id">
+                  {{lang.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <span *ngIf="currentMode === mode.USERS">Выбрано: {{selectedUsers.length}} пользователей</span>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </td-dialog-content>
+  <td-dialog-actions>
+    <button type="button" flex mat-button
+            color="primary"
+            class="push-right-xs"
+            #closeBtn
+            (click)="cancel()">Отменить
+    </button>
+    <button type="button" flex mat-raised-button
+            color="primary"
+            class="push-left-xs"
+            [disabled]="form.invalid"
+            #acceptBtn
+            (click)="accept()">Сохранить
+    </button>
+  </td-dialog-actions>
+</td-dialog>

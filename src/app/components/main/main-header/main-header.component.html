@@ -1,0 +1,42 @@
+<mat-toolbar class="header-toolbar">
+  <div class="fullwidth fullheight" layout="row" layout-align="space-between center">
+    <div layout="row" layout-align="start center" layout-fill flex="75">
+      <div class="menu-top fullheight" layout="row" layout-align="start center">
+        <ng-container *ngIf="isLoggedIn">
+          <!-- меню для больших экранов -->
+          <div class="header-menu-big" layout="row" layout-fill layout-align="start center">
+            <ng-container *ngFor="let menuItem of rootMenuItems">
+              <ng-container *ngIf="menuItem.children && menuItem.children.length">
+                <button #menuTrigger [matMenuTriggerFor]="menu" class="menu-top-item"
+                        #levelOneTrigger="matMenuTrigger"
+                        (mouseenter)="buttonEnter(levelOneTrigger)"
+                        (mouseleave)="buttonLeave(levelOneTrigger)">
+                  {{menuItem.name}}
+                  <mat-icon color="grey">keyboard_arrow_down</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" [overlapTrigger]="false" [hasBackdrop]="false" class="menu-top-list">
+                  <div (mouseenter)="menuEnter()" (mouseleave)="menuLeave(levelOneTrigger)">
+                    <ng-container *ngFor="let item of menuItem.children">
+                      <button mat-menu-item (click)="navigateTo(item)">
+                        <div>
+                          {{item.name}}
+                        </div>
+                        <mat-divider></mat-divider>
+                      </button>
+                    </ng-container>
+                  </div>
+                </mat-menu>
+              </ng-container>
+              <ng-container *ngIf="!menuItem.children || !menuItem.children.length">
+                <button (click)="navigateTo(menuItem)" class="menu-top-item">{{menuItem.name}}</button>
+              </ng-container>
+            </ng-container>
+            <ng-container>
+              <button (click)="logout()" class="menu-top-item">Выйти</button>
+            </ng-container>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</mat-toolbar>

@@ -1,0 +1,115 @@
+@import '~@angular/material/theming';
+
+@mixin td-data-table-typography($config) {
+  .td-data-table-cell {
+    font: {
+      size: mat-font-size($config, body-1);
+      weight: normal;
+    }
+
+    line-height: mat-line-height($config, body-1);
+  }
+  .td-data-table-column {
+    font: {
+      family: mat-font-family($config);
+      size: mat-font-size($config, body-1);
+      weight: normal;
+    }
+  }
+  .td-data-table-sort-badge {
+    font: {
+      family: mat-font-family($config);
+      size: mat-font-size($config, body-1);
+      weight: mat-font-weight($config, body-1);
+    }
+  }
+}
+
+@mixin td-data-table-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+  $is-dark-theme: map-get($theme, is-dark);
+  $border-color: #EFF0F2;
+
+  td-data-table {
+    border-bottom: 1px solid $border-color;
+  }
+  .td-data-table-scrollable {
+    border-top: 1px solid $border-color;
+  }
+  .td-data-table-column-resizer {
+    .td-data-table-column-separator {
+      border-right: 2px solid $border-color;
+      opacity: 0.3;
+    }
+    &:hover,
+    &.td-resizing {
+      .td-data-table-column-separator {
+        opacity: 1;
+      }
+    }
+  }
+  table[td-data-table] {
+    .mat-checkbox-cell,
+    .mat-checkbox-column {
+      color: mat-color($foreground, secondary-text);
+      mat-pseudo-checkbox.mat-pseudo-checkbox-checked {
+        background-color: mat-color($accent);
+      }
+    }
+    .td-data-table-cell {
+      mat-form-field {
+        .mat-form-field-underline {
+          display: none;
+        }
+      }
+    }
+    .td-data-table-column {
+      color: mat-color($foreground, secondary-text);
+      * {
+        vertical-align: middle;
+      }
+      mat-icon {
+        &.td-data-table-sort-icon {
+          color: mat-color($foreground, disabled);
+        }
+      }
+      &.mat-active,
+      &.mat-active mat-icon {
+        color: mat-color($foreground, base);
+      }
+    }
+    &.mat-selectable tbody > tr.td-data-table-row {
+      &.td-selected {
+        background-color: mat-color($background, 'app-bar');
+      }
+      &:focus {
+        background-color: mat-color($background, 'hover');
+      }
+    }
+    &.mat-clickable tbody > tr.td-data-table-row {
+      &:hover {
+        background-color: mat-color($background, 'hover');
+      }
+    }
+  }
+  .mat-selected-title {
+    background-color: mat-color($accent, 0.12);
+    color: mat-color($accent);
+  }
+  .td-data-table-sort-badge {
+    background-color: if(
+      $is-dark-theme,
+      map-get($mat-dark-theme-background, background),
+      mat-color($background, 'app-bar')
+    );
+    color: if($is-dark-theme, $light-secondary-text, mat-color($foreground, icon));
+  }
+}
+@mixin td-data-table-theme-including-typography($theme, $typography) {
+  @include td-data-table-typography($typography);
+  @include td-data-table-theme($theme);
+}

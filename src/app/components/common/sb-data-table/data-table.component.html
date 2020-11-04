@@ -1,0 +1,122 @@
+<table sb-data-table [style.left.px]="columnsLeftScroll" [class.mat-selectable]="selectable" [style.width.px]="dataTableBody.scrollWidth">
+  <thead class="sb-data-table-head" (dragover)="_handleColumnDrag($event)">
+    <tr sb-data-table-column-row>
+      <th sb-data-table-column class="sb-cell-for-button" *ngIf="iconColumn">
+      </th>
+      <th sb-data-table-column class="mat-checkbox-column" *ngIf="selectable">
+        <mat-checkbox
+          #checkBoxAll
+          *ngIf="multiple"
+          [disabled]="!hasData"
+          [indeterminate]="indeterminate && !allSelected && hasData"
+          [checked]="allSelected && hasData"
+          (click)="blockEvent($event); selectAllMethod(!checkBoxAll.checked)"
+          (keyup.enter)="selectAllMethod(!checkBoxAll.checked)"
+          (keyup.space)="selectAllMethod(!checkBoxAll.checked)"
+          (keydown.space)="blockEvent($event)"
+        ></mat-checkbox>
+      </th>
+      <th
+        sb-data-table-column
+        #columnElement
+        *ngFor="let column of columns; let i = index; let last = last"
+        [style.min-width.px]="getColumnWidth(i)"
+        [style.max-width.px]="getColumnWidth(i)"
+        [name]="column.name"
+        [id]="column.name"
+        [numeric]="column.numeric"
+        [active]="(column.sortable || sortable) && column === sortByColumn"
+        [sortable]="column.sortable || (sortable && column.sortable !== false)"
+        [sortOrder]="sortOrderEnum"
+        [isColumnSortOrder]="!!column.columnSortOrder"
+        (sortChange)="handleSort(column)"
+      >
+        <span [matTooltip]="column.tooltip" [class]="column.columnSortOrder ? 'sb-table-header-label' : ''">
+          {{ column.label }}
+          <span *ngIf="column.columnSortOrder" class="sb-data-table-sort-badge">
+            {{ column.columnSortOrder || '' }}
+          </span>
+        </span>
+        <span
+          sb-column-resizer
+          *ngIf="resizableColumns"
+          draggable="true"
+          class="sb-data-table-column-resizer"
+          [class.td-resizing]="i === resizingColumn"
+          (mousedown)="_handleStartColumnDrag(i, $event)"
+          (dragstart)="$event?.dataTransfer?.setData('text', '')"
+          (drag)="_handleColumnDrag($event)"
+          (dragend)="_handleEndColumnDrag()"
+          (mouseup)="_handleEndColumnDrag()"
+        >
+          <span class="sb-data-table-column-separator"></span>
+        </span>
+      </th>
+    </tr>
+  </thead>
+</table>
+<div #scrollableDiv class="sb-data-table-scrollable" (scroll)="handleScroll($event)">
+  <div [style.height.px]="totalHeight"></div>
+  <table
+    sb-data-table
+    [style.transform]="offsetTransform"
+    [style.position]="'absolute'"
+    [class.mat-selectable]="selectable"
+    [class.mat-clickable]="clickable"
+  >
+    <tbody class="sb-data-table-body" #dataTableBody>
+      <tr
+        sb-data-table-row
+        #dtRow
+        [selected]="(clickable || selectable) && isRowSelected(row)"
+        [customCssClass]="row.customClass ? row.customClass : null"
+        *ngFor="let row of virtualData; let rowIndex = index"
+        (click)="handleRowClick(row, fromRow + rowIndex, $event)"
+        (keyup)="selectable && _rowKeyup($event, row, rowIndex)"
+        (keydown.space)="blockEvent($event)"
+        (keydown.shift.space)="blockEvent($event)"
+        (keydown.shift)="disableTextSelection()"
+        (keyup.shift)="enableTextSelection()"
+      >
+        <td sb-data-table-cell class="sb-cell-for-button" *ngIf="iconColumn">
+          <a (click)="iconColumnClick(row)">
+            <mat-icon color="accent">{{iconImg}}</mat-icon>
+          </a>
+        </td>
+        <td sb-data-table-cell class="mat-checkbox-cell" *ngIf="selectable">
+          <mat-pseudo-checkbox
+            [state]="dtRow.selected ? 'checked' : 'unchecked'"
+            (mousedown)="disableTextSelection()"
+            (mouseup)="enableTextSelection()"
+            stopRowClick
+            (click)="select(row, $event, fromRow + rowIndex)"
+          ></mat-pseudo-checkbox>
+        </td>
+        <td
+          sb-data-table-cell
+          [numeric]="column.numeric"
+          *ngFor="let column of columns; let i = index"
+          [style.min-width.px]="getColumnWidth(i)"
+          [style.max-width.px]="getColumnWidth(i)"
+        >
+          <span *ngIf="!getTemplateRef(column.name)" class="break-lines">
+            {{ column.format ? column.format(getCellValue(column, row, rowIndex)) :
+            getCellValue(column, row, rowIndex) }}
+          </span>
+
+          <ng-template
+            *ngIf="getTemplateRef(column.name)"
+            [ngTemplateOutlet]="getTemplateRef(column.name)"
+            [ngTemplateOutletContext]="{
+              value: getCellValue(column, row, rowIndex),
+              row: row,
+              column: column.name,
+              index: rowIndex
+            }"
+          ></ng-template>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<ng-content></ng-content>

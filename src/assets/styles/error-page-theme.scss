@@ -1,0 +1,8 @@
+
+@mixin error-page-theme($theme) {
+  $primary: map-get($theme, primary);
+  .error-textarea {resize:none; padding:8px; border:1px solid mat-color($primary, 800); background:#ffffff;}
+  .weight-300 {
+    font-weight: 300;
+  }
+}

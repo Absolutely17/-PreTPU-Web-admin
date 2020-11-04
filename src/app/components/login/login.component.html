@@ -1,0 +1,36 @@
+<div class="layout-scroll-container" *tdLoading="'loginLoadingName'; mode:'indeterminate'; type:'circle'; strategy:'overlay'; color:'accent'">
+  <div class="login-page">
+    <div class="center-box">
+      <mat-card class="login-card">
+        <mat-card-content>
+          <form name="login-form">
+            <mat-form-field class="login-input-container fullwidth" [floatLabel]="'always'">
+              <mat-label>Электронная почта</mat-label>
+              <input matInput id='login' name="login" [(ngModel)]="email">
+            </mat-form-field>
+
+            <mat-form-field class="login-input-container fullwidth" [floatLabel]="'always'">
+              <mat-label>Пароль</mat-label>
+              <input matInput
+                     name="password"
+                     type="{{passwordVisibility.get(passwordFieldName) ? 'text' : 'password'}}"
+                     [(ngModel)]="password">
+                <button mat-icon-button matSuffix tabindex="-1" (mousedown)="changeVisibility(passwordFieldName)">
+                  <mat-icon color="grey">{{passwordVisibility.get(passwordFieldName) ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+            </mat-form-field>
+
+            <div class="mat-error" *ngIf="errorMessage">
+              {{errorMessage}}
+            </div>
+
+            <div class="login-button-wrapper">
+              <button mat-raised-button (click)="doLogin()" class="login-button" color="primary">Войти</button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
