@@ -6,6 +6,7 @@ import {ForbiddenComponent} from './components/common/forbidden/forbidden.compon
 import {ErrorComponent} from './components/common/error/error.component';
 import {UsersRegistryComponent} from './components/user-registry/users-registry.component';
 import {MenuRegistryComponent} from './components/menu/menu-registry.component';
+import {ArticleRegistryComponent} from './components/article-registry/article-registry.component';
 
 // @ts-ignore
 const routes: Routes = [
@@ -22,7 +23,11 @@ const routes: Routes = [
        {
          path: 'users',
          component: UsersRegistryComponent
-       }
+       },
+      {
+        path: 'article',
+        component: ArticleRegistryComponent
+      }
     ]
   },
   {

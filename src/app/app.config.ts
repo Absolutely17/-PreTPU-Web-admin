@@ -6,6 +6,7 @@ import {MatIconRegistry} from '@angular/material/icon';
 @Injectable()
 export class AppConfig {
   public readonly webServiceUrl;
+  public readonly webServiceFullUrl;
 
 
   private static normalizeResourceUri(uri: string): string {
@@ -25,6 +26,7 @@ export class AppConfig {
   constructor(private sanitizer: DomSanitizer,
               private iconRegistry: MatIconRegistry) {
     this.webServiceUrl = AppConfig.normalizeBaseUrl(environment.webServiceUrl);
+    this.webServiceFullUrl = environment.serviceFullUrl;
   }
 
   webServiceApi(uri: string): string {

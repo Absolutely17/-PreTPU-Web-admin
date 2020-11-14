@@ -10,13 +10,14 @@ export class DialogService {
   ) {
   }
 
-  show<T>(dialog: ComponentType<T> | TemplateRef<T>, data?: any, width?: string): MatDialogRef<T> {
+  show<T>(dialog: ComponentType<T> | TemplateRef<T>, data?: any, width?: string, maxWidth?: string): MatDialogRef<T> {
       return this.dialog.open(dialog, {
         data,
         width: width || '500px',
         minWidth: width || '500px',
         maxWidth: width || '500px',
-        disableClose: true
+        disableClose: true,
+        panelClass: 'full-width-dialog'
       });
   }
 

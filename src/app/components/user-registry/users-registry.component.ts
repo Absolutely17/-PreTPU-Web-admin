@@ -29,7 +29,7 @@ export class UsersRegistryComponent implements OnInit {
     {name: 'email', label: 'Электронная почта', sortable: true, filter: true, width: 300},
     {name: 'gender', label: 'Пол', sortable: true, filter: true, width: 200},
     {name: 'groupName', label: 'Номер группы', sortable: true, filter: true, width: 200},
-    {name: 'languageName', label: 'Язык', sortable: true, filter: true, format: value => {
+    {name: 'languageId', label: 'Язык', sortable: true, filter: true, format: value => {
         if (this.dicts && this.dicts.languages) {
           return this.dicts.languages.find(it => it.id === value).name;
         } else {
@@ -49,7 +49,7 @@ export class UsersRegistryComponent implements OnInit {
   filteredTotal: number;
   selectedRows: any[] = [];
 
-  loadingKey = 'loginLoadingName';
+  loadingKey = 'userRegistryLoading';
 
   fromRow = 1;
   currentPage = 1;

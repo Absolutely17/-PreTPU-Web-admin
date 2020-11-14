@@ -18,6 +18,10 @@ export const userMenuItems: MenuItem[] = [
   {
     name: 'Пользователи',
     url: '/users'
+  },
+  {
+    name: 'Статьи',
+    url: '/article'
   }
 ];
 

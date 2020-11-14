@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {InjectionToken, NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RootComponent} from './components/root.component';
 import {HttpClientModule} from '@angular/common/http';
@@ -27,6 +27,12 @@ import {NotificationService} from './services/notification/notification.service'
 import {sbDataTableComponents} from './components/common/sb-data-table/data-table.module';
 import {ChecklistDatabase, MenuRegistryComponent} from './components/menu/menu-registry.component';
 import {MenuService} from './services/menu/menu.service';
+import {MenuEditingComponent} from './components/dialog/menu-editing-dialog/menu-editing.component';
+import {QuillEditorComponent, QuillModule, QuillService} from 'ngx-quill';
+import {ArticleEditingDialogComponent} from './components/dialog/article-edtiting-dialog/article-editing-dialog.component';
+import {ArticleRegistryComponent} from './components/article-registry/article-registry.component';
+import {ArticleService} from './services/article/article.service';
+import {ImageService} from './services/image/image.service';
 
 export const commonServices = [
   MessageService
@@ -46,13 +52,17 @@ export const commonServices = [
     UploadDocumentDialogComponent,
     SendNotificationDialogComponent,
     ...sbDataTableComponents,
-    MenuRegistryComponent
+    MenuRegistryComponent,
+    MenuEditingComponent,
+    ArticleEditingDialogComponent,
+    ArticleRegistryComponent
   ],
   imports: [
     HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
     CommonImportsModule,
+    QuillModule.forRoot(),
     appRouting
   ],
   providers: [
@@ -67,6 +77,8 @@ export const commonServices = [
     NotificationService,
     ChecklistDatabase,
     MenuService,
+    ArticleService,
+    ImageService,
     authInterceptorProviders
   ],
   bootstrap: [RootComponent]

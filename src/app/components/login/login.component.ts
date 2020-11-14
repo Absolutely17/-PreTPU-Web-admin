@@ -48,7 +48,6 @@ export class LoginComponent implements OnInit {
     };
     this.loadingService.register(this.loadingKey);
     this.authService.login(loginInfo).subscribe(it => {
-      console.log(it);
       if (it && it.token) {
         this.tokenService.saveToken(it.token);
         this.tokenService.saveUser(it.user);

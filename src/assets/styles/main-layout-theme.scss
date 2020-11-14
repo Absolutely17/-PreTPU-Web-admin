@@ -27,6 +27,11 @@
   }
 
   /* Общие стили */
+  .full-width-dialog {
+    max-width: 1600px !important;
+    width: auto !important;
+    max-height: 900px !important;
+  }
   .app-container {
     position: absolute;
     width: 100%;
@@ -407,7 +412,11 @@
     font: 400 14px "roboto", sans-serif;
     caret-color: #000;
   }
+  .menu-registry .mat-form-field-label {
+    margin-top: 0;
+  }
   .mat-form-field-label {
+    transform: none !important;
     font-size: 12px;
     top: 0;
   }

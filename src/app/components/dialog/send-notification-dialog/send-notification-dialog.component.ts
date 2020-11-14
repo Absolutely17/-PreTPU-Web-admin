@@ -44,7 +44,7 @@ export class SendNotificationDialogComponent implements OnInit{
     @Inject(MAT_DIALOG_DATA) data: SendNotificationDialogData,
     private tokenService: TokenStorageService,
     private errorService: ErrorService,
-    protected snackBar: MatSnackBar,
+    protected snackBar: MatSnackBar
   ) {
     this.selectedUsers = data.users;
     this.currentMode = data.mode;
@@ -87,7 +87,6 @@ export class SendNotificationDialogComponent implements OnInit{
         adminEmail: this.tokenService.getUser().email,
         users
       };
-      console.log(sendData);
       this.notificationService.sendNotificationOnUsers(sendData).subscribe(it => {
         this.snackBar.open(`Уведомление отправлено`,
           'Закрыть', {duration: 3000});
