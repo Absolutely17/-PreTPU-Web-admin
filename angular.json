@@ -30,7 +30,8 @@
               "src/styles.scss",
               "node_modules/@covalent/core/common/platform.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "proxyConfig": "proxy.local.json"
           },
           "configurations": {
             "production": {
