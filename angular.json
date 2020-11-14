@@ -30,8 +30,7 @@
               "src/styles.scss",
               "node_modules/@covalent/core/common/platform.scss"
             ],
-            "scripts": [],
-            "proxyConfig": "proxy.local.json"
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -74,7 +73,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "PreTPU-Admin:build"
+            "browserTarget": "PreTPU-Admin:build",
+            "proxyConfig": "proxy.local.json"
           },
           "configurations": {
             "production": {
