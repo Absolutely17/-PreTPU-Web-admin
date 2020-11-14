@@ -1,23 +1,20 @@
-import {ITdDataTableColumn, ITdDataTableSortChangeEvent, TdDataTableService, TdDataTableSortingOrder} from '@covalent/core/data-table';
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {TdDialogService} from '@covalent/core/dialogs';
+import {TdDataTableService} from '@covalent/core/data-table';
+import {Component} from '@angular/core';
 import {UserService} from '../../services/user/user.service';
-import {IPageChangeEvent, TdPagingBarComponent} from '@covalent/core/paging';
 import {DialogService} from '../../services/dialog/dialog.service';
 import {ComponentType} from '@angular/cdk/overlay';
 import {UploadDocumentDialogComponent} from '../dialog/upload-document-dialog/upload-document-dialog.component';
 import {SendNotificationDialogComponent, SendNotificationMode} from '../dialog/send-notification-dialog/send-notification-dialog.component';
 import {TdLoadingService} from '@covalent/core/loading';
-import {ISbDataTableColumn, ISbDataTableSortingOrder} from '../common/sb-data-table/data-table.component';
-import {ISbDataTableSortChangeEvent} from '../common/sb-data-table/data-table-column/data-table-column.component';
+import {ISbDataTableColumn} from '../common/sb-data-table/data-table.component';
+import {AdditionalMenuItem, TableActionConfig, TableActionType, TableComponent} from '../common/table/table.component';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-users-registry',
-  templateUrl: './users-registry.component.html'
+  templateUrl: '../common/table/table.component.html'
 })
-export class UsersRegistryComponent implements OnInit {
-
-  @ViewChild(TdPagingBarComponent, {static: true}) pagingBar: TdPagingBarComponent;
+export class UsersRegistryComponent extends TableComponent {
 
   uploadDocumentDialog: ComponentType<UploadDocumentDialogComponent> = UploadDocumentDialogComponent;
 
@@ -29,77 +26,54 @@ export class UsersRegistryComponent implements OnInit {
     {name: 'email', label: 'Электронная почта', sortable: true, filter: true, width: 300},
     {name: 'gender', label: 'Пол', sortable: true, filter: true, width: 200},
     {name: 'groupName', label: 'Номер группы', sortable: true, filter: true, width: 200},
-    {name: 'languageId', label: 'Язык', sortable: true, filter: true, format: value => {
+    {
+      name: 'languageId', label: 'Язык', sortable: true, filter: true, format: value => {
         if (this.dicts && this.dicts.languages) {
           return this.dicts.languages.find(it => it.id === value).name;
         } else {
           return value;
         }
-      }, width: 200},
-    {name: 'uploadDocument', label: '', sortable: true, filter: true, width: 100},
+      }, width: 200
+    },
+    {
+      name: 'activeFcmToken', label: 'Доступны уведомления', sortable: true, width: 150, format: value => {
+        return value ? 'Да' : 'Нет';
+      }
+    },
+    {name: 'uploadDocument', label: '', sortable: true, filter: true, width: 100}
   ];
 
-  data: any[];
+  additionalMenuItems: AdditionalMenuItem[] = [
+    {name: 'uploadDocument', func: this.uploadDocument.bind(this), icon: 'insert_drive_file'}
+  ];
 
-  dicts: any;
+  menuItemList = [{
+    id: TableActionType.SendOnUsersNotification,
+    name: 'Отправить уведомление выбранным пользователям'
+  },
+    {
+      id: TableActionType.SendOnGroupNotification,
+      name: 'Отправить групповое уведомление'
+    }
+  ];
 
-  selectable = false;
+  selectableButton = true;
 
-  filteredData: any[];
-  filteredTotal: number;
-  selectedRows: any[] = [];
+  textSelectableButton = 'Выбрать пользователей';
 
   loadingKey = 'userRegistryLoading';
 
-  fromRow = 1;
-  currentPage = 1;
-  pageSize = 25;
   sortBy = 'firstName';
-  sortOrder: ISbDataTableSortingOrder = ISbDataTableSortingOrder.Descending;
 
   constructor(
-    private dataTableService: TdDataTableService,
+    protected dataTableService: TdDataTableService,
+    protected loadingService: TdLoadingService,
     private userService: UserService,
-    private dialogService: DialogService,
-    private loadingService: TdLoadingService
+    private dialogService: DialogService
   ) {
+    super(dataTableService, loadingService);
   }
 
-  ngOnInit(): void {
-    this.userService.getUsersTable().subscribe(it => {
-      this.data = it;
-      this.refreshTable();
-    });
-    this.userService.getDicts().subscribe(it => {
-      if (it) {
-        this.dicts = it;
-      }
-    });
-  }
-
-  sort(sortEvent: ISbDataTableSortChangeEvent): void {
-    this.sortBy = sortEvent.name;
-    this.sortOrder = sortEvent.order;
-    this.refreshTable();
-  }
-
-  page(pagingEvent: IPageChangeEvent): void {
-    this.fromRow = pagingEvent.fromRow;
-    this.currentPage = pagingEvent.page;
-    this.pageSize = pagingEvent.pageSize;
-    this.refreshTable();
-  }
-
-  refreshTable(): void {
-    this.loadingService.register(this.loadingKey);
-    let newData: any[] = this.data;
-    this.filteredTotal = newData.length;
-    // @ts-ignore
-    newData = this.dataTableService.sortData(newData, this.sortBy, this.sortOrder);
-    newData = this.dataTableService.pageData(newData, this.fromRow, this.currentPage * this.pageSize);
-    this.filteredData = newData;
-    this.loadingService.resolve(this.loadingKey);
-  }
 
   uploadDocument(row: any): void {
     this.dialogService.show(this.uploadDocumentDialog, row);
@@ -121,6 +95,27 @@ export class UsersRegistryComponent implements OnInit {
       mode: SendNotificationMode.GROUP,
       dicts: this.dicts
     });
+  }
+
+  getTableData(): Observable<any> {
+    return this.userService.getUsersTable();
+  }
+
+  getDictsTableData(): Observable<any> {
+    return this.userService.getDicts();
+  }
+
+  menuItemClick(event: MouseEvent, menuItem: TableActionConfig): void {
+    if (menuItem) {
+      switch (menuItem.id) {
+        case TableActionType.SendOnUsersNotification:
+          this.sendUsersNotification();
+          break;
+        case TableActionType.SendOnGroupNotification:
+          this.sendGroupNotification();
+          break;
+      }
+    }
   }
 
 }

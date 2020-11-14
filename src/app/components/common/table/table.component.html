@@ -1,15 +1,17 @@
-<div flex="auto">
-  <div layout-align="end center" layout="row" class="breadcrumbs-container">
-    <button type="button" mat-icon-button matTooltip="Список функций"
-            [matMenuTriggerFor]="registryMenu">
-      <mat-icon color="grey">more_vert</mat-icon>
-    </button>
-    <mat-menu #registryMenu="matMenu">
-      <button mat-menu-item (click)="create()">Создать статью</button>
-    </mat-menu>
-  </div>
-</div>
 <div class="fullheight" layout="column">
+  <div flex="auto">
+    <div layout-align="end center" layout="row" class="breadcrumbs-container">
+      <button *ngIf="selectableButton" mat-button (click)="enableSelectUsers()">{{textSelectableButton}}</button>
+      <button *ngIf="menuItemList.length" type="button" mat-icon-button matTooltip="Список функций"
+              [matMenuTriggerFor]="registryMenu">
+        <mat-icon color="grey">more_vert</mat-icon>
+      </button>
+      <mat-menu #registryMenu="matMenu">
+        <button type="button" mat-menu-item *ngFor="let menuItem of menuItemList"
+                (click)="menuItemClick($event, menuItem)">{{menuItem.name}}</button>
+      </mat-menu>
+    </div>
+  </div>
   <div flex="grow">
     <mat-sidenav-container autosize class="table-container">
       <mat-sidenav-content>
@@ -19,21 +21,35 @@
               <div class="layout-scroll-container-inner">
                 <div class="layout-scroll-content display-table-view">
                   <div class="loader-container"
-                       *tdLoading="'loginLoadingName'; mode:'indeterminate'; type:'circle'; strategy:'overlay'; color:'accent'">
+                       *tdLoading="loadingKey; mode:'indeterminate'; type:'circle'; strategy:'overlay'; color:'accent'">
                     <div class="layout-scroll-container">
                       <div class="layout-scroll-container-inner">
                         <div class="layout-scroll-content display-table-container">
                           <div class="data-table">
-                            <sb-data-table *ngIf="filteredData"
+                            <sb-data-table *ngIf="filteredData && dicts"
                                            #dataTable
                                            [data]="filteredData"
                                            [columns]="columns"
+                                           [selectable]="selectable"
                                            [multiple]="true"
                                            [sortable]="true"
                                            [sortBy]="sortBy"
+                                           [(ngModel)]="selectedRows"
                                            [sortOrder]="sortOrder"
                                            (sortChange)="sort($event)"
+                                           [iconColumn]="iconColumn"
+                                           [callerComponent]="this"
+                                           [iconImg]="iconImg"
+                                           [iconAction]="iconAction"
                             >
+                              <ng-template *ngFor="let menuItemAdditional of additionalMenuItems"
+                                           sbDataTableTemplate="{{menuItemAdditional.name}}" let-row="row">
+                                <div layout="row">
+                                  <button (click)="menuItemAdditional.func(row)" mat-button>
+                                    <mat-icon>{{menuItemAdditional.icon}}</mat-icon>
+                                  </button>
+                                </div>
+                              </ng-template>
                             </sb-data-table>
                           </div>
                         </div>

@@ -1,7 +1,6 @@
 import {Component, ElementRef, Injectable, ViewChild} from '@angular/core';
 import {FlatTreeControl} from '@angular/cdk/tree';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
-import {SelectionModel} from '@angular/cdk/collections';
 import {BehaviorSubject} from 'rxjs';
 import {MenuService} from '../../services/menu/menu.service';
 import {DialogService} from '../../services/dialog/dialog.service';
@@ -431,7 +430,7 @@ export class MenuRegistryComponent {
     const addedItems = [];
     const editedItems = [];
     this.analyzeEditingItems(addedItems, editedItems);
-    if (addedItems.length && editedItems.length) {
+    if (addedItems.length || editedItems.length) {
       const menuInfo = {
         addedItems: addedItems,
         editedItems: editedItems
