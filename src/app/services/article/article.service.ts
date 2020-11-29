@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {AppConfig} from '../../app.config';
 import {HttpClient} from '@angular/common/http';
-import {Document} from '../../models/document/document';
 import {Observable} from 'rxjs';
 import {Article} from '../../models/article/article';
 
@@ -30,6 +29,10 @@ export class ArticleService {
 
   getDicts(): Observable<any> {
     return this.http.get<any>(this.appConfig.webServiceApi('/article/dicts'));
+  }
+
+  getArticleById(id: string): Observable<any> {
+    return this.http.get<any>(this.appConfig.webServiceApi(`/article/table/${id}`));
   }
 
 }

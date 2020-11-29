@@ -13,7 +13,7 @@ export class MenuService {
   }
 
   getMenuItems(language: string): Observable<any> {
-    return this.http.get<any>(this.appConfig.webServiceApi(`/menu?language=${language}&email=test@test.com`))
+    return this.http.get<any>(this.appConfig.webServiceApi(`/menu/table?language=${language}`));
   }
 
   getDicts(): Observable<any> {

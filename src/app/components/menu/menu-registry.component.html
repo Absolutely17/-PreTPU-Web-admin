@@ -10,7 +10,7 @@
     </mat-form-field>
   </div>
   <div class="loader-container"
-       *tdLoading="'menuLoadingName'; mode:'indeterminate'; type:'circle'; strategy:'overlay'; color:'accent'">
+       *tdLoading="'menuLoadingName'; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
       <mat-tree-node *matTreeNodeDef="let node"
                      matTreeNodeToggle
@@ -21,17 +21,20 @@
                               'drop-below': dragNodeExpandOverArea === 'below' && dragNodeExpandOverNode === node,
                               'drop-center': dragNodeExpandOverArea === 'center' && dragNodeExpandOverNode === node}"
              draggable="true"
-           (dragstart)="handleDragStart($event, node);"
-           (dragover)="handleDragOver($event, node);"
-           (drop)="handleDrop($event, node);"
-           (dragend)="handleDragEnd($event);">{{node.name}} {{node.type}}</div>
-      <button mat-icon-button *ngIf="node.type === 'LINKS_LIST'" (click)="addNewItem(node)">
-        <mat-icon>add</mat-icon>
-      </button>
-      <button mat-icon-button (click)="edit(node)">
-        <mat-icon>edit</mat-icon>
-      </button>
-    </mat-tree-node>
+             (dragstart)="handleDragStart($event, node);"
+             (dragover)="handleDragOver($event, node);"
+             (drop)="handleDrop($event, node);"
+             (dragend)="handleDragEnd($event);">{{node.name}} {{node.type}}</div>
+        <button mat-button *ngIf="node.type === 'LINKS_LIST'" (click)="addNewItem(node)">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button mat-button (click)="edit(node)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-button (click)="remove(node)">
+          <mat-icon>remove</mat-icon>
+        </button>
+      </mat-tree-node>
 
     <mat-tree-node *matTreeNodeDef="let node; when: hasChild"
                    matTreeNodePadding>
@@ -50,11 +53,14 @@
            (drop)="handleDrop($event, node);"
            (dragend)="handleDragEnd($event);">{{node.name}} ({{node.type}})
       </div>
-      <button mat-icon-button *ngIf="node.type === 'LINKS_LIST'" (click)="addNewItem(node)">
+      <button mat-button *ngIf="node.type === 'LINKS_LIST'" (click)="addNewItem(node)">
         <mat-icon>add</mat-icon>
       </button>
-      <button mat-icon-button (click)="edit(node)">
+      <button mat-button (click)="edit(node)">
         <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-button (click)="remove(node)">
+        <mat-icon>remove</mat-icon>
       </button>
     </mat-tree-node>
     </mat-tree>

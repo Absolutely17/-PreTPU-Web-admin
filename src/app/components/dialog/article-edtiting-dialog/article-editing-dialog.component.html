@@ -48,7 +48,8 @@
             </mat-form-field>
 
               <quill-editor [styles]="{resize: 'both', overflow: 'auto', 'max-height': '450px', 'max-width':'1500px',
-               'min-width':'1150px'}" format="html" formControlName="text" (onEditorCreated)="getEditorInstance($event)">
+               'min-width':'1150px'}" format="html" formControlName="text" (onEditorCreated)="getEditorInstance($event)"
+                            [modules]="modules">
 
               </quill-editor>
           </div>

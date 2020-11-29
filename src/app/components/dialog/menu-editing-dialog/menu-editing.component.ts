@@ -1,16 +1,18 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {TokenStorageService} from '../../../services/token/token-storage.service';
 import {ErrorService} from '../../../services/error/error.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MenuService} from '../../../services/menu/menu.service';
-import {SendNotificationDialogData} from '../send-notification-dialog/send-notification-dialog.component';
 import {MenuItem} from '../../menu/menu-registry.component';
 import {DialogService} from '../../../services/dialog/dialog.service';
 import {ArticleEditingDialogComponent} from '../article-edtiting-dialog/article-editing-dialog.component';
 import {ComponentType} from '@angular/cdk/overlay';
-import {DialogMode} from '../DialogMode';
+import {DialogMode} from '../dialog-mode';
+import {AppConfig} from '../../../app.config';
+import {ImageService} from '../../../services/image/image.service';
+import {TdLoadingService} from '@covalent/core/loading';
+import {ArticleChooseDialogComponent} from '../article-choose-dialog/article-choose-dialog.component';
 
 export interface MenuEditingData {
   mode: DialogMode;
@@ -22,9 +24,11 @@ export interface MenuEditingData {
   selector: 'app-menu-editing-component',
   templateUrl: './menu-editing.component.html'
 })
-export class MenuEditingComponent implements OnInit{
+export class MenuEditingComponent implements OnInit {
 
   articleDialog: ComponentType<ArticleEditingDialogComponent> = ArticleEditingDialogComponent;
+
+  articleChooseDialog: ComponentType<ArticleChooseDialogComponent> = ArticleChooseDialogComponent;
 
   currentMode: DialogMode;
 
@@ -36,7 +40,11 @@ export class MenuEditingComponent implements OnInit{
 
   item: MenuItem;
 
-  currentArticle: string;
+  selectedArticles: string[];
+
+  imageId: string;
+
+  loaderName = 'menuEditingLoader';
 
   get type(): string {
     return this.get('type').value;
@@ -48,13 +56,17 @@ export class MenuEditingComponent implements OnInit{
     @Inject(MAT_DIALOG_DATA) data: MenuEditingData,
     protected snackBar: MatSnackBar,
     private menuService: MenuService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private appConfig: AppConfig,
+    private imageService: ImageService,
+    private loadingService: TdLoadingService
   ) {
+    this.selectedArticles = [];
     this.currentMode = data.mode;
     this.dicts = data.dicts;
     if (data.item) {
       this.item = data.item;
-      this.currentArticle = data.item.articleId;
+      this.selectedArticles = data.item.linkedArticles;
     }
   }
 
@@ -62,7 +74,8 @@ export class MenuEditingComponent implements OnInit{
     this.form = new FormGroup({}, null, null);
     this.form.addControl('name', new FormControl('', Validators.required));
     this.form.addControl('type', new FormControl('', Validators.required));
-    this.form.addControl('url', new FormControl('', null));
+    this.form.addControl('url', new FormControl(null, null));
+    this.form.addControl('image', new FormControl(null, null));
     if (this.item) {
       this.form.patchValue(this.item);
     }
@@ -92,8 +105,11 @@ export class MenuEditingComponent implements OnInit{
 
   accept(): void {
     const menuInfo = this.form.getRawValue();
-    if (this.currentArticle && menuInfo.type === 'ARTICLE') {
-      menuInfo.articleId = this.currentArticle;
+    if (this.imageId) {
+      menuInfo.image = this.imageId;
+    }
+    if (this.selectedArticles && (menuInfo.type === 'ARTICLE' || menuInfo.type === 'FEED_LIST')) {
+      menuInfo.linkedArticles = this.selectedArticles;
     }
     this.dialogRef.close(menuInfo);
   }
@@ -104,18 +120,51 @@ export class MenuEditingComponent implements OnInit{
       dicts: this.dicts
     }, '1000px').afterClosed().subscribe((it) => {
       if (it) {
-        this.currentArticle = it;
+        this.selectedArticles = it;
       }
     });
   }
 
-  chooseArticle(): void {
+  selectArticle(multiple: boolean = false): void {
+    this.dialogService.show(this.articleChooseDialog, {
+      selectedArticles: this.selectedArticles,
+      multiple: multiple
+    }, '1400px').afterClosed().subscribe(it => {
+      if (it) {
+        this.selectedArticles = it;
+      }
+    });
+  }
 
+  selectMultipleArticle(): void {
+    this.selectArticle(true);
   }
 
   // Сбрасываем URL и ID статьи при смене типа пункта меню
   changeType(): void {
-    this.currentArticle = null;
+    this.selectedArticles = null;
     this.form.patchValue({url: null});
+  }
+
+  selectImage(): void {
+    this.loadingService.register(this.loaderName);
+    const file = this.get('image').value;
+    if (/^image\//.test(file.type)) {
+      this.imageService.upload(file).subscribe(it => {
+        if (it) {
+          this.imageId = it;
+          this.loadingService.resolve(this.loaderName);
+        }
+      });
+    } else {
+      this.snackBar.open('Можно загружать только изображения',
+        'Закрыть', {duration: 3000});
+      this.loadingService.resolve(this.loaderName);
+    }
+  }
+
+  openImage(): void {
+    // todo open image
+    window.open(this.appConfig.webServiceFullUrl + '/media/img/' + this.item.image);
   }
 }

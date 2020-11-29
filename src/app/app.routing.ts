@@ -7,6 +7,7 @@ import {ErrorComponent} from './components/common/error/error.component';
 import {UsersRegistryComponent} from './components/user-registry/users-registry.component';
 import {MenuRegistryComponent} from './components/menu/menu-registry.component';
 import {ArticleRegistryComponent} from './components/article-registry/article-registry.component';
+import {MainPageComponent} from './components/common/main-page/main-page.component';
 
 // @ts-ignore
 const routes: Routes = [
@@ -17,13 +18,17 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     children: [
       {
+        path: '',
+        component: MainPageComponent
+      },
+      {
         path: 'menu',
         component: MenuRegistryComponent
       },
-       {
-         path: 'users',
-         component: UsersRegistryComponent
-       },
+      {
+        path: 'users',
+        component: UsersRegistryComponent
+      },
       {
         path: 'article',
         component: ArticleRegistryComponent

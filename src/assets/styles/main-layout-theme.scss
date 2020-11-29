@@ -365,7 +365,7 @@
     }
   }
   .mat-progress-spinner circle {
-    stroke: mat-color($accent, 300);
+    stroke: #058606;
   }
   .cancel-button {
     background: rgba(47, 128, 237, 0.42);
@@ -755,7 +755,9 @@
 
   /* Основной контент */
   .footer {
-    box-shadow: 0px -6.82px 25.575px rgba(30, 135, 240, 0.2);
+    display: flex;
+    justify-content: center;
+    box-shadow: 0px 6.82px 50px rgb(135 187 139 / 50%);
     color: #828282;
     padding: 8px 26px;
   }
@@ -1386,7 +1388,6 @@
     .mat-chip-list .mat-chip-list-wrapper .mat-chip {font:400 12px "roboto", sans-serif;}
     .element-row .mat-input-element {line-height:16px;}
     .td-dialog-actions {top:auto; left:auto;}
-    .mat-raised-button.td-file-input {min-width:0; height:40px; border-radius:100%; box-shadow:none !important;}
 
     .td-dialog-message {color:#000000;}
     .batch-loading-dialog {

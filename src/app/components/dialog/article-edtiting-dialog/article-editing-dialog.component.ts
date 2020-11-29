@@ -5,11 +5,11 @@ import {ErrorService} from '../../../services/error/error.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ImageService} from '../../../services/image/image.service';
 import {ArticleService} from '../../../services/article/article.service';
-import {DialogMode} from '../DialogMode';
-import Quill from 'quill'
+import {DialogMode} from '../dialog-mode';
+import * as QuillNamespace from 'quill';
 import {Article} from '../../../models/article/article';
-import {environment} from '../../../../environments/environment';
 import {AppConfig} from '../../../app.config';
+import ImageResize from 'quill-image-resize';
 
 export interface ArticleEditingDialogData {
   articleId: string;
@@ -17,12 +17,45 @@ export interface ArticleEditingDialogData {
   dicts?: any;
 }
 
+const Quill: any = QuillNamespace;
+const BaseImageFormat = Quill.import('formats/image');
+const ImageFormatAttributesList = [
+  'alt',
+  'height',
+  'width',
+  'style'
+];
+
+class ImageFormat extends BaseImageFormat {
+  static formats(domNode) {
+    return ImageFormatAttributesList.reduce(function(formats, attribute) {
+      if (domNode.hasAttribute(attribute)) {
+        formats[attribute] = domNode.getAttribute(attribute);
+      }
+      return formats;
+    }, {});
+  }
+
+  format(name, value) {
+    if (ImageFormatAttributesList.indexOf(name) > -1) {
+      if (value) {
+        // @ts-ignore
+        this.domNode.setAttribute(name, value);
+      } else {
+        // @ts-ignore
+        this.domNode.removeAttribute(name);
+      }
+    } else {
+      super.format(name, value);
+    }
+  }
+}
 
 @Component({
   selector: 'app-article-editing-dialog-component',
   templateUrl: './article-editing-dialog.component.html'
 })
-export class ArticleEditingDialogComponent implements OnInit{
+export class ArticleEditingDialogComponent implements OnInit {
 
   form: FormGroup;
 
@@ -36,6 +69,18 @@ export class ArticleEditingDialogComponent implements OnInit{
 
   currentArticleId: string;
 
+  topTags = '<!DOCTYPE HTML>\n' +
+    '<html>\n' +
+    '<head>\n' +
+    '  <meta charset=\\"utf-8\\">\n' +
+    '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+    '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+    '<body>';
+
+  bottomTags = '</body></html>';
+
+  modules = {};
+
   constructor(
     private dialogRef: MatDialogRef<ArticleEditingDialogComponent>,
     private errorService: ErrorService,
@@ -45,9 +90,19 @@ export class ArticleEditingDialogComponent implements OnInit{
     private articleService: ArticleService,
     private appConfig: AppConfig
   ) {
+    this.modules = {
+      imageResize: {}
+    };
     this.currentMode = data.mode;
     this.dicts = data.dicts;
     this.currentArticleId = data.articleId;
+    if (data.articleId) {
+      this.articleService.getArticleById(data.articleId).subscribe(it => {
+        if (it) {
+          this.form.patchValue(it);
+        }
+      });
+    }
   }
 
   ngOnInit(): void {
@@ -61,32 +116,34 @@ export class ArticleEditingDialogComponent implements OnInit{
   }
 
   inlineStylesQuill(): void {
-    var DirectionAttribute = Quill.import('attributors/attribute/direction');
+    const DirectionAttribute = Quill.import('attributors/attribute/direction');
     Quill.register(DirectionAttribute, true);
-    var AlignClass = Quill.import('attributors/class/align');
+    const AlignClass = Quill.import('attributors/class/align');
     Quill.register(AlignClass, true);
-    var BackgroundClass = Quill.import('attributors/class/background');
+    const BackgroundClass = Quill.import('attributors/class/background');
     Quill.register(BackgroundClass, true);
-    var ColorClass = Quill.import('attributors/class/color');
+    const ColorClass = Quill.import('attributors/class/color');
     Quill.register(ColorClass, true);
-    var DirectionClass = Quill.import('attributors/class/direction');
+    const DirectionClass = Quill.import('attributors/class/direction');
     Quill.register(DirectionClass, true);
-    var FontClass = Quill.import('attributors/class/font');
+    const FontClass = Quill.import('attributors/class/font');
     Quill.register(FontClass, true);
-    var SizeClass = Quill.import('attributors/class/size');
+    const SizeClass = Quill.import('attributors/class/size');
     Quill.register(SizeClass, true);
-    var AlignStyle = Quill.import('attributors/style/align');
+    const AlignStyle = Quill.import('attributors/style/align');
     Quill.register(AlignStyle, true);
-    var BackgroundStyle = Quill.import('attributors/style/background');
+    const BackgroundStyle = Quill.import('attributors/style/background');
     Quill.register(BackgroundStyle, true);
-    var ColorStyle = Quill.import('attributors/style/color');
+    const ColorStyle = Quill.import('attributors/style/color');
     Quill.register(ColorStyle, true);
-    var DirectionStyle = Quill.import('attributors/style/direction');
+    const DirectionStyle = Quill.import('attributors/style/direction');
     Quill.register(DirectionStyle, true);
-    var FontStyle = Quill.import('attributors/style/font');
+    const FontStyle = Quill.import('attributors/style/font');
     Quill.register(FontStyle, true);
-    var SizeStyle = Quill.import('attributors/style/size');
+    const SizeStyle = Quill.import('attributors/style/size');
     Quill.register(SizeStyle, true);
+    Quill.register('modules/imageResize', ImageResize, true);
+    Quill.register(ImageFormat, true);
   }
 
   isInvalid(name: string): boolean {
@@ -124,7 +181,7 @@ export class ArticleEditingDialogComponent implements OnInit{
       if (/^image\//.test(file.type)) {
         this.saveToServer(file);
       } else {
-        this.snackBar.open('You could only upload images.',
+        this.snackBar.open('Можно загружать только изображения',
           'Закрыть', {duration: 3000});
       }
     };
@@ -134,7 +191,7 @@ export class ArticleEditingDialogComponent implements OnInit{
   saveToServer(file: File) {
     this.imageService.upload(file).subscribe(it => {
       if (it) {
-        const imageUrl = this.appConfig.webServiceFullUrl + '/media/img' + it;
+        const imageUrl = this.appConfig.webServiceFullUrl + '/media/img/' + it;
         this.quillEditor.insertEmbed(1, 'image', imageUrl, 'user');
       }
     })
@@ -163,23 +220,15 @@ export class ArticleEditingDialogComponent implements OnInit{
         }
       });
     } else {
-      this.articleService.update(articleInfo, this.currentArticleId);
+      this.articleService.update(articleInfo, this.currentArticleId).subscribe(it => this.dialogRef.close());
     }
 
   }
 
   // Добавляем необходимые теги на HTML документа для его правильного отображения
   addMetaInfoToText(): string {
-    const topTags = '<!DOCTYPE HTML>\n' +
-      '<html>\n' +
-      '<head>\n' +
-      '  <meta charset=\\"utf-8\\">\n' +
-      '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
-      '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
-      '<body>';
-    const bottomTags = '</body></html>';
     let htmlText = this.get('text');
-    return topTags + htmlText.value + bottomTags;
+    return this.topTags + htmlText.value + this.bottomTags;
   }
 
 }

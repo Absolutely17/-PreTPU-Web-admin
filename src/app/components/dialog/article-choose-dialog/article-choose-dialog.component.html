@@ -1,0 +1,28 @@
+<td-dialog>
+  <td-dialog-title>Выбор статьи</td-dialog-title>
+  <td-dialog-content>
+    <div style="height: 700px">
+      <app-article-registry #tableComponent
+                            [isDialogView]="true"
+                            [selectable]="true"
+                            [multiple]="multiple"
+                            [iconColumn]="false"
+                            [defaultSelected]="selectedArticles">
+      </app-article-registry>
+    </div>
+  </td-dialog-content>
+  <td-dialog-actions>
+    <button type="button" flex mat-button
+            color="primary"
+            class="push-right-xs"
+            #closeBtn
+            (click)="cancel()">Отменить
+    </button>
+    <button type="button" flex mat-raised-button
+            color="primary"
+            class="push-left-xs"
+            #acceptBtn
+            (click)="accept()">Выбрать
+    </button>
+  </td-dialog-actions>
+</td-dialog>

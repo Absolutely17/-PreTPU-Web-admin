@@ -1,6 +1,6 @@
 <div class="fullheight" layout="column">
   <div flex="auto">
-    <div layout-align="end center" layout="row" class="breadcrumbs-container">
+    <div *ngIf="!isDialogView" layout-align="end center" layout="row" class="breadcrumbs-container">
       <button *ngIf="selectableButton" mat-button (click)="enableSelectUsers()">{{textSelectableButton}}</button>
       <button *ngIf="menuItemList.length" type="button" mat-icon-button matTooltip="Список функций"
               [matMenuTriggerFor]="registryMenu">
@@ -21,7 +21,7 @@
               <div class="layout-scroll-container-inner">
                 <div class="layout-scroll-content display-table-view">
                   <div class="loader-container"
-                       *tdLoading="loadingKey; mode:'indeterminate'; type:'circle'; strategy:'overlay'; color:'accent'">
+                       *tdLoading="loadingKey; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
                     <div class="layout-scroll-container">
                       <div class="layout-scroll-container-inner">
                         <div class="layout-scroll-content display-table-container">
@@ -31,7 +31,7 @@
                                            [data]="filteredData"
                                            [columns]="columns"
                                            [selectable]="selectable"
-                                           [multiple]="true"
+                                           [multiple]="multiple"
                                            [sortable]="true"
                                            [sortBy]="sortBy"
                                            [(ngModel)]="selectedRows"

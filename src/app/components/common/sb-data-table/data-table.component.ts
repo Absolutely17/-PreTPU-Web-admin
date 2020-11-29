@@ -1005,6 +1005,14 @@ export class SbDataTableComponent
     }
   }
 
+  doInitSelection(defaultSelected: string[]): void {
+    this._data.forEach((it, index) => {
+      if (defaultSelected && defaultSelected.find(item => item === it.id)) {
+        this._doSelection(it, index);
+      }
+    });
+  }
+
   /**
    * Does the actual Row Selection
    */

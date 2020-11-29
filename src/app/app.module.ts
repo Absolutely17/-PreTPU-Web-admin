@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {InjectionToken, NgModule} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RootComponent} from './components/root.component';
 import {HttpClientModule} from '@angular/common/http';
@@ -28,11 +28,13 @@ import {sbDataTableComponents} from './components/common/sb-data-table/data-tabl
 import {ChecklistDatabase, MenuRegistryComponent} from './components/menu/menu-registry.component';
 import {MenuService} from './services/menu/menu.service';
 import {MenuEditingComponent} from './components/dialog/menu-editing-dialog/menu-editing.component';
-import {QuillEditorComponent, QuillModule, QuillService} from 'ngx-quill';
+import {QuillModule} from 'ngx-quill';
 import {ArticleEditingDialogComponent} from './components/dialog/article-edtiting-dialog/article-editing-dialog.component';
 import {ArticleRegistryComponent} from './components/article-registry/article-registry.component';
 import {ArticleService} from './services/article/article.service';
 import {ImageService} from './services/image/image.service';
+import {ArticleChooseDialogComponent} from './components/dialog/article-choose-dialog/article-choose-dialog.component';
+import {MainPageComponent} from './components/common/main-page/main-page.component';
 
 export const commonServices = [
   MessageService
@@ -55,14 +57,20 @@ export const commonServices = [
     MenuRegistryComponent,
     MenuEditingComponent,
     ArticleEditingDialogComponent,
-    ArticleRegistryComponent
+    ArticleRegistryComponent,
+    ArticleChooseDialogComponent,
+    MainPageComponent
   ],
   imports: [
     HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
     CommonImportsModule,
-    QuillModule.forRoot(),
+    QuillModule.forRoot({
+      modules: {
+        imageResize: true
+      }
+    }),
     appRouting
   ],
   providers: [

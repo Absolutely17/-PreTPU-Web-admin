@@ -1,63 +1,92 @@
-<td-dialog>
-  <td-dialog-title>{{currentMode === mode.CREATE ? 'Создание' : 'Редактирование'}} пункта меню</td-dialog-title>
-  <td-dialog-content>
-    <div flex="grow" class="simple-fields">
-      <div *ngIf="form">
-        <form [formGroup]="form">
-          <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
-            <mat-form-field class="fullwidth push-bottom-sm">
-              <mat-label>Название пункта меню</mat-label>
-              <input matInput tdAutoTrim autocomplete="off"
-                     type="text"
-                     formControlName="name"
-                     [maxlength]="500"/>
-              <span class="error-label" *ngIf="isInvalid('name')" matTooltip="{{getError('name')}}">
+<div class="loader-container"
+     *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
+  <td-dialog>
+    <td-dialog-title>{{currentMode === mode.CREATE ? 'Создание' : 'Редактирование'}} пункта меню</td-dialog-title>
+    <td-dialog-content>
+      <div flex="grow" class="simple-fields">
+        <div *ngIf="form">
+          <form [formGroup]="form">
+            <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
+              <mat-form-field class="fullwidth push-bottom-sm">
+                <mat-label>Название пункта меню</mat-label>
+                <input matInput tdAutoTrim autocomplete="off"
+                       type="text"
+                       formControlName="name"
+                       [maxlength]="500"/>
+                <span class="error-label" *ngIf="isInvalid('name')" matTooltip="{{getError('name')}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>
-            </mat-form-field>
+              </mat-form-field>
 
-            <mat-form-field *ngIf="dicts && dicts.types" class="fullwidth push-bottom-sm">
-              <mat-label>Тип пункта меню</mat-label>
-              <mat-select formControlName="type" (selectionChange)="changeType()">
-                <mat-option *ngFor="let type of dicts.types" [value]="type.id">
-                  {{type.name}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+              <mat-form-field *ngIf="dicts && dicts.types" class="fullwidth push-bottom-sm">
+                <mat-label>Тип пункта меню</mat-label>
+                <mat-select formControlName="type" (selectionChange)="changeType()">
+                  <mat-option *ngFor="let type of dicts.types" [value]="type.id">
+                    {{type.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div>
+                <td-file-input [style]="'display: inline-block'" class="push-bottom-md" formControlName="image"
+                               color="primary" (select)="selectImage()">
+                  <mat-icon>attach_file</mat-icon>
+                  <span>Выбрать изображение</span>
+                </td-file-input>
+                <div style="display:inline-block" *ngIf="item && item.image">
+                  <mat-label class="push-left-md">Текущее изображение:</mat-label>
+                  <button matTooltip="Открыть в новой вкладке" type="button" mat-icon-button (click)="openImage()">
+                    <mat-icon mat-button>open_in_new</mat-icon>
+                  </button>
+                </div>
+              </div>
 
-            <mat-form-field *ngIf="type === 'LINK'" class="fullwidth push-bottom-sm">
-              <mat-label>Ссылка</mat-label>
-              <input matInput tdAutoTrim autocomplete="off"
-                     type="text"
-                     formControlName="url"
-                     [maxlength]="500"/>
-              <span class="error-label" *ngIf="isInvalid('url')" matTooltip="{{getError('url')}}">
+
+              <mat-form-field *ngIf="type === 'LINK'" class="fullwidth push-bottom-sm">
+                <mat-label>Ссылка</mat-label>
+                <input matInput tdAutoTrim autocomplete="off"
+                       type="text"
+                       formControlName="url"
+                       [maxlength]="500"/>
+                <span class="error-label" *ngIf="isInvalid('url')" matTooltip="{{getError('url')}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>
-            </mat-form-field>
-            <button *ngIf="type === 'ARTICLE'" mat-button (click)="createArticle()">Добавить новую
-              статью
-            </button>
-            <button *ngIf="type === 'ARTICLE'" mat-button (click)="chooseArticle()">Выбрать статью
-            </button>
-          </div>
-        </form>
+              </mat-form-field>
+              <ng-container *ngIf="type === 'ARTICLE'">
+                <button mat-button (click)="createArticle()">Добавить новую
+                  статью
+                </button>
+                <button matTooltip="Текущая выбранная статья будет выделена в списке" mat-button
+                        (click)="selectArticle()">Выбрать статью
+                </button>
+              </ng-container>
+
+              <ng-container *ngIf="type === 'FEED_LIST'">
+                <span
+                  class="push-bottom-sm">Количество прикрепленных статей: {{selectedArticles ? selectedArticles.length : '0'}}</span>
+                <button matTooltip="Текущие выбранные статьи будут выделены в списке" mat-button
+                        (click)="selectMultipleArticle()">Выбрать статьи
+                </button>
+              </ng-container>
+
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
-  </td-dialog-content>
-  <td-dialog-actions>
-    <button type="button" flex mat-button
-            color="primary"
-            class="push-right-xs"
-            #closeBtn
-            (click)="cancel()">Отменить
-    </button>
-    <button type="button" flex mat-raised-button
-            color="primary"
-            class="push-left-xs"
-            [disabled]="form.invalid"
-            #acceptBtn
-            (click)="accept()">{{currentMode === mode.CREATE ? 'Создать' : 'Изменить'}}
-    </button>
-  </td-dialog-actions>
-</td-dialog>
+    </td-dialog-content>
+    <td-dialog-actions>
+      <button type="button" flex mat-button
+              color="primary"
+              class="push-right-xs"
+              #closeBtn
+              (click)="cancel()">Отменить
+      </button>
+      <button type="button" flex mat-raised-button
+              color="primary"
+              class="push-left-xs"
+              [disabled]="form.invalid"
+              #acceptBtn
+              (click)="accept()">{{currentMode === mode.CREATE ? 'Создать' : 'Изменить'}}
+      </button>
+    </td-dialog-actions>
+  </td-dialog>
+</div>

@@ -8,7 +8,7 @@ import {ComponentType} from '@angular/cdk/overlay';
 import {MenuEditingComponent} from '../dialog/menu-editing-dialog/menu-editing.component';
 import {TdLoadingService} from '@covalent/core/loading';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {DialogMode} from '../dialog/DialogMode';
+import {DialogMode} from '../dialog/dialog-mode';
 
 export class MenuItem {
   id: string;
@@ -18,7 +18,8 @@ export class MenuItem {
   position: number;
   url: string;
   parentId: string;
-  articleId: string;
+  linkedArticles: string[];
+  image: string;
   children: MenuItem[];
   languageId: string;
 }
@@ -90,9 +91,11 @@ export class ChecklistDatabase {
       node.id = obj[key].id;
       node.position = obj[key].position;
       node.parentId = parentId;
-      node.articleId = obj[key].idArticle;
+      node.linkedArticles = [];
+      node.linkedArticles = obj[key].linkedArticles;
       node.languageId = languageId;
       node.url = obj[key].url;
+      node.image = obj[key].imageId;
       this.dataFromServiceInOneRow.push({...node});
       if (children != null) {
         if (typeof children === 'object') {
@@ -124,7 +127,8 @@ export class ChecklistDatabase {
     node.name = newParams.name;
     node.type = newParams.type;
     node.url = newParams.url;
-    node.articleId = newParams.articleId;
+    node.linkedArticles = newParams.linkedArticles;
+    node.image = newParams.image;
     this.dataChange.next(this.data);
   }
 
@@ -296,6 +300,8 @@ export class MenuRegistryComponent {
 
   dicts: any;
 
+  deletedItems: string[];
+
   loadingName = 'menuLoadingName';
 
   /* Drag and drop */
@@ -320,6 +326,7 @@ export class MenuRegistryComponent {
         this.dicts = it;
       }
     });
+    this.deletedItems = [];
   }
 
   getLevel = (node: MenuItemFlat) => node.level;
@@ -409,8 +416,10 @@ export class MenuRegistryComponent {
         newItem = this.database.copyPasteItemAbove(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
       } else if (this.dragNodeExpandOverArea === 'below') {
         newItem = this.database.copyPasteItemBelow(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
-      } else {
+      } else if (this.flatNodeMap.get(node).type === 'LINKS_LIST') {
         newItem = this.database.copyPasteItem(this.flatNodeMap.get(this.dragNode), this.flatNodeMap.get(node));
+      } else {
+        return;
       }
       this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
       this.treeControl.expandDescendants(this.nestedNodeMap.get(newItem));
@@ -430,12 +439,15 @@ export class MenuRegistryComponent {
     const addedItems = [];
     const editedItems = [];
     this.analyzeEditingItems(addedItems, editedItems);
-    if (addedItems.length || editedItems.length) {
+    if (addedItems.length || editedItems.length || this.deletedItems.length) {
       const menuInfo = {
         addedItems: addedItems,
-        editedItems: editedItems
+        editedItems: editedItems,
+        deletedItems: this.deletedItems
       };
+      console.log(menuInfo);
       this.menuService.save(menuInfo).subscribe(it => {
+        this.deletedItems = [];
         this.languageChange();
       });
     }
@@ -452,6 +464,11 @@ export class MenuRegistryComponent {
         this.database.editItem(origNode, it);
       }
     });
+  }
+
+  remove(node: MenuItemFlat): void {
+    this.deletedItems.push(node.id);
+    this.database.deleteItem(this.flatNodeMap.get(node));
   }
 
   analyzeEditingItems(addedItems: any, editedItems: any): void {
@@ -472,8 +489,6 @@ export class MenuRegistryComponent {
         this.collectEditedItems(it, editedItems);
       });
     }
-    console.log(addedItems);
-    console.log(editedItems);
   }
 
   // Ищем измененные элементы по отношению к исходным

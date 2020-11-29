@@ -35,6 +35,53 @@
               <button (click)="logout()" class="menu-top-item">Выйти</button>
             </ng-container>
           </div>
+
+          <div class="header-menu-min" layout="row" layout-fill layout-align="start center">
+
+            <button #menuTrigger [matMenuTriggerFor]="levelOne" class="menu-top-item"
+                    #levelOneTrigger="matMenuTrigger"
+                    (mouseenter)="buttonEnter(levelOneTrigger)"
+                    (mouseleave)="buttonLeave(levelOneTrigger)">
+              Навигация
+              <mat-icon color="grey">keyboard_arrow_down</mat-icon>
+            </button>
+
+            <mat-menu #levelOne="matMenu" direction="down" yPosition="below" [overlapTrigger]="false"
+                      [hasBackdrop]="false" class="menu-top-list">
+              <div (mouseenter)="menuEnter()" (mouseleave)="menuLeave(levelOneTrigger)">
+                <ng-container *ngFor="let menuItem of rootMenuItems; let last = last">
+                  <ng-container *ngIf="menuItem.children && menuItem.children.length > 0">
+                    <button mat-menu-item
+                            #levelTwoTrigger="matMenuTrigger"
+                            [matMenuTriggerFor]="levelTwo">
+                      {{ menuItem.name }}
+                      <mat-divider *ngIf="!last"></mat-divider>
+                    </button>
+
+                    <mat-menu #levelTwo="matMenu" [overlapTrigger]="false" [hasBackdrop]="false" class="menu-top-list">
+                      <div (mouseenter)="menu2Enter()" (mouseleave)="menu2Leave(levelOneTrigger,levelTwoTrigger)">
+                        <button mat-menu-item
+                                *ngFor="let childItem of menuItem.children"
+                                (click)="navigateTo(childItem)">
+                          {{ childItem.name }}
+                          <mat-divider></mat-divider>
+                        </button>
+                      </div>
+                    </mat-menu>
+                  </ng-container>
+
+                  <ng-container *ngIf="!menuItem.children">
+                    <button mat-menu-item
+                            (click)="navigateTo(menuItem)">
+                      {{ menuItem.name }}
+                      <mat-divider></mat-divider>
+                    </button>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </mat-menu>
+
+          </div>
         </ng-container>
       </div>
     </div>

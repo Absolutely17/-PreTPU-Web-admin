@@ -57,6 +57,8 @@ export class UsersRegistryComponent extends TableComponent {
     }
   ];
 
+  multiple = true;
+
   selectableButton = true;
 
   textSelectableButton = 'Выбрать пользователей';

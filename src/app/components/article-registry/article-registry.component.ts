@@ -7,7 +7,7 @@ import {TdLoadingService} from '@covalent/core/loading';
 import {DialogService} from '../../services/dialog/dialog.service';
 import {ComponentType} from '@angular/cdk/overlay';
 import {ArticleEditingDialogComponent} from '../dialog/article-edtiting-dialog/article-editing-dialog.component';
-import {DialogMode} from '../dialog/DialogMode';
+import {DialogMode} from '../dialog/dialog-mode';
 import {ArticleService} from '../../services/article/article.service';
 import {TableActionConfig, TableActionType, TableComponent} from '../common/table/table.component';
 import {Observable} from 'rxjs';
@@ -24,7 +24,7 @@ export class ArticleRegistryComponent extends TableComponent {
     {name: 'name', label: 'Название статьи', sortable: true, filter: true, width: 500},
     {name: 'topic', label: 'Тематика', sortable: true, filter: true, width: 200},
     {
-      name: 'language', label: 'Язык статьи', sortable: true, width: 150, format: value => {
+      name: 'language', label: 'Язык статьи', sortable: true, width: 100, format: value => {
         if (this.dicts && this.dicts.languages) {
           return this.dicts.languages.find(it => it.id === value).name;
         } else {
@@ -32,7 +32,7 @@ export class ArticleRegistryComponent extends TableComponent {
         }
       }
     },
-    {name: 'countView', label: 'Число просмотров', sortable: true, width: 70},
+    {name: 'countView', label: 'Число просмотров', sortable: true, width: 100},
     {name: 'createDate', label: 'Дата создания', sortable: true, filter: true, width: 200}
   ];
 
@@ -51,7 +51,7 @@ export class ArticleRegistryComponent extends TableComponent {
 
   iconImg = 'subdirectory_arrow_right';
 
-  iconAction = this.open;
+  iconAction = this.editIconAction;
 
 
   constructor(
@@ -90,8 +90,17 @@ export class ArticleRegistryComponent extends TableComponent {
     }, '1000px').afterClosed().subscribe(() => this.refreshTable());
   }
 
-  open(): void {
-    console.log('TODO OPEN');
+  editIconAction(row: any, _this: ArticleRegistryComponent): void {
+    _this.edit(row.id);
   }
+
+  edit(id: string): void {
+    this.dialogService.show(this.articleDialog, {
+      articleId: id,
+      mode: DialogMode.EDIT,
+      dicts: this.dicts
+    }, '1000px').afterClosed().subscribe(() => this.refreshTable());
+  }
+
 
 }

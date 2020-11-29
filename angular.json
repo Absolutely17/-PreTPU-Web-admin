@@ -30,7 +30,9 @@
               "src/styles.scss",
               "node_modules/@covalent/core/common/platform.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/quill/dist/quill.min.js"
+            ]
           },
           "configurations": {
             "production": {
