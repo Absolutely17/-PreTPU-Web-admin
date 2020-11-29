@@ -65,6 +65,7 @@ export class MenuEditingComponent implements OnInit {
     this.currentMode = data.mode;
     this.dicts = data.dicts;
     if (data.item) {
+      this.imageId = data.item.image;
       this.item = data.item;
       this.selectedArticles = data.item.linkedArticles;
     }
@@ -120,7 +121,7 @@ export class MenuEditingComponent implements OnInit {
       dicts: this.dicts
     }, '1000px').afterClosed().subscribe((it) => {
       if (it) {
-        this.selectedArticles = it;
+        this.selectedArticles.push(it);
       }
     });
   }
@@ -142,7 +143,7 @@ export class MenuEditingComponent implements OnInit {
 
   // Сбрасываем URL и ID статьи при смене типа пункта меню
   changeType(): void {
-    this.selectedArticles = null;
+    this.selectedArticles = [];
     this.form.patchValue({url: null});
   }
 
@@ -165,6 +166,6 @@ export class MenuEditingComponent implements OnInit {
 
   openImage(): void {
     // todo open image
-    window.open(this.appConfig.webServiceFullUrl + '/media/img/' + this.item.image);
+    window.open(this.appConfig.webServiceFullUrl + '/media/img/' + this.imageId);
   }
 }
