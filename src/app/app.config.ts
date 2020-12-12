@@ -27,6 +27,8 @@ export class AppConfig {
               private iconRegistry: MatIconRegistry) {
     this.webServiceUrl = AppConfig.normalizeBaseUrl(environment.webServiceUrl);
     this.webServiceFullUrl = environment.serviceFullUrl;
+    iconRegistry
+      .addSvgIcon('logout', sanitizer.bypassSecurityTrustResourceUrl('assets/img/logout.svg'));
   }
 
   webServiceApi(uri: string): string {

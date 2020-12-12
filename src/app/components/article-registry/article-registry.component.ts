@@ -53,6 +53,7 @@ export class ArticleRegistryComponent extends TableComponent {
 
   iconAction = this.editIconAction;
 
+  tableName = 'Реестр статей';
 
   constructor(
     protected dataTableService: TdDataTableService,

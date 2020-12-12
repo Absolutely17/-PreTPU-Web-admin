@@ -67,6 +67,8 @@ export class UsersRegistryComponent extends TableComponent {
 
   sortBy = 'firstName';
 
+  tableName = 'Реестр пользователей';
+
   constructor(
     protected dataTableService: TdDataTableService,
     protected loadingService: TdLoadingService,

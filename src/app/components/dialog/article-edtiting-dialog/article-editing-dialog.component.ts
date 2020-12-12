@@ -51,6 +51,17 @@ class ImageFormat extends BaseImageFormat {
   }
 }
 
+const CodeBlock = Quill.import('formats/code-block');
+
+class InlineCodeBlock extends CodeBlock {
+  static create(value) {
+    let node = super.create();
+    node.setAttribute('style', 'white-space: pre-wrap; word-break: break-word;');
+    node.className = '';
+    return node;
+  }
+}
+
 @Component({
   selector: 'app-article-editing-dialog-component',
   templateUrl: './article-editing-dialog.component.html'
@@ -144,6 +155,7 @@ export class ArticleEditingDialogComponent implements OnInit {
     Quill.register(SizeStyle, true);
     Quill.register('modules/imageResize', ImageResize, true);
     Quill.register(ImageFormat, true);
+    Quill.register(InlineCodeBlock, true);
   }
 
   isInvalid(name: string): boolean {

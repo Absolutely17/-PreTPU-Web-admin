@@ -9,6 +9,8 @@ import {MenuEditingComponent} from '../dialog/menu-editing-dialog/menu-editing.c
 import {TdLoadingService} from '@covalent/core/loading';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {DialogMode} from '../dialog/dialog-mode';
+import {CdkDragDrop} from '@angular/cdk/drag-drop';
+import {SelectionModel} from '@angular/cdk/collections';
 
 export class MenuItem {
   id: string;
@@ -107,16 +109,14 @@ export class ChecklistDatabase {
   }
 
   // Вставить имеющийся пункт во внутрь другого
-  insertItem(parent: MenuItem, nodeNew: any): MenuItem {
+  insertItem(parent: MenuItem, nodeNew: MenuItem): MenuItem {
     if (!parent.children) {
       parent.children = [];
     }
     let newItem;
-    if (nodeNew instanceof MenuItem) {
-      newItem = {...nodeNew} as MenuItem;
-      newItem.level = parent.level + 1;
-      newItem.parentId = parent.id;
-    }
+    newItem = {...nodeNew} as MenuItem;
+    newItem.level = parent.level + 1;
+    newItem.parentId = parent.id;
     parent.children.push(newItem);
     this.dataChange.next(this.data);
     return newItem;
@@ -312,6 +312,8 @@ export class MenuRegistryComponent {
   dragNodeExpandOverArea: string;
   @ViewChild('emptyItem') emptyItem: ElementRef;
 
+  hasAnyChange: boolean;
+
   constructor(
     private database: ChecklistDatabase,
     private dialogService: DialogService,
@@ -357,6 +359,7 @@ export class MenuRegistryComponent {
 
   // Добавляем новый пункт меню. Работае только в корне или у пунктов меню с типом LINKS_LIST
   addNewItem(node?: MenuItemFlat) {
+    this.hasAnyChange = true;
     this.dialogService.show(this.menuEditingDialog, {
       mode: DialogMode.CREATE,
       dicts: this.dicts
@@ -384,18 +387,22 @@ export class MenuRegistryComponent {
   handleDragOver(event, node) {
     event.preventDefault();
 
-    // Handle node expand
-    if (node === this.dragNodeExpandOverNode) {
-      if (this.dragNode !== node && !this.treeControl.isExpanded(node)) {
-        if ((new Date().getTime() - this.dragNodeExpandOverTime) > this.dragNodeExpandOverWaitTimeMs) {
-          this.treeControl.expand(node);
-        }
-      }
-    } else {
-      this.dragNodeExpandOverNode = node;
-      this.dragNodeExpandOverTime = new Date().getTime();
+    // // Handle node expand
+    // if (node === this.dragNodeExpandOverNode) {
+    //   if (this.dragNode !== node && !this.treeControl.isExpanded(node)) {
+    //     if ((new Date().getTime() - this.dragNodeExpandOverTime) > this.dragNodeExpandOverWaitTimeMs) {
+    //       this.treeControl.expand(node);
+    //     }
+    //   }
+    // } else {
+    //   this.dragNodeExpandOverNode = node;
+    //   this.dragNodeExpandOverTime = new Date().getTime();
+    // }
+    if (node === this.dragNode) {
+      this.dragNodeExpandOverNode = null;
+      return;
     }
-
+    this.dragNodeExpandOverNode = node;
     // Handle drag area
     const percentageX = event.offsetX / event.target.clientWidth;
     const percentageY = event.offsetY / event.target.clientHeight;
@@ -410,6 +417,7 @@ export class MenuRegistryComponent {
 
   handleDrop(event, node) {
     event.preventDefault();
+    this.hasAnyChange = true;
     if (node !== this.dragNode) {
       let newItem: MenuItem;
       if (this.dragNodeExpandOverArea === 'above') {
@@ -422,7 +430,9 @@ export class MenuRegistryComponent {
         return;
       }
       this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
-      this.treeControl.expandDescendants(this.nestedNodeMap.get(newItem));
+      this.nestedNodeMap.delete(this.flatNodeMap.get(this.dragNode));
+      this.flatNodeMap.delete(this.dragNode);
+      //this.treeControl.expandDescendants(this.nestedNodeMap.get(newItem));
     }
     this.dragNode = null;
     this.dragNodeExpandOverNode = null;
@@ -436,6 +446,7 @@ export class MenuRegistryComponent {
   }
 
   save(): void {
+    this.hasAnyChange = false;
     const addedItems = [];
     const editedItems = [];
     this.analyzeEditingItems(addedItems, editedItems);
@@ -454,6 +465,7 @@ export class MenuRegistryComponent {
   }
 
   edit(node: MenuItemFlat): void {
+    this.hasAnyChange = true;
     const origNode = this.flatNodeMap.get(node);
     this.dialogService.show(this.menuEditingDialog, {
       mode: DialogMode.EDIT,
@@ -467,14 +479,29 @@ export class MenuRegistryComponent {
   }
 
   remove(node: MenuItemFlat): void {
+    this.hasAnyChange = true;
     this.deletedItems.push(node.id);
-    this.database.deleteItem(this.flatNodeMap.get(node));
+    const menuItem = this.flatNodeMap.get(node);
+    if (menuItem && menuItem.type === 'LINKS_LIST' && menuItem.children.length > 0) {
+      this.dialogService.showConfirmDialog({
+        title: 'Удаление пункта меню',
+        message: 'Выбранный Вами пункт меню содержит дочерние пункты меню. В случае удаления они также будут удалены. Вы уверены?',
+        acceptButton: 'Удалить',
+        cancelButton: 'Отмена'
+      }).afterClosed().subscribe(it => {
+        if (it) {
+          this.database.deleteItem(this.flatNodeMap.get(node));
+        }
+      });
+    } else {
+      this.database.deleteItem(this.flatNodeMap.get(node));
+    }
   }
 
   analyzeEditingItems(addedItems: any, editedItems: any): void {
     this.database.data.forEach((it, index) => {
       // Проверка на новые элементы
-      if (!this.database.initialData || this.database.initialData.filter(init => init.id === it.id).length < 1) {
+      if (!this.database.initialData || this.database.dataFromServiceInOneRow.filter(init => init.id === it.id).length < 1) {
         addedItems.push(it);
       }
       this.checkOnNewItem(it, addedItems);
@@ -495,8 +522,8 @@ export class MenuRegistryComponent {
   collectEditedItems(item: MenuItem, editedItems: MenuItem[]): void {
     let sameInitItem = this.database.dataFromServiceInOneRow.filter(x => x.id === item.id);
     if (sameInitItem && sameInitItem.length === 1) {
-      if (JSON.stringify({...item, children: undefined}) !== JSON.stringify(sameInitItem[0])) {
-        editedItems.push({...item, children: null});
+      if (JSON.stringify({...item}) !== JSON.stringify(sameInitItem[0])) {
+        editedItems.push({...item});
       }
     }
     if (item.children) {
@@ -528,10 +555,165 @@ export class MenuRegistryComponent {
 
   // Подгружаем пункты меню при смене языка меню
   languageChange(): void {
+    this.loadingService.register(this.loadingName);
     this.database.getItemsByLanguage(this.currentLanguage);
     this.database.dataChange.subscribe(data => {
+      if (data && data.length > 0) {
+        this.loadingService.resolve(this.loadingName);
+      }
       this.dataSource.data = [];
       this.dataSource.data = data;
+    });
+  }
+
+
+  // TEST
+  // Нужно привести данную реализацию к работоспособности, т.к. она более красива и удобна
+
+  /**
+   * Храним элементы, которые были раскрыты
+   */
+  expansionModel = new SelectionModel<string>(true);
+
+
+  /**
+   * Формируем список элементов, которые на текущий момент отображены у пользователя. Совпадает с DOM
+   */
+  visibleNodes(): MenuItem[] {
+    const result = [];
+    this.database.data.forEach((node) => {
+      this.addExpandedChildren(result, node, this.expansionModel.selected);
+    });
+    return result;
+  }
+
+  /**
+   * Добавляем список дочерние элементы раскрытых пунктов меню, дабы соответствовать DOM
+   */
+  addExpandedChildren(result: any[], node: MenuItem, expanded: string[]) {
+    result.push(node);
+    if (expanded.includes(node.id)) {
+      node.children.map((child) => this.addExpandedChildren(result, child, expanded));
+    }
+  }
+
+  /**
+   * Handle the drop - here we rearrange the data based on the drop event,
+   * then rebuild the tree.
+   * */
+  drop(event: CdkDragDrop<string[]>) {
+    // Если перетащили за границу дерева
+    if (!event.isPointerOverContainer) {
+      return;
+    }
+    this.hasAnyChange = true;
+    // Получаем лист отображаемых пользователю пунктов. Соответствует представлению в DOM
+    const visibleNodes = this.visibleNodes();
+
+    // Изменяем данные, для этого вытянет их в жсон
+    const changedData = JSON.parse(JSON.stringify(this.database.data));
+
+    // Ищем элемент, на место которого мы поставим выбранный
+    const nodeAtDest = visibleNodes[event.currentIndex];
+    // Элементы того же уровня, как и найденный
+    // Если мы навелись на элемент с дочерними пунктами и он раскрыт, вставим внутрь его первым элементом
+    let newSiblings;
+    let insertIndex;
+    if (this.expansionModel.selected.find(it => it === nodeAtDest.id)) {
+      // Искать нужно children тоже
+      // TODO
+      newSiblings = changedData.find(it => it.id === nodeAtDest.id).children;
+      insertIndex = 0;
+    } else {
+      newSiblings = this.findNodeSiblings(changedData, nodeAtDest.id);
+      insertIndex = newSiblings.findIndex(s => s.id === nodeAtDest.id);
+    }
+    // По текущему элементу находим его одноуровневых братьев и удаляем его
+    const nodeToInsert = this.deleteFromCurrentSiblings(event.item.data, nodeAtDest, changedData);
+    if (nodeAtDest.id === nodeToInsert.id) {
+      return;
+    }
+
+    // Вставляем элемент в новое место
+    if (nodeToInsert.level !== nodeAtDest.level && event.currentIndex > event.previousIndex) {
+      newSiblings.splice(insertIndex + 1, 0, nodeToInsert);
+    } else {
+      newSiblings.splice(insertIndex, 0, nodeToInsert);
+    }
+    // Заменяем значение parentId и level
+    const parent = this.getParentFromNodes(changedData, newSiblings[0]);
+    if (parent) {
+      nodeToInsert.parentId = parent.id;
+    } else {
+      nodeToInsert.parentId = null;
+    }
+    nodeToInsert.level = parent ? parent.level + 1 : 1;
+
+    // Переформировываем дерево
+    this.rebuildTreeForData(changedData);
+  }
+
+  deleteFromCurrentSiblings(currentNode: MenuItemFlat, draggedNode: MenuItem, changedData: any): MenuItem {
+    const siblings = this.findNodeSiblings(changedData, currentNode.id);
+    const siblingIndex = siblings.findIndex(n => n.id === currentNode.id);
+    return siblings.splice(siblingIndex, 1)[0];
+  }
+
+  // Ищем родительский пункт относительного выбранного
+  getParentFromNodes(data: MenuItem[], node: MenuItem): MenuItem {
+    for (let i = 0; i < data.length; ++i) {
+      const currentRoot = data[i];
+      const parent = this.getParent(currentRoot, node);
+      if (parent != null) {
+        return parent;
+      }
+    }
+    return null;
+  }
+
+  getParent(currentRoot: MenuItem, node: MenuItem): MenuItem {
+    if (currentRoot.children && currentRoot.children.length > 0) {
+      for (let i = 0; i < currentRoot.children.length; ++i) {
+        const child = currentRoot.children[i];
+        if (child.id === node.id) {
+          return currentRoot;
+        } else if (child.children && child.children.length > 0) {
+          const parent = this.getParent(child, node);
+          if (parent != null) {
+            return parent;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Рекурсивно ищем все элементы на том же уровне, что и текущий
+   */
+  findNodeSiblings(arr: Array<any>, id: string): Array<any> {
+    let result, subResult;
+    arr.forEach((item, i) => {
+      if (item.id === id) {
+        result = arr;
+      } else if (item.children) {
+        subResult = this.findNodeSiblings(item.children, id);
+        if (subResult) {
+          result = subResult;
+        }
+      }
+    });
+    return result;
+  }
+
+  /**
+   * Переформировываем дерево. Раскрываем до этого раскрытые элементы.
+   */
+  rebuildTreeForData(data: any) {
+    this.database.dataChange.next(data);
+    this.expansionModel.selected.forEach((id) => {
+      const node = this.treeControl.dataNodes.find((n) => n.id === id);
+      this.treeControl.expand(node);
     });
   }
 

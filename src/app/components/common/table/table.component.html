@@ -1,15 +1,20 @@
 <div class="fullheight" layout="column">
   <div flex="auto">
-    <div *ngIf="!isDialogView" layout-align="end center" layout="row" class="breadcrumbs-container">
-      <button *ngIf="selectableButton" mat-button (click)="enableSelectUsers()">{{textSelectableButton}}</button>
-      <button *ngIf="menuItemList.length" type="button" mat-icon-button matTooltip="Список функций"
-              [matMenuTriggerFor]="registryMenu">
-        <mat-icon color="grey">more_vert</mat-icon>
-      </button>
-      <mat-menu #registryMenu="matMenu">
-        <button type="button" mat-menu-item *ngFor="let menuItem of menuItemList"
-                (click)="menuItemClick($event, menuItem)">{{menuItem.name}}</button>
-      </mat-menu>
+    <div class="breadcrumbs-container">
+      <div class="table-name">
+        <span>{{tableName}}</span>
+      </div>
+      <div *ngIf="!isDialogView" layout-align="end center" layout="row">
+        <button *ngIf="selectableButton" mat-button (click)="enableSelectUsers()">{{textSelectableButton}}</button>
+        <button *ngIf="menuItemList.length" type="button" mat-icon-button matTooltip="Список функций"
+                [matMenuTriggerFor]="registryMenu">
+          <mat-icon color="grey">more_vert</mat-icon>
+        </button>
+        <mat-menu #registryMenu="matMenu">
+          <button type="button" mat-menu-item *ngFor="let menuItem of menuItemList"
+                  (click)="menuItemClick($event, menuItem)">{{menuItem.name}}</button>
+        </mat-menu>
+      </div>
     </div>
   </div>
   <div flex="grow">

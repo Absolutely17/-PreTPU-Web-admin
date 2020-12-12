@@ -35,6 +35,8 @@ import {ArticleService} from './services/article/article.service';
 import {ImageService} from './services/image/image.service';
 import {ArticleChooseDialogComponent} from './components/dialog/article-choose-dialog/article-choose-dialog.component';
 import {MainPageComponent} from './components/common/main-page/main-page.component';
+import {ConfirmDialogComponent} from './components/common/dialog/confirm-dialog/confirm-dialog.component';
+import {SaveFormButtonComponent} from './components/common/save-button/save-form-button.component';
 
 export const commonServices = [
   MessageService
@@ -59,7 +61,9 @@ export const commonServices = [
     ArticleEditingDialogComponent,
     ArticleRegistryComponent,
     ArticleChooseDialogComponent,
-    MainPageComponent
+    MainPageComponent,
+    ConfirmDialogComponent,
+    SaveFormButtonComponent
   ],
   imports: [
     HttpClientModule,

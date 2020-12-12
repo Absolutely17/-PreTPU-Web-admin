@@ -1,0 +1,28 @@
+<td-dialog>
+  <td-dialog-title *ngIf="title">
+    {{title}}
+  </td-dialog-title>
+  <td-dialog-content>
+    <div class="td-dialog-message break-lines text-center">{{message}}</div>
+    <div flex="grow" class="overflow-auto" [ngStyle]="{'max-height': '400px'}">
+      <pre>{{additionalMessage}}</pre>
+    </div>
+  </td-dialog-content>
+  <td-dialog-actions layout="row" layout-align="start center" layout-fill>
+    <div *ngIf="recordsCount" flex="grow" class="gray-text mat-body-2">Выбрано {{recordsCount}} записей</div>
+    <div *ngIf="!recordsCount" flex="grow" class="gray-text mat-body-2"></div>
+    <div flex="none" class="text-right">
+      <button flex mat-button
+              color="primary"
+              class="push-right-xs"
+              *ngIf="cancelButton"
+              #closeBtn
+              (click)="cancel()">{{cancelButton}}</button>
+      <button flex mat-raised-button
+              color="primary"
+              class="push-left-xs"
+              #acceptBtn
+              (click)="accept()">{{acceptButton}}</button>
+    </div>
+  </td-dialog-actions>
+</td-dialog>

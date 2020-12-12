@@ -42,6 +42,8 @@ export abstract class TableComponent implements OnInit {
 
   _multiple: boolean;
 
+  tableName: string;
+
   @Input('selectable')
   set selectable(selectDefault: boolean) {
     this._selectable = selectDefault;

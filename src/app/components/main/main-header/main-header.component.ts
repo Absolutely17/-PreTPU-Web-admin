@@ -22,6 +22,14 @@ export const userMenuItems: MenuItem[] = [
   {
     name: 'Статьи',
     url: '/article'
+  },
+  {
+    name: 'Языки',
+    url: '/language'
+  },
+  {
+    name: 'Служебные данные',
+    url: '/serviceData'
   }
 ];
 
@@ -36,11 +44,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   mainPageMenuItem: MenuItem = {
     name: 'Главная',
     url: '/'
-  };
-
-  helpMenuItem: MenuItem = {
-    name: 'Справка',
-    url: 'help'
   };
 
   isLoggedIn: boolean;

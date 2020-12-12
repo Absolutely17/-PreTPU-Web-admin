@@ -1,6 +1,10 @@
 <mat-toolbar class="header-toolbar">
   <div class="fullwidth fullheight" layout="row" layout-align="space-between center">
     <div layout="row" layout-align="start center" layout-fill flex="75">
+      <a (click)="navigateTo(mainPageMenuItem)" class="header-logo-wrapper" layout="row" layout-align="start center">
+        <img src="../../../../../assets/img/pretpu-logo.svg" alt="PreTPU. Администраторская панель"
+             title="PreTPU. Администраторская панель" class="header-logo">
+      </a>
       <div class="menu-top fullheight" layout="row" layout-align="start center">
         <ng-container *ngIf="isLoggedIn">
           <!-- меню для больших экранов -->
@@ -31,9 +35,7 @@
                 <button (click)="navigateTo(menuItem)" class="menu-top-item">{{menuItem.name}}</button>
               </ng-container>
             </ng-container>
-            <ng-container>
-              <button (click)="logout()" class="menu-top-item">Выйти</button>
-            </ng-container>
+
           </div>
 
           <div class="header-menu-min" layout="row" layout-fill layout-align="start center">
@@ -82,6 +84,17 @@
             </mat-menu>
 
           </div>
+        </ng-container>
+      </div>
+    </div>
+    <div class="header-toolbar-right" flex="25">
+      <div layout="row" layout-align="end center" layout-fill>
+        <ng-container>
+
+          <button (click)="logout()" class="menu-top-item">
+            Выйти
+            <mat-icon style="padding-left: 10px" svgIcon="logout"></mat-icon>
+          </button>
         </ng-container>
       </div>
     </div>
