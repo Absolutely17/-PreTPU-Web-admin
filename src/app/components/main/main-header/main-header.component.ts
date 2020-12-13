@@ -29,7 +29,7 @@ export const userMenuItems: MenuItem[] = [
   },
   {
     name: 'Служебные данные',
-    url: '/serviceData'
+    url: '/systemConfig'
   }
 ];
 

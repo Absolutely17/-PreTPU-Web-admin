@@ -158,6 +158,7 @@ export class ChecklistDatabase {
       parentNode.children.splice(parentNode.children.indexOf(node), 0, newItem);
       newItem.parentId = parentNode.id;
     } else {
+      newItem.parentId = null;
       this.data.splice(this.data.indexOf(node), 0, newItem);
     }
     this.dataChange.next(this.data);

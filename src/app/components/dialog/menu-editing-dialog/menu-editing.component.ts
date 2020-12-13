@@ -106,9 +106,7 @@ export class MenuEditingComponent implements OnInit {
 
   accept(): void {
     const menuInfo = this.form.getRawValue();
-    if (this.imageId) {
-      menuInfo.image = this.imageId;
-    }
+    menuInfo.image = this.imageId;
     if (this.selectedArticles && (menuInfo.type === 'ARTICLE' || menuInfo.type === 'FEED_LIST')) {
       menuInfo.linkedArticles = this.selectedArticles;
     }
@@ -165,7 +163,10 @@ export class MenuEditingComponent implements OnInit {
   }
 
   openImage(): void {
-    // todo open image
-    window.open(this.appConfig.webServiceFullUrl + '/media/img/' + this.imageId);
+    let image = new Image();
+    image.src = this.appConfig.webServiceFullUrl + '/media/img/' + this.imageId;
+    let win = window.open('');
+    win.document.write(image.outerHTML);
+
   }
 }

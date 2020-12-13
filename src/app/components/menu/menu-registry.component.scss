@@ -1,15 +1,15 @@
 .drop-above {
-  border-top: 10px solid #ff0000 !important;
+  border-top: 10px solid #5aac69 !important;
   margin-top: -10px;
 }
 
 .drop-below {
-  border-bottom: 10px solid #ff0000 !important;
+  border-bottom: 10px solid #5aac69 !important;
   margin-bottom: -10px;
 }
 
 .drop-center {
-  background-color: #dddddd !important;
+  background-color: #08488f !important;
 }
 
 .menu-registry {
@@ -46,6 +46,10 @@
     align-items: center;
     min-height: 48px;
     flex: 1;
+
+    .buttons {
+      margin-left: 7px;
+    }
   }
 
 }

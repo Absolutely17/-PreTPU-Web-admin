@@ -8,6 +8,8 @@ import {UsersRegistryComponent} from './components/user-registry/users-registry.
 import {MenuRegistryComponent} from './components/menu/menu-registry.component';
 import {ArticleRegistryComponent} from './components/article-registry/article-registry.component';
 import {MainPageComponent} from './components/common/main-page/main-page.component';
+import {SystemConfigComponent} from './components/system-config/system-config.component';
+import {LanguageRegistryComponent} from './components/language-registry/language-registry.component';
 
 // @ts-ignore
 const routes: Routes = [
@@ -32,6 +34,14 @@ const routes: Routes = [
       {
         path: 'article',
         component: ArticleRegistryComponent
+      },
+      {
+        path: 'systemConfig',
+        component: SystemConfigComponent
+      },
+      {
+        path: 'language',
+        component: LanguageRegistryComponent
       }
     ]
   },

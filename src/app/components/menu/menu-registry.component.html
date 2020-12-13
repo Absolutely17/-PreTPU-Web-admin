@@ -28,15 +28,17 @@
              (dragend)="handleDragEnd($event)" class="tree-node">
           <button mat-icon-button disabled></button>
           {{node.name}} {{node.type}}
-          <button mat-button *ngIf="node.type === 'LINKS_LIST'" (click)="addNewItem(node)">
-            <mat-icon>add</mat-icon>
-          </button>
-          <button mat-button (click)="edit(node)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-button (click)="remove(node)">
-            <mat-icon>remove</mat-icon>
-          </button>
+          <div class="buttons">
+            <button mat-button *ngIf="node.type === 'LINKS_LIST'" (click)="addNewItem(node)">
+              <mat-icon>add</mat-icon>
+            </button>
+            <button mat-button (click)="edit(node)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-button (click)="remove(node)">
+              <mat-icon>remove</mat-icon>
+            </button>
+          </div>
         </div>
       </mat-tree-node>
 
@@ -57,15 +59,17 @@
             </mat-icon>
           </button>
           {{node.name}} ({{node.type}})
-          <button mat-button *ngIf="node.type === 'LINKS_LIST'" (click)="addNewItem(node)">
-            <mat-icon>add</mat-icon>
-          </button>
-          <button mat-button (click)="edit(node)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-button (click)="remove(node)">
-            <mat-icon>remove</mat-icon>
-          </button>
+          <div class="buttons">
+            <button mat-button *ngIf="node.type === 'LINKS_LIST'" (click)="addNewItem(node)">
+              <mat-icon>add</mat-icon>
+            </button>
+            <button mat-button (click)="edit(node)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-button (click)="remove(node)">
+              <mat-icon>remove</mat-icon>
+            </button>
+          </div>
         </div>
       </mat-tree-node>
     </mat-tree>

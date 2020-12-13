@@ -32,10 +32,14 @@
                   <mat-icon>attach_file</mat-icon>
                   <span>Выбрать изображение</span>
                 </td-file-input>
-                <div style="display:inline-block" *ngIf="item && item.image">
+                <div style="display:inline-block" *ngIf="imageId">
                   <mat-label class="push-left-md">Текущее изображение:</mat-label>
                   <button matTooltip="Открыть в новой вкладке" type="button" mat-icon-button (click)="openImage()">
                     <mat-icon mat-button>open_in_new</mat-icon>
+                  </button>
+                  <button matTooltip="Удалить текущее используемое изображение" type="button" mat-icon-button
+                          (click)="imageId = null;">
+                    <mat-icon mat-button>remove_circle_outline</mat-icon>
                   </button>
                 </div>
               </div>

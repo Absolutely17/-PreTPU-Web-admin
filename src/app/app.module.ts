@@ -37,6 +37,9 @@ import {ArticleChooseDialogComponent} from './components/dialog/article-choose-d
 import {MainPageComponent} from './components/common/main-page/main-page.component';
 import {ConfirmDialogComponent} from './components/common/dialog/confirm-dialog/confirm-dialog.component';
 import {SaveFormButtonComponent} from './components/common/save-button/save-form-button.component';
+import {SystemConfigComponent} from './components/system-config/system-config.component';
+import {SystemConfigService} from './services/systemConfig/system-config.service';
+import {LanguageRegistryComponent} from './components/language-registry/language-registry.component';
 
 export const commonServices = [
   MessageService
@@ -63,7 +66,9 @@ export const commonServices = [
     ArticleChooseDialogComponent,
     MainPageComponent,
     ConfirmDialogComponent,
-    SaveFormButtonComponent
+    SaveFormButtonComponent,
+    SystemConfigComponent,
+    LanguageRegistryComponent
   ],
   imports: [
     HttpClientModule,
@@ -91,6 +96,7 @@ export const commonServices = [
     MenuService,
     ArticleService,
     ImageService,
+    SystemConfigService,
     authInterceptorProviders
   ],
   bootstrap: [RootComponent]
