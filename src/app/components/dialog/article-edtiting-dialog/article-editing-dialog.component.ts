@@ -204,7 +204,7 @@ export class ArticleEditingDialogComponent implements OnInit {
     this.imageService.upload(file).subscribe(it => {
       if (it) {
         const imageUrl = this.appConfig.webServiceFullUrl + '/media/img/' + it;
-        this.quillEditor.insertEmbed(1, 'image', imageUrl, 'user');
+        this.quillEditor.insertEmbed(this.quillEditor.getSelection().index, 'image', imageUrl, 'user');
       }
     })
   }

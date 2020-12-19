@@ -1,11 +1,11 @@
-import {Component, ElementRef, Injectable, ViewChild} from '@angular/core';
+import {Component, ElementRef, Injectable, OnInit, ViewChild} from '@angular/core';
 import {FlatTreeControl} from '@angular/cdk/tree';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import {BehaviorSubject} from 'rxjs';
 import {MenuService} from '../../services/menu/menu.service';
 import {DialogService} from '../../services/dialog/dialog.service';
 import {ComponentType} from '@angular/cdk/overlay';
-import {MenuEditingComponent} from '../dialog/menu-editing-dialog/menu-editing.component';
+import {MenuEditingDialogComponent} from '../dialog/menu-editing-dialog/menu-editing-dialog.component';
 import {TdLoadingService} from '@covalent/core/loading';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {DialogMode} from '../dialog/dialog-mode';
@@ -34,10 +34,10 @@ export class MenuItemFlat {
 
 @Injectable()
 export class ChecklistDatabase {
-  dataChange = new BehaviorSubject<MenuItem[]>([]);
+  dataChange = new BehaviorSubject<MenuItem[]>(null);
 
-  dataFromService: any;
-  dataFromServiceInOneRow: any;
+  dataFromService: any[];
+  dataFromServiceInOneRow: any[];
 
   initialData: MenuItem[];
 
@@ -57,12 +57,15 @@ export class ChecklistDatabase {
    */
   getItemsByLanguage(language: string): void {
     this.countNewItems = 0;
+    this.dataFromService = [];
+    this.initialData = [];
+    this.dataFromServiceInOneRow = [];
     this.menuService.getMenuItems(language).subscribe(it => {
-      if (it) {
+      if (it && it.length > 0) {
         this.dataFromService = it;
-        this.initialData = [];
-        this.dataFromServiceInOneRow = [];
         this.initialize(language);
+      } else {
+        this.dataChange.next([]);
       }
     }, error => {
       this.dataChange.next([]);
@@ -276,9 +279,9 @@ export class ChecklistDatabase {
   templateUrl: './menu-registry.component.html',
   styleUrls: ['./menu-registry.component.scss'],
 })
-export class MenuRegistryComponent {
+export class MenuRegistryComponent implements OnInit {
 
-  menuEditingDialog: ComponentType<MenuEditingComponent> = MenuEditingComponent;
+  menuEditingDialog: ComponentType<MenuEditingDialogComponent> = MenuEditingDialogComponent;
 
   /** Map from flat node to nested node. This helps us finding the nested node to be modified */
   flatNodeMap = new Map<MenuItemFlat, MenuItem>();
@@ -317,7 +320,8 @@ export class MenuRegistryComponent {
     private database: ChecklistDatabase,
     private dialogService: DialogService,
     private menuService: MenuService,
-    private loadingService: TdLoadingService
+    private loadingService: TdLoadingService,
+    private snackBar: MatSnackBar
   ) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel, this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<MenuItemFlat>(this.getLevel, this.isExpandable);
@@ -355,6 +359,20 @@ export class MenuRegistryComponent {
     this.nestedNodeMap.set(node, flatNode);
     return flatNode;
   };
+
+  ngOnInit(): void {
+    this.database.dataChange.subscribe(data => {
+      if (data) {
+        this.loadingService.resolve(this.loadingName);
+        if (data.length > 0) {
+          this.dataSource.data = data;
+        } else {
+          this.snackBar.open('Не удалось найти пункты меню по указанному языку', 'Закрыть', {duration: 3000});
+          this.database.dataChange.next(null);
+        }
+      }
+    });
+  }
 
   // Добавляем новый пункт меню. Работае только в корне или у пунктов меню с типом LINKS_LIST
   addNewItem(node?: MenuItemFlat) {
@@ -556,13 +574,8 @@ export class MenuRegistryComponent {
   languageChange(): void {
     this.loadingService.register(this.loadingName);
     this.database.getItemsByLanguage(this.currentLanguage);
-    this.database.dataChange.subscribe(data => {
-      if (data && data.length > 0) {
-        this.loadingService.resolve(this.loadingName);
-      }
-      this.dataSource.data = [];
-      this.dataSource.data = data;
-    });
+    this.dataSource.data = [];
+    this.database.dataChange.next(null);
   }
 
 }

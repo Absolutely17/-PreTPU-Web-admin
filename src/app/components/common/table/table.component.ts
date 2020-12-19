@@ -157,7 +157,9 @@ export abstract class TableComponent implements OnInit {
     }
     // todo Тут подумать. Надо выделять статьи тогда, когда компонент уже загрузился.
     setTimeout(() => {
-      this.dataTable.doInitSelection(this.defaultSelected);
+      if (this.dataTable) {
+        this.dataTable.doInitSelection(this.defaultSelected);
+      }
     }, 1000);
   }
 

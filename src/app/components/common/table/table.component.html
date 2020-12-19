@@ -31,21 +31,22 @@
                       <div class="layout-scroll-container-inner">
                         <div class="layout-scroll-content display-table-container">
                           <div class="data-table">
-                            <sb-data-table *ngIf="filteredData && dicts"
-                                           #dataTable
-                                           [data]="filteredData"
-                                           [columns]="columns"
-                                           [selectable]="selectable"
-                                           [multiple]="multiple"
-                                           [sortable]="true"
-                                           [sortBy]="sortBy"
-                                           [(ngModel)]="selectedRows"
-                                           [sortOrder]="sortOrder"
-                                           (sortChange)="sort($event)"
-                                           [iconColumn]="iconColumn"
-                                           [callerComponent]="this"
-                                           [iconImg]="iconImg"
-                                           [iconAction]="iconAction"
+                            <sb-data-table
+                              *ngIf="filteredData && (getDictsTableData() && dicts || !getDictsTableData())"
+                              #dataTable
+                              [data]="filteredData"
+                              [columns]="columns"
+                              [selectable]="selectable"
+                              [multiple]="multiple"
+                              [sortable]="true"
+                              [sortBy]="sortBy"
+                              [(ngModel)]="selectedRows"
+                              [sortOrder]="sortOrder"
+                              (sortChange)="sort($event)"
+                              [iconColumn]="iconColumn"
+                              [callerComponent]="this"
+                              [iconImg]="iconImg"
+                              [iconAction]="iconAction"
                             >
                               <ng-template *ngFor="let menuItemAdditional of additionalMenuItems"
                                            sbDataTableTemplate="{{menuItemAdditional.name}}" let-row="row">

@@ -21,10 +21,10 @@ export interface MenuEditingData {
 }
 
 @Component({
-  selector: 'app-menu-editing-component',
-  templateUrl: './menu-editing.component.html'
+  selector: 'app-menu-editing-dialog',
+  templateUrl: './menu-editing-dialog.component.html'
 })
-export class MenuEditingComponent implements OnInit {
+export class MenuEditingDialogComponent implements OnInit {
 
   articleDialog: ComponentType<ArticleEditingDialogComponent> = ArticleEditingDialogComponent;
 
@@ -51,7 +51,7 @@ export class MenuEditingComponent implements OnInit {
   }
 
   constructor(
-    private dialogRef: MatDialogRef<MenuEditingComponent>,
+    private dialogRef: MatDialogRef<MenuEditingDialogComponent>,
     private errorService: ErrorService,
     @Inject(MAT_DIALOG_DATA) data: MenuEditingData,
     protected snackBar: MatSnackBar,

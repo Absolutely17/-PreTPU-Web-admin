@@ -1,0 +1,35 @@
+<div class="loader-container"
+     *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
+  <td-dialog>
+    <td-dialog-title>Добавление нового языка в систему</td-dialog-title>
+    <td-dialog-content>
+      <div flex="grow" class="simple-fields">
+        <div>
+          <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
+            <autocomplete-select
+              [title]="'Язык'"
+              [validator]="requireMatch.bind(this)"
+              [options]="availableLanguages"
+            >
+            </autocomplete-select>
+          </div>
+        </div>
+      </div>
+    </td-dialog-content>
+    <td-dialog-actions>
+      <button type="button" flex mat-button
+              color="primary"
+              class="push-right-xs"
+              #closeBtn
+              (click)="cancel()">Отменить
+      </button>
+      <button type="button" flex mat-raised-button
+              color="primary"
+              class="push-left-xs"
+              [disabled]="!languageSelect || languageSelect && languageSelect.control.invalid"
+              #acceptBtn
+              (click)="accept()">Создать
+      </button>
+    </td-dialog-actions>
+  </td-dialog>
+</div>

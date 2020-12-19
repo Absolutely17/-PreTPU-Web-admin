@@ -27,7 +27,7 @@ import {NotificationService} from './services/notification/notification.service'
 import {sbDataTableComponents} from './components/common/sb-data-table/data-table.module';
 import {ChecklistDatabase, MenuRegistryComponent} from './components/menu/menu-registry.component';
 import {MenuService} from './services/menu/menu.service';
-import {MenuEditingComponent} from './components/dialog/menu-editing-dialog/menu-editing.component';
+import {MenuEditingDialogComponent} from './components/dialog/menu-editing-dialog/menu-editing-dialog.component';
 import {QuillModule} from 'ngx-quill';
 import {ArticleEditingDialogComponent} from './components/dialog/article-edtiting-dialog/article-editing-dialog.component';
 import {ArticleRegistryComponent} from './components/article-registry/article-registry.component';
@@ -40,35 +40,48 @@ import {SaveFormButtonComponent} from './components/common/save-button/save-form
 import {SystemConfigComponent} from './components/system-config/system-config.component';
 import {SystemConfigService} from './services/systemConfig/system-config.service';
 import {LanguageRegistryComponent} from './components/language-registry/language-registry.component';
+import {LanguageService} from './services/language/language.service';
+import {LanguageCreateDialogComponent} from './components/dialog/language-create-dialog/language-create-dialog.component';
+import {AutocompleteSelectComponent} from './components/common/autocomplete-select/autocomplete-select.component';
 
 export const commonServices = [
-  MessageService
+  AppConfig,
+  MessageService,
+  ErrorService,
+  AuthService,
+  ImageService
+];
+
+export const commonComponents = [
+  RootComponent,
+  MainComponent,
+  MainHeaderComponent,
+  LoginComponent,
+  ForbiddenComponent,
+  ErrorComponent,
+  AutocompleteSelectComponent,
+  SaveFormButtonComponent,
+  ConfirmDialogComponent
 ];
 
 
 @NgModule({
   declarations: [
-    RootComponent,
-    MainComponent,
-    MainHeaderComponent,
-    LoginComponent,
-    ForbiddenComponent,
-    ErrorComponent,
+    ...sbDataTableComponents,
+    commonComponents,
     MessageDialogComponent,
     UsersRegistryComponent,
     UploadDocumentDialogComponent,
     SendNotificationDialogComponent,
-    ...sbDataTableComponents,
     MenuRegistryComponent,
-    MenuEditingComponent,
+    MenuEditingDialogComponent,
     ArticleEditingDialogComponent,
     ArticleRegistryComponent,
     ArticleChooseDialogComponent,
     MainPageComponent,
-    ConfirmDialogComponent,
-    SaveFormButtonComponent,
     SystemConfigComponent,
-    LanguageRegistryComponent
+    LanguageRegistryComponent,
+    LanguageCreateDialogComponent
   ],
   imports: [
     HttpClientModule,
@@ -84,10 +97,8 @@ export const commonServices = [
   ],
   providers: [
     ...commonServices,
+    authInterceptorProviders,
     AuthGuard,
-    AppConfig,
-    ErrorService,
-    AuthService,
     UserService,
     DialogService,
     DocumentService,
@@ -95,9 +106,8 @@ export const commonServices = [
     ChecklistDatabase,
     MenuService,
     ArticleService,
-    ImageService,
     SystemConfigService,
-    authInterceptorProviders
+    LanguageService
   ],
   bootstrap: [RootComponent]
 })
