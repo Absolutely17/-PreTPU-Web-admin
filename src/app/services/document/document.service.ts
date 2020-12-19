@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Document} from '../../models/document/document';
 import {AppConfig} from '../../app.config';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 @Injectable()
@@ -19,6 +19,6 @@ export class DocumentService {
       type: 'application/json'
     }));
     formData.append('document', file);
-    return this.http.post<any>(this.appConfig.webServiceApi('/document/upload'), formData);
+    return this.http.post<any>(this.appConfig.webServiceApi('/document/admin/upload'), formData);
   }
 }

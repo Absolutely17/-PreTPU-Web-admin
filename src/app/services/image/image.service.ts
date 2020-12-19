@@ -17,7 +17,7 @@ export class ImageService {
     const headers = new HttpHeaders();
     const formData: FormData = new FormData();
     formData.append('file', image);
-    return this.http.post(this.appConfig.webServiceApi('/media/img/upload'), formData, {
+    return this.http.post(this.appConfig.webServiceApi('/media/img/admin/upload'), formData, {
       headers, responseType: 'text'
     });
   }

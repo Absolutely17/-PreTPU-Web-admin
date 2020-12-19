@@ -14,11 +14,11 @@ export class NotificationService {
   }
 
   sendNotificationOnUsers(data: SendNotificationData): Observable<any> {
-    return this.http.post<any>(this.appConfig.webServiceApi('/notification/users'), data);
+    return this.http.post<any>(this.appConfig.webServiceApi('/notification/admin/users'), data);
   }
 
   sendNotificationOnGroup(data: SendNotificationData): Observable<any> {
-    return this.http.post<any>(this.appConfig.webServiceApi('/notification/group'), data);
+    return this.http.post<any>(this.appConfig.webServiceApi('/notification/admin/group'), data);
   }
 
 }

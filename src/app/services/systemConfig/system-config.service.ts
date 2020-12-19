@@ -14,10 +14,10 @@ export class SystemConfigService {
   }
 
   getTable(): Observable<SystemParameter[]> {
-    return this.http.get<SystemParameter[]>(this.appConfig.webServiceApi('/systemConfig/table'));
+    return this.http.get<SystemParameter[]>(this.appConfig.webServiceApi('/systemConfig/admin/table'));
   }
 
   editConfig(data: any): Observable<any> {
-    return this.http.put<any>(this.appConfig.webServiceApi('/systemConfig'), data);
+    return this.http.put<any>(this.appConfig.webServiceApi('/systemConfig/admin'), data);
   }
 }

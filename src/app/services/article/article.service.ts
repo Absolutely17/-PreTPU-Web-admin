@@ -14,25 +14,25 @@ export class ArticleService {
   }
 
   create(article: Article): Observable<any> {
-    return this.http.post(this.appConfig.webServiceApi('/article/create'), article, {
+    return this.http.post(this.appConfig.webServiceApi('/article/admin/table/create'), article, {
       responseType: 'text'
     });
   }
 
   update(article: Article, articleId: string): Observable<any> {
-    return this.http.put<any>(this.appConfig.webServiceApi(`/article/${articleId}`), article);
+    return this.http.put<any>(this.appConfig.webServiceApi(`/article/admin/table/${articleId}`), article);
   }
 
   getTable(): Observable<any> {
-    return this.http.get<any>(this.appConfig.webServiceApi('/article/table'));
+    return this.http.get<any>(this.appConfig.webServiceApi('/article/admin/table'));
   }
 
   getDicts(): Observable<any> {
-    return this.http.get<any>(this.appConfig.webServiceApi('/article/dicts'));
+    return this.http.get<any>(this.appConfig.webServiceApi('/article/admin/dicts'));
   }
 
   getArticleById(id: string): Observable<any> {
-    return this.http.get<any>(this.appConfig.webServiceApi(`/article/table/${id}`));
+    return this.http.get<any>(this.appConfig.webServiceApi(`/article/admin/table/${id}`));
   }
 
 }

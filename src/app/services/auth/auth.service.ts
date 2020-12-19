@@ -18,6 +18,6 @@ export class AuthService {
    * Аутентификация пользователя с указанным логином и паролем
    */
   login(loginInfo: LoginInfo): Observable<Auth> {
-    return this.http.post<Auth>(this.appConfig.webServiceApi('/auth/web-admin/login'), loginInfo);
+    return this.http.post<Auth>(this.appConfig.webServiceApi('/auth/admin/login'), loginInfo);
   }
 }

@@ -16,10 +16,10 @@ export class UserService {
   }
 
   getUsersTable(): Observable<any> {
-    return this.http.get<UserInfo[]>(this.appConfig.webServiceApi('/user/table'));
+    return this.http.get<UserInfo[]>(this.appConfig.webServiceApi('/user/admin/table'));
   }
 
   getDicts(): Observable<any> {
-    return this.http.get<any>(this.appConfig.webServiceApi('/user/dicts'));
+    return this.http.get<any>(this.appConfig.webServiceApi('/user/admin/dicts'));
   }
 }

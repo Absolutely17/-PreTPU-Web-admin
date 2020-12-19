@@ -13,15 +13,15 @@ export class MenuService {
   }
 
   getMenuItems(language: string): Observable<any> {
-    return this.http.get<any>(this.appConfig.webServiceApi(`/menu/table?language=${language}`));
+    return this.http.get<any>(this.appConfig.webServiceApi(`/menu/admin/table?language=${language}`));
   }
 
   getDicts(): Observable<any> {
-    return this.http.get<any>(this.appConfig.webServiceApi('/menu/dicts'));
+    return this.http.get<any>(this.appConfig.webServiceApi('/menu/admin/dicts'));
   }
 
   save(menuInfo: any): Observable<any> {
-    return this.http.post<any>(this.appConfig.webServiceApi('/menu/save'), menuInfo);
+    return this.http.post<any>(this.appConfig.webServiceApi('/menu/admin/save'), menuInfo);
   }
 
 }

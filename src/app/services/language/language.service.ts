@@ -14,15 +14,15 @@ export class LanguageService {
   }
 
   getTable(): Observable<Language[]> {
-    return this.http.get<Language[]>(this.appConfig.webServiceApi('/language/table'));
+    return this.http.get<Language[]>(this.appConfig.webServiceApi('/language/admin/table'));
   }
 
   create(request: any): Observable<any> {
-    return this.http.post<any>(this.appConfig.webServiceApi('/language/create'), request);
+    return this.http.post<any>(this.appConfig.webServiceApi('/language/admin/create'), request);
   }
 
   getAllAvailableForCreate(): Observable<Language[]> {
-    return this.http.get<Language[]>(this.appConfig.webServiceApi('/language/allAvailableForCreate'));
+    return this.http.get<Language[]>(this.appConfig.webServiceApi('/language/admin/allAvailableForCreate'));
   }
 
 }
