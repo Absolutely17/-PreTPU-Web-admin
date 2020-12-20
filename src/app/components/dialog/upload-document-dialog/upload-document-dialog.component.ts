@@ -65,10 +65,9 @@ export class UploadDocumentDialogComponent implements OnInit{
       fileName: this.form.get('fileName').value
     };
     this.docService.uploadDocument(documentData, this.form.get('file').value).subscribe(it => {
-        this.snackBar.open(`Документ успешно прикреплен к пользователю ${documentData.userEmail}`,
-          'Закрыть', {duration: 3000});
-        this.cancel();
-    }, error => this.errorService.handleFormError(error, this.form));
+      this.snackBar.open(`Документ успешно прикреплен к пользователю ${documentData.userEmail}`,
+        'Закрыть', {duration: 3000});
+    }, error => this.errorService.handleFormError(error, this.form)).add(() => this.dialogRef.close());
   }
 
   cancel(): void {

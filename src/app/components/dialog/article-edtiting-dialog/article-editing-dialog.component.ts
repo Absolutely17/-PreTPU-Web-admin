@@ -223,16 +223,13 @@ export class ArticleEditingDialogComponent implements OnInit {
       language: this.get('language').value
     };
     if (this.currentMode === this.mode.CREATE) {
-      this.articleService.create(articleInfo).subscribe(it => {
-        if (it) {
-          this.dialogRef.close(it);
-        } else {
-          this.snackBar.open('Не удалось создать статью', 'Закрыть', {duration: 3000});
-          this.dialogRef.close();
-        }
-      });
+      this.articleService.create(articleInfo).subscribe(() => {
+      }, error => this.errorService.handleServiceError(error)).add(() => this.dialogRef.close());
     } else {
-      this.articleService.update(articleInfo, this.currentArticleId).subscribe(it => this.dialogRef.close());
+      this.articleService.update(articleInfo, this.currentArticleId).subscribe(
+        it => this.dialogRef.close(),
+        error => this.errorService.handleServiceError(error)
+      ).add(() => this.dialogRef.close());
     }
 
   }

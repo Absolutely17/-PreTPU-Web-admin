@@ -90,7 +90,7 @@ export class SendNotificationDialogComponent implements OnInit{
       this.notificationService.sendNotificationOnUsers(sendData).subscribe(it => {
         this.snackBar.open(`Уведомление отправлено`,
           'Закрыть', {duration: 3000});
-      }, error => this.errorService.handleFormError(error, this.form));
+      }, error => this.errorService.handleFormError(error, this.form)).add(() => this.dialogRef.close());
     } else {
       const sendData: SendNotificationData = {
         title: this.form.get('title').value,
@@ -101,7 +101,7 @@ export class SendNotificationDialogComponent implements OnInit{
       this.notificationService.sendNotificationOnGroup(sendData).subscribe(it => {
         this.snackBar.open(`Уведомление отправлено`,
           'Закрыть', {duration: 3000});
-      }, error => this.errorService.handleFormError(error, this.form));
+      }, error => this.errorService.handleFormError(error, this.form)).add(() => this.dialogRef.close());
     }
   }
 

@@ -25,8 +25,15 @@ export class AutocompleteSelectComponent implements OnInit {
   multiple = false;
   @Input()
   title: string;
-  @Input()
-  options: any[];
+
+  _options: any[];
+
+  @Input('options')
+  set options(options: any[]) {
+    this.filteredOptions = options;
+    this._options = options;
+  }
+
   @Input()
   value = 'id';
   @Input()
@@ -41,7 +48,6 @@ export class AutocompleteSelectComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.filteredOptions = this.options;
     if (this.required) {
       this.control.setValidators(Validators.required);
     }
@@ -64,7 +70,7 @@ export class AutocompleteSelectComponent implements OnInit {
   };
 
   filterItem(value) {
-    this.filteredOptions = this.options.filter(
+    this.filteredOptions = this._options.filter(
       item => item[this.display].toLowerCase().startsWith(value.toLowerCase())
     );
     this.selectAllChecked = true;
@@ -93,7 +99,7 @@ export class AutocompleteSelectComponent implements OnInit {
       let displayOption = [];
       if (this.multiple) {
         for (let i = 0; i < this.labelCount; i++) {
-          const selectValue = this.options.filter(
+          const selectValue = this._options.filter(
             option => option[this.value] === this.selectedValue[i]
           );
           if (selectValue.length) {
@@ -109,7 +115,7 @@ export class AutocompleteSelectComponent implements OnInit {
           }
         }
       } else {
-        displayOption = this.options.filter(
+        displayOption = this._options.filter(
           option => option[this.value] === this.selectedValue
         );
         if (displayOption.length) {
