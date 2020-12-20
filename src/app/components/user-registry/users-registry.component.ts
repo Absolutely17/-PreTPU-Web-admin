@@ -9,6 +9,7 @@ import {TdLoadingService} from '@covalent/core/loading';
 import {ISbDataTableColumn} from '../common/sb-data-table/data-table.component';
 import {AdditionalMenuItem, TableActionConfig, TableActionType, TableComponent} from '../common/table/table.component';
 import {Observable} from 'rxjs';
+import {CalendarCreateEventDialogComponent} from '../dialog/calendar-create-event-dialog/calendar-create-event-dialog.component';
 
 @Component({
   selector: 'app-users-registry',
@@ -19,6 +20,8 @@ export class UsersRegistryComponent extends TableComponent {
   uploadDocumentDialog: ComponentType<UploadDocumentDialogComponent> = UploadDocumentDialogComponent;
 
   sendNotificationDialog: ComponentType<SendNotificationDialogComponent> = SendNotificationDialogComponent;
+
+  calendarEventCreateDialog: ComponentType<CalendarCreateEventDialogComponent> = CalendarCreateEventDialogComponent;
 
   columns: ISbDataTableColumn[] = [
     {name: 'firstName', label: 'Имя', sortable: true, filter: true, width: 200},
@@ -44,16 +47,20 @@ export class UsersRegistryComponent extends TableComponent {
   ];
 
   additionalMenuItems: AdditionalMenuItem[] = [
-    {name: 'uploadDocument', func: this.uploadDocument.bind(this), icon: 'insert_drive_file'}
+    {name: 'uploadDocument', func: this.uploadDocument.bind(this), icon: 'insert_drive_file', tooltip: 'Прикрепить документ пользователю'}
   ];
 
   menuItemList = [{
     id: TableActionType.SendOnUsersNotification,
-    name: 'Отправить уведомление выбранным пользователям'
+    name: 'Выборочное уведомление'
   },
     {
       id: TableActionType.SendOnGroupNotification,
-      name: 'Отправить групповое уведомление'
+      name: 'Групповое уведомление'
+    },
+    {
+      id: TableActionType.CalendarCreateEvent,
+      name: 'Создать напоминание'
     }
   ];
 
@@ -61,7 +68,9 @@ export class UsersRegistryComponent extends TableComponent {
 
   selectableButton = true;
 
-  textSelectableButton = 'Выбрать пользователей';
+  textEnableSelectable = 'Выбрать пользователей';
+
+  textCancelSelectable = 'Отменить выбор пользователей';
 
   loadingKey = 'userRegistryLoading';
 
@@ -101,6 +110,13 @@ export class UsersRegistryComponent extends TableComponent {
     });
   }
 
+  createCalendarEvent(): void {
+    this.dialogService.show(this.calendarEventCreateDialog, {
+      selectedUsers: this.selectedRows,
+      dicts: this.dicts
+    });
+  }
+
   getTableData(): Observable<any> {
     return this.userService.getUsersTable();
   }
@@ -117,6 +133,9 @@ export class UsersRegistryComponent extends TableComponent {
           break;
         case TableActionType.SendOnGroupNotification:
           this.sendGroupNotification();
+          break;
+        case TableActionType.CalendarCreateEvent:
+          this.createCalendarEvent();
           break;
       }
     }

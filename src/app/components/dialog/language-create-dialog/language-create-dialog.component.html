@@ -7,8 +7,9 @@
         <div>
           <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
             <autocomplete-select
+              [value]="'id'"
+              [display]="'name'"
               [title]="'Язык'"
-              [validator]="requireMatch.bind(this)"
               [options]="availableLanguages"
             >
             </autocomplete-select>

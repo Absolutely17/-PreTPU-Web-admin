@@ -1,48 +1,138 @@
-import {FormControl, ValidatorFn, Validators} from '@angular/forms';
-import {Component, Input, OnInit} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import {FormControl, Validators} from '@angular/forms';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 
 @Component({
   selector: 'autocomplete-select',
-  templateUrl: 'autocomplete-select.component.html'
+  templateUrl: 'autocomplete-select.component.html',
+  styleUrls: ['autocomplete-select.component.scss']
 })
 export class AutocompleteSelectComponent implements OnInit {
 
-  control = new FormControl(null, null);
+  control = new FormControl(null, [Validators.required]);
 
-  _options: any[];
+  filteredOptions = [];
 
-  _title: string;
+  selectedValue = [];
 
-  _validator: ValidatorFn;
+  selectAllChecked = false;
 
-  filteredOptions = new BehaviorSubject<any[]>([]);
+  displayString = '';
 
-  @Input('validator')
-  set validator(validator: ValidatorFn) {
-    this._validator = validator;
-    this.control.setValidators([Validators.required, this._validator]);
+  @Input()
+  labelCount = 5;
+  @Input()
+  multiple = false;
+  @Input()
+  title: string;
+  @Input()
+  options: any[];
+  @Input()
+  value = 'id';
+  @Input()
+  display = 'value';
+  @Input()
+  required = false;
+
+  @Output()
+  selectionChange: EventEmitter<any> = new EventEmitter();
+
+  constructor() {
   }
 
-  @Input('title')
-  set title(title: string) {
-    this._title = title;
+  ngOnInit() {
+    this.filteredOptions = this.options;
+    if (this.required) {
+      this.control.setValidators(Validators.required);
+    }
   }
 
-  @Input('options')
-  set options(options: any[]) {
-    this._options = options;
-    this.filteredOptions.next(this._options);
+  toggleSelectAll(val) {
+    if (val.checked) {
+      this.filteredOptions.forEach(option => {
+        if (!this.selectedValue.includes(option[this.value])) {
+          this.selectedValue = this.selectedValue.concat([option[this.value]]);
+        }
+      });
+    } else {
+      const filteredValues = this.getFilteredOptionsValues();
+      this.selectedValue = this.selectedValue.filter(
+        item => !filteredValues.includes(item)
+      );
+    }
+    this.selectionChange.emit(this.selectedValue);
+  };
+
+  filterItem(value) {
+    this.filteredOptions = this.options.filter(
+      item => item[this.display].toLowerCase().startsWith(value.toLowerCase())
+    );
+    this.selectAllChecked = true;
+    this.filteredOptions.forEach(item => {
+      if (!this.selectedValue.includes(item[this.value])) {
+        this.selectAllChecked = false;
+      }
+    });
   }
 
-  ngOnInit(): void {
-    this.control.valueChanges.subscribe(it => this._filter(it));
+  hideOption(option) {
+    return !(this.filteredOptions.indexOf(option) > -1);
   }
 
-  private _filter(value: string): void {
-    const filterValue = value.toLowerCase();
-    this.filteredOptions.next(this._options.filter(option => option.name.toLowerCase().includes(filterValue)));
+  getFilteredOptionsValues() {
+    const filteredValues = [];
+    this.filteredOptions.forEach(option => {
+      filteredValues.push(option[this.value]);
+    });
+    return filteredValues;
+  }
+
+  onDisplayString() {
+    this.displayString = '';
+    if (this.selectedValue && this.selectedValue.length) {
+      let displayOption = [];
+      if (this.multiple) {
+        for (let i = 0; i < this.labelCount; i++) {
+          const selectValue = this.options.filter(
+            option => option[this.value] === this.selectedValue[i]
+          );
+          if (selectValue.length) {
+            displayOption[i] = selectValue[0];
+          }
+        }
+        if (displayOption.length) {
+          for (let i = 0; i < displayOption.length; i++) {
+            this.displayString = displayOption.map(it => it[this.display]).join(', ');
+          }
+          if (this.selectedValue.length > this.labelCount) {
+            this.displayString += ` (+ ${this.selectedValue.length - this.labelCount})`;
+          }
+        }
+      } else {
+        displayOption = this.options.filter(
+          option => option[this.value] === this.selectedValue
+        );
+        if (displayOption.length) {
+          this.displayString = displayOption[0][this.display];
+        }
+      }
+    }
+    return this.displayString;
+  }
+
+  onSelectionChange(val) {
+    const filteredValues = this.getFilteredOptionsValues();
+    let count = 0;
+    if (this.multiple) {
+      this.selectedValue.filter(item => {
+        if (filteredValues.includes(item)) {
+          count++;
+        }
+      });
+      this.selectAllChecked = count === this.filteredOptions.length;
+    }
+    this.selectedValue = val.value;
+    this.selectionChange.emit(this.selectedValue);
   }
 
   getError(): string {
@@ -50,9 +140,6 @@ export class AutocompleteSelectComponent implements OnInit {
     if (error) {
       if (error.required) {
         return 'Обязательно для заполнения';
-      }
-      if (error.requireMatch) {
-        return 'Необходимо выбрать значение из списка';
       }
     }
   }

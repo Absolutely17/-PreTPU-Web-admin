@@ -5,7 +5,8 @@
         <span>{{tableName}}</span>
       </div>
       <div *ngIf="!isDialogView" layout-align="end center" layout="row">
-        <button *ngIf="selectableButton" mat-button (click)="enableSelectUsers()">{{textSelectableButton}}</button>
+        <button *ngIf="selectableButton" mat-button
+                (click)="enableSelectUsers()">{{this.selectable ? textCancelSelectable : textEnableSelectable}}</button>
         <button *ngIf="menuItemList.length" type="button" mat-icon-button matTooltip="Список функций"
                 [matMenuTriggerFor]="registryMenu">
           <mat-icon color="grey">more_vert</mat-icon>
@@ -51,7 +52,8 @@
                               <ng-template *ngFor="let menuItemAdditional of additionalMenuItems"
                                            sbDataTableTemplate="{{menuItemAdditional.name}}" let-row="row">
                                 <div layout="row">
-                                  <button (click)="menuItemAdditional.func(row)" mat-button>
+                                  <button matTooltip="{{menuItemAdditional.tooltip}}"
+                                          (click)="menuItemAdditional.func(row)" mat-button>
                                     <mat-icon>{{menuItemAdditional.icon}}</mat-icon>
                                   </button>
                                 </div>

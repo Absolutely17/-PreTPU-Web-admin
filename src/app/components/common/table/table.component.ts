@@ -9,7 +9,8 @@ import {Observable} from 'rxjs';
 export enum TableActionType {
   SendOnUsersNotification = 'SendOnUsersNotification',
   SendOnGroupNotification = 'SendOnGroupNotification',
-  AddRow = 'AddRow'
+  AddRow = 'AddRow',
+  CalendarCreateEvent = 'CalendarCreateEvent'
 }
 
 export interface TableActionConfig {
@@ -21,6 +22,7 @@ export interface AdditionalMenuItem {
   name: string;
   func: any;
   icon: string;
+  tooltip?: string;
 }
 
 export abstract class TableComponent implements OnInit {
@@ -93,7 +95,13 @@ export abstract class TableComponent implements OnInit {
   /**
    * Текст для кнопки с включением возможности выбора объектов таблицы
    */
-  textSelectableButton: string;
+  textEnableSelectable: string;
+
+  /**
+   * Текст для кнопки выключения возможности выбора объектов таблицы
+   */
+  textCancelSelectable: string;
+
 
   /**
    * Нужна ли кнопка с выбором объектов таблицы
@@ -140,12 +148,7 @@ export abstract class TableComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadingService.register(this.loadingKey);
-    this.getTableData().subscribe(it => {
-      if (it) {
-        this.data = it;
-        this.refreshTable();
-      }
-    });
+    this.refreshTable();
     const dictsObservable = this.getDictsTableData();
     if (dictsObservable) {
       dictsObservable.subscribe(it => {

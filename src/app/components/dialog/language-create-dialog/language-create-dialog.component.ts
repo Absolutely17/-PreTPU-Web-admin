@@ -1,5 +1,4 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {FormControl, ValidationErrors} from '@angular/forms';
 import {MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../../services/error/error.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -50,27 +49,16 @@ export class LanguageCreateDialogComponent implements OnInit {
 
   accept(): void {
     const selectedLang = this.languageSelect.control.value;
-    const langAvailableId = this.availableLanguages.find(it => it.name === selectedLang).id;
     const createRequest = {
-      id: langAvailableId,
+      id: selectedLang,
       // todo сделать изображения
       imageId: null
     };
     this.languageService.create(createRequest).subscribe(() => {
-      this.dialogRef.close();
       this.snackBar.open('Язык успешно добавлен', 'Закрыть', {duration: 3000});
     }, error => {
-      this.dialogRef.close();
       this.errorService.handleServiceError(error);
-    });
-  }
-
-  requireMatch(control: FormControl): ValidationErrors | null {
-    const selection: any = control.value;
-    if (this.availableLanguages && !this.availableLanguages.find(it => it.name === selection)) {
-      return {requireMatch: true};
-    }
-    return null;
+    }).add(() => this.dialogRef.close());
   }
 
 }

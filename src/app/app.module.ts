@@ -43,6 +43,10 @@ import {LanguageRegistryComponent} from './components/language-registry/language
 import {LanguageService} from './services/language/language.service';
 import {LanguageCreateDialogComponent} from './components/dialog/language-create-dialog/language-create-dialog.component';
 import {AutocompleteSelectComponent} from './components/common/autocomplete-select/autocomplete-select.component';
+import {CalendarCreateEventDialogComponent} from './components/dialog/calendar-create-event-dialog/calendar-create-event-dialog.component';
+import {NGX_MAT_DATE_FORMATS, NgxMatDateFormats, NgxMatDatetimePickerModule} from '@angular-material-components/datetime-picker';
+import {NgxMatMomentModule} from '@angular-material-components/moment-adapter';
+import {MAT_DATE_LOCALE} from '@angular/material/core';
 
 export const commonServices = [
   AppConfig,
@@ -65,6 +69,18 @@ export const commonComponents = [
 ];
 
 
+const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
+  parse: {
+    dateInput: 'l, LTS'
+  },
+  display: {
+    dateInput: 'DD.MM.YYYY HH:mm',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  }
+};
+
 @NgModule({
   declarations: [
     ...sbDataTableComponents,
@@ -81,13 +97,16 @@ export const commonComponents = [
     MainPageComponent,
     SystemConfigComponent,
     LanguageRegistryComponent,
-    LanguageCreateDialogComponent
+    LanguageCreateDialogComponent,
+    CalendarCreateEventDialogComponent
   ],
   imports: [
     HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
     CommonImportsModule,
+    NgxMatDatetimePickerModule,
+    NgxMatMomentModule,
     QuillModule.forRoot({
       modules: {
         imageResize: true
@@ -96,6 +115,8 @@ export const commonComponents = [
     appRouting
   ],
   providers: [
+    {provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS},
+    {provide: MAT_DATE_LOCALE, useValue: 'ru'},
     ...commonServices,
     authInterceptorProviders,
     AuthGuard,

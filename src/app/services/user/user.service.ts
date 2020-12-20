@@ -22,4 +22,12 @@ export class UserService {
   getDicts(): Observable<any> {
     return this.http.get<any>(this.appConfig.webServiceApi('/user/admin/dicts'));
   }
+
+  getGroups(): Observable<any> {
+    return this.http.get<any>(this.appConfig.webServiceApi('/dict/group'));
+  }
+
+  createCalendarEvent(request: any): Observable<any> {
+    return this.http.post(this.appConfig.webServiceApi('/user/admin/calendarEvent'), request);
+  }
 }

@@ -1,14 +1,24 @@
 <mat-form-field class="fullwidth push-bottom-sm">
-  <input type="text"
-         placeholder="{{_title}}"
-         matInput
-         [formControl]="control"
-         [matAutocomplete]="auto">
-  <mat-autocomplete #auto="matAutocomplete">
-    <mat-option *ngFor="let option of filteredOptions | async" [value]="option.name">
-      {{option.name}}
+  <mat-select #selectElem [placeholder]="title" [formControl]="control" [multiple]="multiple"
+              [(ngModel)]="selectedValue" (selectionChange)="onSelectionChange($event)">
+    <div class="box-search">
+      <mat-checkbox *ngIf="multiple" color="primary" class="box-select-all" [(ngModel)]="selectAllChecked"
+                    (change)="toggleSelectAll($event)"></mat-checkbox>
+      <input #searchInput type="text" [ngClass]="{'pl-1': !multiple}" (input)="filterItem(searchInput.value)"
+             placeholder="Найти...">
+      <div class="box-search-icon" (click)="filterItem(''); searchInput.value = ''">
+        <button mat-icon-button class="search-button">
+          <mat-icon class="mat-24" aria-label="Search icon">clear</mat-icon>
+        </button>
+      </div>
+    </div>
+    <mat-select-trigger>
+      {{onDisplayString()}}
+    </mat-select-trigger>
+    <mat-option [style.display]="hideOption(option) ? 'none': 'flex'" *ngFor="let option of options"
+                [value]="option.id">{{option.name}}
     </mat-option>
-  </mat-autocomplete>
+  </mat-select>
   <span class="error-label" *ngIf="control.invalid" matTooltip="{{getError()}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>

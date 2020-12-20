@@ -1,0 +1,103 @@
+<div class="loader-container"
+     *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
+  <td-dialog>
+    <td-dialog-title>Создание события</td-dialog-title>
+    <td-dialog-content>
+      <div flex="grow" class="simple-fields">
+        <div *ngIf="form && this.groups">
+          <form [formGroup]="form">
+            <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
+
+              <mat-form-field class="fullwidth push-bottom-sm">
+                <mat-label>Название события</mat-label>
+                <input matInput tdAutoTrim autocomplete="off"
+                       type="text"
+                       formControlName="name"
+                       [maxlength]="500"/>
+                <span class="error-label" *ngIf="isInvalid('name')" matTooltip="{{getError('name')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+              </mat-form-field>
+
+              <mat-form-field class="fullwidth push-bottom-sm">
+                <mat-label>Описание</mat-label>
+                <input matInput tdAutoTrim autocomplete="off"
+                       type="text"
+                       formControlName="description"
+                       [maxlength]="500"/>
+                <span class="error-label" *ngIf="isInvalid('description')" matTooltip="{{getError('description')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+              </mat-form-field>
+
+              <mat-form-field class="fullwidth push-bottom-sm">
+                <input autocomplete="off" matInput [ngxMatDatetimePicker]="picker" placeholder="Дата"
+                       formControlName="date">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <ngx-mat-datetime-picker #picker [showSeconds]="false">
+                </ngx-mat-datetime-picker>
+                <span class="error-label" *ngIf="isInvalid('date')" matTooltip="{{getError('date')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+              </mat-form-field>
+
+              <mat-form-field class="fullwidth push-bottom-sm">
+                <mat-label>Получатели</mat-label>
+                <mat-select formControlName="groupTarget">
+                  <mat-option *ngFor="let groupTarget of groupTargets" [value]="groupTarget.id">
+                    {{groupTarget.value}}
+                  </mat-option>
+                </mat-select>
+                <span class="error-label" *ngIf="isInvalid('groupTarget')" matTooltip="{{getError('groupTarget')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+              </mat-form-field>
+
+
+              <span *ngIf="get('groupTarget').value === 'SELECTED_USERS'">Выбрано: {{selectedUsers.length}}
+                пользователей
+                <mat-icon style="font-size: 14px; position: relative; top: 2px;" *ngIf="selectedUsers.length === 0"
+                          color="warn" matTooltip="Необходимо выбрать пользователей">
+                  warning
+                </mat-icon>
+              </span>
+
+              <ng-container *ngIf="get('groupTarget').value === 'STUDY_GROUP' && groups"
+                            class="fullwidth push-bottom-sm">
+                <autocomplete-select
+                  [title]="'Группа'"
+                  [options]="groups"
+                  [multiple]="true"
+                  [value]="'id'"
+                  [display]="'name'"
+                >
+                </autocomplete-select>
+              </ng-container>
+
+              <mat-checkbox formControlName="sendNotification">
+                Отправить уведомление о назначении события
+              </mat-checkbox>
+
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </td-dialog-content>
+    <td-dialog-actions>
+      <button type="button" flex mat-button
+              color="primary"
+              class="push-right-xs"
+              #closeBtn
+              (click)="cancel()">Отменить
+      </button>
+      <button type="button" flex mat-raised-button
+              color="primary"
+              class="push-left-xs"
+              [disabled]="form.invalid || acceptDisabled()"
+              #acceptBtn
+              (click)="accept()">Создать
+      </button>
+    </td-dialog-actions>
+  </td-dialog>
+</div>
