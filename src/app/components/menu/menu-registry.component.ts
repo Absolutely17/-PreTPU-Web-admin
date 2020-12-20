@@ -56,6 +56,7 @@ export class ChecklistDatabase {
    * @param language текущий выбранный язык
    */
   getItemsByLanguage(language: string): void {
+    this.dataChange.next(null);
     this.countNewItems = 0;
     this.dataFromService = [];
     this.initialData = [];
@@ -362,13 +363,11 @@ export class MenuRegistryComponent implements OnInit {
 
   ngOnInit(): void {
     this.database.dataChange.subscribe(data => {
-      if (data) {
+      if (data && this.currentLanguage) {
         this.loadingService.resolve(this.loadingName);
-        if (data.length > 0) {
-          this.dataSource.data = data;
-        } else {
+        this.dataSource.data = data;
+        if (this.database.dataFromServiceInOneRow.length === 0) {
           this.snackBar.open('Не удалось найти пункты меню по указанному языку', 'Закрыть', {duration: 3000});
-          this.database.dataChange.next(null);
         }
       }
     });
