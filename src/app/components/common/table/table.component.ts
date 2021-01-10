@@ -148,22 +148,25 @@ export abstract class TableComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadingService.register(this.loadingKey);
-    this.refreshTable();
-    const dictsObservable = this.getDictsTableData();
-    if (dictsObservable) {
-      dictsObservable.subscribe(it => {
-        this.dicts = it;
-        this.loadingService.resolve(this.loadingKey);
-      });
-    } else {
-      this.loadingService.resolve(this.loadingKey);
-    }
+    this.initTableData();
     // todo Тут подумать. Надо выделять статьи тогда, когда компонент уже загрузился.
     setTimeout(() => {
       if (this.dataTable) {
         this.dataTable.doInitSelection(this.defaultSelected);
       }
     }, 1000);
+  }
+
+  initTableData() {
+    const dictsObservable = this.getDictsTableData();
+    if (dictsObservable) {
+      dictsObservable.subscribe(it => {
+        this.dicts = it;
+        this.refreshTable(true);
+      });
+    } else {
+      this.refreshTable(true);
+    }
   }
 
   sort(sortEvent: ISbDataTableSortChangeEvent): void {
@@ -179,7 +182,10 @@ export abstract class TableComponent implements OnInit {
     this.refreshTable();
   }
 
-  refreshTable(): void {
+  refreshTable(initRefresh: boolean = false): void {
+    if (!initRefresh) {
+      this.loadingService.register(this.loadingKey);
+    }
     this.getTableData().subscribe(it => {
       if (it) {
         let newData: any[] = it;
@@ -188,6 +194,7 @@ export abstract class TableComponent implements OnInit {
         newData = this.dataTableService.sortData(newData, this.sortBy, this.sortOrder);
         newData = this.dataTableService.pageData(newData, this.fromRow, this.currentPage * this.pageSize);
         this.filteredData = newData;
+        this.loadingService.resolve(this.loadingKey);
       }
     });
   }

@@ -1,75 +1,75 @@
-<td-dialog>
-  <td-dialog-title>{{currentMode === mode.EDIT ? 'Редактирование' : 'Создание'}} статьи</td-dialog-title>
-  <td-dialog-content>
-    <div flex="grow" class="simple-fields">
-      <div *ngIf="form">
-        <form [formGroup]="form">
-          <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
-            <mat-form-field class="fullwidth push-bottom-sm">
-              <mat-label>Название статьи</mat-label>
-              <input matInput tdAutoTrim autocomplete="off"
-                     type="text"
-                     formControlName="name"
-                     [maxlength]="500"/>
-              <span class="error-label" *ngIf="isInvalid('name')" matTooltip="{{getError('name')}}">
+<div class="loader-container"
+     *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
+  <td-dialog>
+    <td-dialog-title>{{currentMode === mode.EDIT ? 'Редактирование' : 'Создание'}} статьи</td-dialog-title>
+    <td-dialog-content>
+      <div flex="grow" class="simple-fields">
+        <div *ngIf="form">
+          <form [formGroup]="form">
+            <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
+              <mat-form-field class="fullwidth push-bottom-sm">
+                <mat-label>Название статьи</mat-label>
+                <input matInput tdAutoTrim autocomplete="off"
+                       type="text"
+                       formControlName="name"
+                       [maxlength]="500"/>
+                <span class="error-label" *ngIf="isInvalid('name')" matTooltip="{{getError('name')}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>
-            </mat-form-field>
+              </mat-form-field>
 
-            <mat-form-field class="fullwidth push-bottom-sm">
-              <mat-label>Тематика статьи</mat-label>
-              <input matInput tdAutoTrim autocomplete="off"
-                     type="text"
-                     formControlName="topic"
-                     [maxlength]="500"/>
-              <span class="error-label" *ngIf="isInvalid('topic')" matTooltip="{{getError('topic')}}">
+              <mat-form-field class="fullwidth push-bottom-sm">
+                <mat-label>Тематика статьи</mat-label>
+                <input matInput tdAutoTrim autocomplete="off"
+                       type="text"
+                       formControlName="topic"
+                       [maxlength]="500"/>
+                <span class="error-label" *ngIf="isInvalid('topic')" matTooltip="{{getError('topic')}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>
-            </mat-form-field>
+              </mat-form-field>
 
-            <mat-form-field class="fullwidth push-bottom-sm">
-              <mat-label>Краткая версия статьи</mat-label>
-              <input matInput tdAutoTrim autocomplete="off"
-                     type="text"
-                     formControlName="briefText"
-                     [maxlength]="500"/>
-              <span class="error-label" *ngIf="isInvalid('briefText')" matTooltip="{{getError('briefText')}}">
+              <mat-form-field class="fullwidth push-bottom-sm">
+                <mat-label>Краткая версия статьи</mat-label>
+                <input matInput tdAutoTrim autocomplete="off"
+                       type="text"
+                       formControlName="briefText"
+                       [maxlength]="500"/>
+                <span class="error-label" *ngIf="isInvalid('briefText')" matTooltip="{{getError('briefText')}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>
-            </mat-form-field>
+              </mat-form-field>
 
-            <mat-form-field class="fullwidth push-bottom-sm">
-              <mat-label>Язык</mat-label>
-              <mat-select formControlName="language">
-                <mat-option *ngFor="let lang of dicts.languages" [value]="lang.id">
-                  {{lang.name}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+              <mat-form-field class="fullwidth push-bottom-sm">
+                <mat-label>Язык</mat-label>
+                <mat-select formControlName="language">
+                  <mat-option *ngFor="let lang of dicts.languages" [value]="lang.id">
+                    {{lang.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
 
-              <quill-editor [styles]="{resize: 'both', overflow: 'auto', 'max-height': '450px', 'max-width':'1500px',
-               'min-width':'1150px'}" format="html" formControlName="text" (onEditorCreated)="getEditorInstance($event)"
-                            [modules]="modules">
-
-              </quill-editor>
-          </div>
-        </form>
+              <ckeditor formControlName="text" (ready)="onReady($event)" [config]="ckConfig"
+                        [editor]="Editor" data="<p>Hello, world!</p>"></ckeditor>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
-  </td-dialog-content>
-  <td-dialog-actions>
-    <button type="button" flex mat-button
-            color="primary"
-            class="push-right-xs"
-            #closeBtn
-            (click)="cancel()">Отменить
-    </button>
-    <button type="button" flex mat-raised-button
-            color="primary"
-            class="push-left-xs"
-            [disabled]="form.invalid"
-            #acceptBtn
-            (click)="accept()">Создать
-    </button>
-  </td-dialog-actions>
-</td-dialog>
+    </td-dialog-content>
+    <td-dialog-actions>
+      <button type="button" flex mat-button
+              color="primary"
+              class="push-right-xs"
+              #closeBtn
+              (click)="cancel()">Отменить
+      </button>
+      <button type="button" flex mat-raised-button
+              color="primary"
+              class="push-left-xs"
+              [disabled]="form.invalid"
+              #acceptBtn
+              (click)="accept()">Создать
+      </button>
+    </td-dialog-actions>
+  </td-dialog>
+</div>

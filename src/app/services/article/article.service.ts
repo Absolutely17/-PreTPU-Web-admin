@@ -14,13 +14,13 @@ export class ArticleService {
   }
 
   create(article: Article): Observable<any> {
-    return this.http.post(this.appConfig.webServiceApi('/article/admin/table/create'), article, {
+    return this.http.post(this.appConfig.webServiceApi('/article/admin/create'), article, {
       responseType: 'text'
     });
   }
 
   update(article: Article, articleId: string): Observable<any> {
-    return this.http.put<any>(this.appConfig.webServiceApi(`/article/admin/table/${articleId}`), article);
+    return this.http.put<any>(this.appConfig.webServiceApi(`/article/admin/${articleId}`), article);
   }
 
   getTable(): Observable<any> {

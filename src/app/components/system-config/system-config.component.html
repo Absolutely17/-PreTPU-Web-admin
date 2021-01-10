@@ -1,96 +1,99 @@
-<div class="address-creation">
-  <form [formGroup]="form">
-    <table mat-table [dataSource]="dataSource" formArrayName="params" class="table-form fullwidth">
+<div class="loader-container"
+     *tdLoading="loadingKey; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
+  <div class="address-creation">
+    <form [formGroup]="form">
+      <table mat-table [dataSource]="dataSource" formArrayName="params" class="table-form fullwidth">
 
-      <ng-container matColumnDef="edit">
-        <th mat-header-cell *matHeaderCellDef [style.width.%]="1"></th>
-        <td mat-cell *matCellDef="let row; let index = index">
-          <a (click)="removeRow(index)">
-            <mat-icon color="warn">remove_circle_outline</mat-icon>
-          </a>
-        </td>
-        <td mat-footer-cell *matFooterCellDef>
+        <ng-container matColumnDef="edit">
+          <th mat-header-cell *matHeaderCellDef [style.width.%]="1"></th>
+          <td mat-cell *matCellDef="let row; let index = index">
+            <a (click)="removeRow(index)">
+              <mat-icon color="warn">remove_circle_outline</mat-icon>
+            </a>
+          </td>
+          <td mat-footer-cell *matFooterCellDef>
                     <span (click)="addRow()" style="cursor: pointer">
                       <mat-icon>add</mat-icon>
                     </span>
-        </td>
-      </ng-container>
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef>Название</th>
-        <td mat-cell *matCellDef="let row; let index = index" [formGroupName]="index">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Название</th>
+          <td mat-cell *matCellDef="let row; let index = index" [formGroupName]="index">
 
-          <ng-container *ngIf="formInitialized">
-            <mat-form-field class="fullwidth">
-              <input matInput tdAutoTrim formControlName="name" type="text" autocomplete="false"/>
-              <span class="error-label" *ngIf="isInvalid('name', index)" matTooltip="{{getError('name', index)}}">
+            <ng-container *ngIf="formInitialized">
+              <mat-form-field class="fullwidth">
+                <input matInput tdAutoTrim formControlName="name" type="text" autocomplete="false"/>
+                <span class="error-label" *ngIf="isInvalid('name', index)" matTooltip="{{getError('name', index)}}">
                         <mat-icon color="warn">warning</mat-icon>
                       </span>
-            </mat-form-field>
-          </ng-container>
-        </td>
-        <td mat-footer-cell *matFooterCellDef></td>
-      </ng-container>
+              </mat-form-field>
+            </ng-container>
+          </td>
+          <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
 
-      <ng-container matColumnDef="key">
-        <th mat-header-cell *matHeaderCellDef>Ключ</th>
-        <td mat-cell *matCellDef="let row; let index = index" [formGroupName]="index">
+        <ng-container matColumnDef="key">
+          <th mat-header-cell *matHeaderCellDef>Ключ</th>
+          <td mat-cell *matCellDef="let row; let index = index" [formGroupName]="index">
 
-          <ng-container *ngIf="formInitialized">
-            <mat-form-field class="fullwidth">
-              <input matInput tdAutoTrim formControlName="key" type="text" autocomplete="false"/>
-              <span class="error-label" *ngIf="isInvalid('key', index)" matTooltip="{{getError('key', index)}}">
+            <ng-container *ngIf="formInitialized">
+              <mat-form-field class="fullwidth">
+                <input matInput tdAutoTrim formControlName="key" type="text" autocomplete="false"/>
+                <span class="error-label" *ngIf="isInvalid('key', index)" matTooltip="{{getError('key', index)}}">
                         <mat-icon color="warn">warning</mat-icon>
                       </span>
-            </mat-form-field>
-          </ng-container>
-        </td>
-        <td mat-footer-cell *matFooterCellDef></td>
-      </ng-container>
+              </mat-form-field>
+            </ng-container>
+          </td>
+          <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
 
-      <ng-container matColumnDef="value">
-        <th mat-header-cell *matHeaderCellDef>Значение</th>
-        <td mat-cell *matCellDef="let row; let index = index" [formGroupName]="index">
+        <ng-container matColumnDef="value">
+          <th mat-header-cell *matHeaderCellDef>Значение</th>
+          <td mat-cell *matCellDef="let row; let index = index" [formGroupName]="index">
 
-          <ng-container *ngIf="formInitialized">
-            <mat-form-field class="fullwidth">
-              <input matInput tdAutoTrim formControlName="value" type="text" autocomplete="false"/>
-              <span class="error-label" *ngIf="isInvalid('value', index)" matTooltip="{{getError('value', index)}}">
+            <ng-container *ngIf="formInitialized">
+              <mat-form-field class="fullwidth">
+                <input matInput tdAutoTrim formControlName="value" type="text" autocomplete="false"/>
+                <span class="error-label" *ngIf="isInvalid('value', index)" matTooltip="{{getError('value', index)}}">
                         <mat-icon color="warn">warning</mat-icon>
                       </span>
-            </mat-form-field>
-          </ng-container>
-        </td>
-        <td mat-footer-cell *matFooterCellDef></td>
-      </ng-container>
+              </mat-form-field>
+            </ng-container>
+          </td>
+          <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
 
-      <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef>Примечание</th>
-        <td mat-cell *matCellDef="let row; let index = index" [formGroupName]="index">
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Примечание</th>
+          <td mat-cell *matCellDef="let row; let index = index" [formGroupName]="index">
 
-          <ng-container *ngIf="formInitialized">
-            <mat-form-field class="fullwidth">
-              <input matInput tdAutoTrim formControlName="description" type="text" autocomplete="false"/>
-              <span class="error-label" *ngIf="isInvalid('description', index)"
-                    matTooltip="{{getError('description', index)}}">
+            <ng-container *ngIf="formInitialized">
+              <mat-form-field class="fullwidth">
+                <input matInput tdAutoTrim formControlName="description" type="text" autocomplete="false"/>
+                <span class="error-label" *ngIf="isInvalid('description', index)"
+                      matTooltip="{{getError('description', index)}}">
                         <mat-icon color="warn">warning</mat-icon>
                       </span>
-            </mat-form-field>
-          </ng-container>
-        </td>
-        <td mat-footer-cell *matFooterCellDef></td>
-      </ng-container>
+              </mat-form-field>
+            </ng-container>
+          </td>
+          <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
-    </table>
-  </form>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
+      </table>
+    </form>
+  </div>
+
+  <app-save-form-button *ngIf="!form.pristine"
+                        [disableSave]="form.status === 'INVALID'"
+                        [savingForm]="saving"
+                        (save)="onSave()"
+                        (cancel)="resetValues()">
+  </app-save-form-button>
 </div>
-
-<app-save-form-button *ngIf="!form.pristine"
-                      [disableSave]="form.status === 'INVALID'"
-                      [savingForm]="saving"
-                      (save)="onSave()"
-                      (cancel)="resetValues()">
-</app-save-form-button>

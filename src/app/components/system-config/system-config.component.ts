@@ -4,6 +4,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {SystemConfigService} from '../../services/systemConfig/system-config.service';
 import {BehaviorSubject} from 'rxjs';
+import {TdLoadingService} from '@covalent/core/loading';
 
 export interface SystemParameter {
   id: string;
@@ -35,11 +36,14 @@ export class SystemConfigComponent {
 
   displayedColumns = ['edit', 'name', 'key', 'value', 'description'];
 
+  loadingKey = 'systemConfigLoading';
+
   constructor(
     private systemService: SystemConfigService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
     private errorService: ErrorService,
+    private loadingService: TdLoadingService
   ) {
     this.form = formBuilder.group({'params': this.params});
     this.initDataSource();
@@ -49,15 +53,16 @@ export class SystemConfigComponent {
   }
 
   initDataSource() {
+    this.loadingService.register(this.loadingKey);
     this.systemService.getTable().subscribe(data => {
       data.forEach(it => {
         const control = this.createNewRow(it);
         this.params.push(control);
       });
       this.updateView();
+      this.loadingService.resolve(this.loadingKey);
+      this.formInitialized = true;
     });
-    this.formInitialized = true;
-
   }
 
   createNewRow(row?: SystemParameter) {

@@ -47,6 +47,7 @@ import {CalendarCreateEventDialogComponent} from './components/dialog/calendar-c
 import {NGX_MAT_DATE_FORMATS, NgxMatDateFormats, NgxMatDatetimePickerModule} from '@angular-material-components/datetime-picker';
 import {NgxMatMomentModule} from '@angular-material-components/moment-adapter';
 import {MAT_DATE_LOCALE} from '@angular/material/core';
+import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
 
 export const commonServices = [
   AppConfig,
@@ -107,6 +108,7 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
     CommonImportsModule,
     NgxMatDatetimePickerModule,
     NgxMatMomentModule,
+    CKEditorModule,
     QuillModule.forRoot({
       modules: {
         imageResize: true
