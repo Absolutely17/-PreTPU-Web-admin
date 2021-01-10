@@ -26,7 +26,8 @@ export class MenuItem {
 
 export enum LogAction {
   DELETE,
-  ADD,
+  ADD_ROOT,
+  ADD_CHILD,
   EDIT,
   MOVED
 }
@@ -393,12 +394,13 @@ export class MenuRegistryComponent implements OnInit {
       dicts: this.dicts
     }).afterClosed().subscribe(it => {
       if (it) {
-        this.addToLog(LogAction.ADD, it.name);
         if (node) {
           const parentNode = this.flatNodeMap.get(node);
+          this.addToLog(LogAction.ADD_CHILD, it.name, parentNode.name);
           this.database.insertNewItem({...it, languageId: this.currentLanguage} as MenuItem, parentNode);
           this.treeControl.expand(node);
         } else {
+          this.addToLog(LogAction.ADD_ROOT, it.name);
           this.database.insertNewItem({...it, languageId: this.currentLanguage} as MenuItem);
         }
       }
@@ -608,14 +610,17 @@ export class MenuRegistryComponent implements OnInit {
     }
   }
 
-  addToLog(logAction: LogAction, name: string) {
+  addToLog(logAction: LogAction, name: string, nameRoot?: string) {
     let logRows = this.logInfo.length;
     switch (logAction) {
       case LogAction.DELETE:
         this.logInfo.push(logRows + 1 + '. Удален пункт меню "' + name + '"');
         break;
-      case LogAction.ADD:
+      case LogAction.ADD_ROOT:
         this.logInfo.push(logRows + 1 + '. Добавлен пункт меню "' + name + '"');
+        break;
+      case LogAction.ADD_CHILD:
+        this.logInfo.push(logRows + 1 + '. Добавлен дочерний пункт меню "' + name +'" в "' + nameRoot + '"');
         break;
       case LogAction.EDIT:
         this.logInfo.push(logRows + 1 + '. Изменен пункт меню "' + name + '"');

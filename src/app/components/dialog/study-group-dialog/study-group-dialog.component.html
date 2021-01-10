@@ -1,0 +1,53 @@
+<div class="loader-container"
+     *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
+  <td-dialog>
+    <td-dialog-title>{{mode === dialogMode.CREATE ? 'Создание' : 'Изменение'}} учебной группы</td-dialog-title>
+    <td-dialog-content>
+      <div flex="grow" class="simple-fields">
+        <div *ngIf="form">
+          <form [formGroup]="form">
+            <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
+              <mat-form-field class="fullwidth push-bottom-sm">
+                <mat-label>Название группы</mat-label>
+                <input matInput tdAutoTrim autocomplete="off"
+                       type="text"
+                       formControlName="name"
+                       [maxlength]="500"/>
+                <span class="error-label" *ngIf="isInvalid('name')" matTooltip="{{getError('name')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+              </mat-form-field>
+
+              <mat-form-field class="fullwidth push-bottom-sm">
+                <mat-label>Внутренний номер группы</mat-label>
+                <input matInput tdAutoTrim autocomplete="off"
+                       type="text"
+                       formControlName="internalID"
+                       [maxlength]="500"/>
+                <span class="error-label" *ngIf="isInvalid('internalID')" matTooltip="{{getError('internalID')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+              </mat-form-field>
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </td-dialog-content>
+    <td-dialog-actions>
+      <button type="button" flex mat-button
+              color="primary"
+              class="push-right-xs"
+              #closeBtn
+              (click)="cancel()">Отменить
+      </button>
+      <button type="button" flex mat-raised-button
+              color="primary"
+              class="push-left-xs"
+              [disabled]="form.invalid"
+              #acceptBtn
+              (click)="accept()">Сохранить
+      </button>
+    </td-dialog-actions>
+  </td-dialog>
+</div>

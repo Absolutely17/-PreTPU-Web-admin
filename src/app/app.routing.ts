@@ -10,6 +10,7 @@ import {ArticleRegistryComponent} from './components/article-registry/article-re
 import {MainPageComponent} from './components/common/main-page/main-page.component';
 import {SystemConfigComponent} from './components/system-config/system-config.component';
 import {LanguageRegistryComponent} from './components/language-registry/language-registry.component';
+import {StudyGroupRegistryComponent} from "./components/study-group-registry/study-group-registry.component";
 
 // @ts-ignore
 const routes: Routes = [
@@ -42,6 +43,10 @@ const routes: Routes = [
       {
         path: 'language',
         component: LanguageRegistryComponent
+      },
+      {
+        path: 'studyGroup',
+        component: StudyGroupRegistryComponent
       }
     ]
   },

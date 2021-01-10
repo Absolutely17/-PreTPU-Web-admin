@@ -60,7 +60,7 @@ export class UsersRegistryComponent extends TableComponent {
     },
     {
       id: TableActionType.CalendarCreateEvent,
-      name: 'Создать напоминание'
+      name: 'Добавить событие'
     }
   ];
 

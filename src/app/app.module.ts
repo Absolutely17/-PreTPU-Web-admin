@@ -48,6 +48,9 @@ import {NGX_MAT_DATE_FORMATS, NgxMatDateFormats, NgxMatDatetimePickerModule} fro
 import {NgxMatMomentModule} from '@angular-material-components/moment-adapter';
 import {MAT_DATE_LOCALE} from '@angular/material/core';
 import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
+import {StudyGroupService} from "./services/studyGroup/study-group.service";
+import {StudyGroupRegistryComponent} from "./components/study-group-registry/study-group-registry.component";
+import {StudyGroupDialogComponent} from "./components/dialog/study-group-dialog/study-group-dialog.component";
 
 export const commonServices = [
   AppConfig,
@@ -99,7 +102,9 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
     SystemConfigComponent,
     LanguageRegistryComponent,
     LanguageCreateDialogComponent,
-    CalendarCreateEventDialogComponent
+    CalendarCreateEventDialogComponent,
+    StudyGroupRegistryComponent,
+    StudyGroupDialogComponent
   ],
   imports: [
     HttpClientModule,
@@ -130,7 +135,8 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
     MenuService,
     ArticleService,
     SystemConfigService,
-    LanguageService
+    LanguageService,
+    StudyGroupService
   ],
   bootstrap: [RootComponent]
 })

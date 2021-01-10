@@ -30,6 +30,10 @@ export const userMenuItems: MenuItem[] = [
   {
     name: 'Служебные данные',
     url: '/systemConfig'
+  },
+  {
+    name: 'Учебные группы',
+    url: '/studyGroup'
   }
 ];
 
