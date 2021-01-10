@@ -24,7 +24,7 @@ export class UserService {
   }
 
   getGroups(): Observable<any> {
-    return this.http.get<any>(this.appConfig.webServiceApi('/dict/group'));
+    return this.http.get<any>(this.appConfig.webServiceApi('/studyGroup'));
   }
 
   createCalendarEvent(request: any): Observable<any> {

@@ -94,7 +94,12 @@
           История изменений
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <p *ngFor="let logRow of logInfo">{{logRow}}</p>
+      <ng-container *ngIf="logInfo && logInfo.length">
+        <p *ngFor="let logRow of logInfo">{{logRow}}</p>
+      </ng-container>
+      <ng-container *ngIf="logInfo && !logInfo.length">
+        <p>Пусто</p>
+      </ng-container>
     </mat-expansion-panel>
   </div>
 </div>
