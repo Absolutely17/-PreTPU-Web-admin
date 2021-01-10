@@ -1,81 +1,100 @@
 <div class="menu-registry">
-  <div class="flex-center">
-    <mat-form-field *ngIf="dicts && dicts.languages" appearance="fill">
-      <mat-label>Язык</mat-label>
-      <mat-select [(ngModel)]="currentLanguage" (selectionChange)="languageChange()">
-        <mat-option *ngFor="let lang of dicts.languages" [value]="lang.id">
-          {{lang.name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <div style="display: inline-block" *ngIf="currentLanguage">
-      <button mat-button (click)="addNewItem()">
-        <mat-icon>add</mat-icon>
-      </button>
+  <div>
+    <div class="flex-center">
+      <mat-form-field *ngIf="dicts && dicts.languages" appearance="fill">
+        <mat-label>Язык</mat-label>
+        <mat-select [(ngModel)]="currentLanguage" (selectionChange)="languageChange()">
+          <mat-option *ngFor="let lang of dicts.languages" [value]="lang.id">
+            {{lang.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="add-menu-item" *ngIf="currentLanguage">
+        <button mat-button (click)="addNewItem()">
+          <mat-icon>add</mat-icon>
+          Добавить пункт меню
+        </button>
+      </div>
     </div>
-  </div>
-  <div class="loader-container"
-       *tdLoading="'menuLoadingName'; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
-    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-      <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
-        <div [ngClass]="{'drop-above': dragNodeExpandOverArea === 'above' && dragNodeExpandOverNode === node,
+    <div class="loader-container"
+         *tdLoading="'menuLoadingName'; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
+      <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
+          <div [ngClass]="{'drop-above': dragNodeExpandOverArea === 'above' && dragNodeExpandOverNode === node,
                               'drop-below': dragNodeExpandOverArea === 'below' && dragNodeExpandOverNode === node,
                               'drop-center': dragNodeExpandOverArea === 'center' && dragNodeExpandOverNode === node}"
-             draggable="true"
-             (dragstart)="handleDragStart($event, node)"
-             (drop)="handleDrop($event, node)"
-             (dragover)="handleDragOver($event, node)"
-             (dragend)="handleDragEnd($event)" class="tree-node">
-          <button mat-icon-button disabled></button>
-          {{node.name}} {{node.type}}
-          <div class="buttons">
-            <button mat-button *ngIf="node.type === 'LINKS_LIST'" (click)="addNewItem(node)">
-              <mat-icon>add</mat-icon>
-            </button>
-            <button mat-button (click)="edit(node)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-button (click)="remove(node)">
-              <mat-icon>remove</mat-icon>
-            </button>
+               draggable="true"
+               (dragstart)="handleDragStart($event, node)"
+               (drop)="handleDrop($event, node)"
+               (dragover)="handleDragOver($event, node)"
+               (dragend)="handleDragEnd($event)" class="tree-node">
+            <div class="tree-node-content">
+              <button mat-icon-button disabled></button>
+              {{node.name}} [{{getMenuType(node.type)}}]
+            </div>
+            <div class="buttons">
+              <button class="edit-btn" mat-button (click)="edit(node)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button matTooltip="{{addBtnTooltip}}" class="add-btn" mat-button *ngIf="node.type === 'LINKS_LIST'"
+                      (click)="addNewItem(node)">
+                <mat-icon>add</mat-icon>
+              </button>
+              <button class="remove-btn" mat-button (click)="remove(node)">
+                <mat-icon>remove</mat-icon>
+              </button>
+            </div>
           </div>
-        </div>
-      </mat-tree-node>
+        </mat-tree-node>
 
-      <mat-tree-node *matTreeNodeDef="let node; when: hasChild"
-                     matTreeNodePadding>
-        <div [ngClass]="{'drop-above': dragNodeExpandOverArea === 'above' && dragNodeExpandOverNode === node,
+        <mat-tree-node *matTreeNodeDef="let node; when: hasChild"
+                       matTreeNodePadding>
+          <div [ngClass]="{'drop-above': dragNodeExpandOverArea === 'above' && dragNodeExpandOverNode === node,
                               'drop-below': dragNodeExpandOverArea === 'below' && dragNodeExpandOverNode === node,
                               'drop-center': dragNodeExpandOverArea === 'center' && dragNodeExpandOverNode === node}"
-             draggable="true"
-             (dragstart)="handleDragStart($event, node)"
-             (drop)="handleDrop($event, node)"
-             (dragover)="handleDragOver($event, node)"
-             (dragend)="handleDragEnd($event)" class="tree-node">
-          <button mat-icon-button matTreeNodeToggle
-                  [attr.aria-label]="'toggle ' + node.filename">
-            <mat-icon class="mat-icon-rtl-mirror">
-              {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
-            </mat-icon>
-          </button>
-          {{node.name}} ({{node.type}})
-          <div class="buttons">
-            <button mat-button *ngIf="node.type === 'LINKS_LIST'" (click)="addNewItem(node)">
-              <mat-icon>add</mat-icon>
-            </button>
-            <button mat-button (click)="edit(node)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-button (click)="remove(node)">
-              <mat-icon>remove</mat-icon>
-            </button>
+               draggable="true"
+               (dragstart)="handleDragStart($event, node)"
+               (drop)="handleDrop($event, node)"
+               (dragover)="handleDragOver($event, node)"
+               (dragend)="handleDragEnd($event)" class="tree-node">
+            <div class="tree-node-content">
+              <button mat-icon-button matTreeNodeToggle
+                      [attr.aria-label]="'toggle ' + node.filename">
+                <mat-icon class="mat-icon-rtl-mirror">
+                  {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                </mat-icon>
+              </button>
+              {{node.name}} [{{getMenuType(node.type)}}]
+            </div>
+            <div class="buttons">
+              <button class="edit-btn" mat-button (click)="edit(node)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button matTooltip="{{addBtnTooltip}}" class="add-btn" mat-button *ngIf="node.type === 'LINKS_LIST'"
+                      (click)="addNewItem(node)">
+                <mat-icon>add</mat-icon>
+              </button>
+              <button class="remove-btn" mat-button (click)="remove(node)">
+                <mat-icon>remove</mat-icon>
+              </button>
+            </div>
           </div>
-        </div>
-      </mat-tree-node>
-    </mat-tree>
+        </mat-tree-node>
+      </mat-tree>
 
+    </div>
+    <app-save-form-button *ngIf="hasAnyChange" (save)="save()">
+    </app-save-form-button>
+    <span #emptyItem></span>
   </div>
-  <app-save-form-button *ngIf="hasAnyChange" (save)="save()">
-  </app-save-form-button>
-  <span #emptyItem></span>
+  <div class="log-container">
+    <mat-expansion-panel (opened)="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          История изменений
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <p *ngFor="let logRow of logInfo">{{logRow}}</p>
+    </mat-expansion-panel>
+  </div>
 </div>

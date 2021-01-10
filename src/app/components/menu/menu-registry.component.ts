@@ -24,6 +24,13 @@ export class MenuItem {
   languageId: string;
 }
 
+export enum LogAction {
+  DELETE,
+  ADD,
+  EDIT,
+  MOVED
+}
+
 export class MenuItemFlat {
   id: string;
   name: string;
@@ -307,6 +314,10 @@ export class MenuRegistryComponent implements OnInit {
 
   loadingName = 'menuLoadingName';
 
+  addBtnTooltip = 'Создать дочерний пункт меню внутри выбранного';
+
+  logInfo: string[];
+
   /* Drag and drop */
   dragNode: any;
   dragNodeExpandOverWaitTimeMs = 300;
@@ -324,6 +335,7 @@ export class MenuRegistryComponent implements OnInit {
     private loadingService: TdLoadingService,
     private snackBar: MatSnackBar
   ) {
+    this.logInfo = [];
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel, this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<MenuItemFlat>(this.getLevel, this.isExpandable);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
@@ -381,6 +393,7 @@ export class MenuRegistryComponent implements OnInit {
       dicts: this.dicts
     }).afterClosed().subscribe(it => {
       if (it) {
+        this.addToLog(LogAction.ADD, it.name);
         if (node) {
           const parentNode = this.flatNodeMap.get(node);
           this.database.insertNewItem({...it, languageId: this.currentLanguage} as MenuItem, parentNode);
@@ -448,6 +461,7 @@ export class MenuRegistryComponent implements OnInit {
       this.database.deleteItem(this.flatNodeMap.get(this.dragNode));
       this.nestedNodeMap.delete(this.flatNodeMap.get(this.dragNode));
       this.flatNodeMap.delete(this.dragNode);
+      this.addToLog(LogAction.MOVED, this.dragNode.name);
       //this.treeControl.expandDescendants(this.nestedNodeMap.get(newItem));
     }
     this.dragNode = null;
@@ -473,6 +487,7 @@ export class MenuRegistryComponent implements OnInit {
         deletedItems: this.deletedItems
       };
       console.log(menuInfo);
+      this.logInfo = [];
       this.menuService.save(menuInfo).subscribe(it => {
         this.deletedItems = [];
         this.languageChange();
@@ -489,6 +504,7 @@ export class MenuRegistryComponent implements OnInit {
       dicts: this.dicts
     }).afterClosed().subscribe(it => {
       if (it) {
+        this.addToLog(LogAction.EDIT, node.name);
         this.database.editItem(origNode, it);
       }
     });
@@ -498,19 +514,18 @@ export class MenuRegistryComponent implements OnInit {
     this.hasAnyChange = true;
     this.deletedItems.push(node.id);
     const menuItem = this.flatNodeMap.get(node);
-    if (menuItem && menuItem.type === 'LINKS_LIST' && menuItem.children.length > 0) {
+    if (menuItem) {
       this.dialogService.showConfirmDialog({
         title: 'Удаление пункта меню',
-        message: 'Выбранный Вами пункт меню содержит дочерние пункты меню. В случае удаления они также будут удалены. Вы уверены?',
+        message: 'Вы уверены, что хотите удалить пункт меню?',
         acceptButton: 'Удалить',
         cancelButton: 'Отмена'
       }).afterClosed().subscribe(it => {
         if (it) {
+          this.addToLog(LogAction.DELETE, node.name);
           this.database.deleteItem(this.flatNodeMap.get(node));
         }
       });
-    } else {
-      this.database.deleteItem(this.flatNodeMap.get(node));
     }
   }
 
@@ -575,6 +590,40 @@ export class MenuRegistryComponent implements OnInit {
     this.database.getItemsByLanguage(this.currentLanguage);
     this.dataSource.data = [];
     this.database.dataChange.next(null);
+    this.logInfo = [];
+  }
+
+  getMenuType(type: string): string {
+    switch (type) {
+      case 'LINKS_LIST':
+        return 'Список пунктов меню';
+      case 'LINK':
+        return 'Ссылка';
+      case 'ARTICLE':
+        return 'Статья';
+      case 'SCHEDULE':
+        return 'Расписание';
+      case 'FEED_LIST':
+        return 'Список статей';
+    }
+  }
+
+  addToLog(logAction: LogAction, name: string) {
+    let logRows = this.logInfo.length;
+    switch (logAction) {
+      case LogAction.DELETE:
+        this.logInfo.push(logRows + 1 + '. Удален пункт меню "' + name + '"');
+        break;
+      case LogAction.ADD:
+        this.logInfo.push(logRows + 1 + '. Добавлен пункт меню "' + name + '"');
+        break;
+      case LogAction.EDIT:
+        this.logInfo.push(logRows + 1 + '. Изменен пункт меню "' + name + '"');
+        break;
+      case LogAction.MOVED:
+        this.logInfo.push(logRows + 1 + '. Перемещен пункт меню "' + name + '"');
+        break;
+    }
   }
 
 }

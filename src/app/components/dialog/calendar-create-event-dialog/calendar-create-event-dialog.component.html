@@ -54,7 +54,7 @@
               </mat-form-field>
 
 
-              <span *ngIf="get('groupTarget').value === 'SELECTED_USERS'">Выбрано: {{selectedUsers.length}}
+              <span *ngIf="get('groupTarget').value === 'SELECTED_USERS'" class="pad-bottom-sm">Выбрано: {{selectedUsers.length}}
                 пользователей
                 <mat-icon style="font-size: 14px; position: relative; top: 2px;" *ngIf="selectedUsers.length === 0"
                           color="warn" matTooltip="Необходимо выбрать пользователей">

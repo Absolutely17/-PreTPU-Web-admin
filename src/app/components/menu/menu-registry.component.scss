@@ -13,7 +13,20 @@
 }
 
 .menu-registry {
+  display: flex;
+  justify-content: space-between;
   padding: 10px 10px 0 10px;
+
+  .flex-center {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .add-menu-item {
+    margin-left: 5px;
+    display: flex;
+    height: 43px;
+  }
 
   .mat-form-field {
     height: 43px;
@@ -26,6 +39,10 @@
         padding: .25em .75em 0 .75em;
       }
     }
+  }
+
+  .log-container {
+    padding: 5px;
   }
 }
 
@@ -41,14 +58,41 @@
 
   .tree-node {
     border: 1px solid white;
-    background-color: #429dfd;
     display: flex;
     align-items: center;
     min-height: 48px;
     flex: 1;
 
+    .tree-node-content {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      background-color: #429dfd;
+      padding-right: 10px;
+
+    }
+
     .buttons {
-      margin-left: 7px;
+      height: 40px;
+
+      .add-btn {
+        border-radius: 0;
+        background: #288a28;
+        height: 40px;
+      }
+
+      .remove-btn {
+        border-radius: 0;
+        background: #9b1616;
+        height: 40px;
+      }
+
+      .edit-btn {
+        background: #2466a7;
+        border-radius: 0;
+        height: 40px;
+      }
+
     }
   }
 
