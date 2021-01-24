@@ -35,4 +35,8 @@ export class ArticleService {
     return this.http.get<any>(this.appConfig.webServiceApi(`/article/admin/table/${id}`));
   }
 
+  delete(id: string): Observable<any> {
+    return this.http.delete(this.appConfig.webServiceApi(`/article/admin/${id}`));
+  }
+
 }

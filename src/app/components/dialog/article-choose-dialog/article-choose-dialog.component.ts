@@ -1,4 +1,4 @@
-import {Component, Inject, ViewChild} from '@angular/core';
+import {Component, HostListener, Inject, ViewChild} from '@angular/core';
 import {ArticleRegistryComponent} from '../../article-registry/article-registry.component';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../../services/error/error.service';
@@ -41,5 +41,9 @@ export class ArticleChooseDialogComponent {
     this.dialogRef.close();
   }
 
+  @HostListener('window:keyup.esc')
+  onKeyUp(): void {
+    this.cancel();
+  }
 
 }

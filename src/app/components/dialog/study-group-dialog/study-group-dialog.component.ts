@@ -1,4 +1,4 @@
-import {Component, Inject} from "@angular/core";
+import {Component, HostListener, Inject} from "@angular/core";
 import {DialogMode} from "../dialog-mode";
 import {AbstractControl, FormControl, FormGroup, Validators} from "@angular/forms";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
@@ -6,6 +6,7 @@ import {ErrorService} from "../../../services/error/error.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {StudyGroupService} from "../../../services/studyGroup/study-group.service";
 import {TdLoadingService} from "@covalent/core/loading";
+import {DialogService} from "../../../services/dialog/dialog.service";
 
 @Component({
   selector: 'app-study-group-dialog',
@@ -29,7 +30,8 @@ export class StudyGroupDialogComponent {
     @Inject(MAT_DIALOG_DATA) data: any,
     private errorService: ErrorService,
     private loadingService: TdLoadingService,
-    protected snackBar: MatSnackBar
+    protected snackBar: MatSnackBar,
+    private dialogService: DialogService
   ) {
     this.loadingService.register(this.loaderName);
     if (data.groupId) {
@@ -82,6 +84,28 @@ export class StudyGroupDialogComponent {
       this.studyGroupService.edit(this.form.getRawValue(), this.currentGroupId).subscribe(() => {},
         error => this.errorService.handleServiceError(error)).add(() => this.dialogRef.close());
     }
+  }
+
+  delete(): void {
+    this.dialogService.showConfirmDialog({
+      title: 'Удаление учебной группы',
+      message: 'Вы уверены, что хотите удалить учебную группу?',
+      acceptButton: 'Удалить',
+      cancelButton: 'Отмена'
+    }).afterClosed().subscribe(it => {
+      if (it) {
+        this.studyGroupService.delete(this.currentGroupId).subscribe(() => {
+            this.snackBar.open('Учебная группа удалена', 'Закрыть', {duration: 3000});
+            this.dialogRef.close();
+        },
+            error => this.errorService.handleServiceError(error));
+      }
+    });
+  }
+
+  @HostListener('window:keyup.esc')
+  onKeyUp(): void {
+    this.cancel();
   }
 
 }

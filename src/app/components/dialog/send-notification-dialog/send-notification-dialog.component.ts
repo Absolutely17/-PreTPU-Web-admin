@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, HostListener, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {UserInfo} from '../../../models/user/user-info';
 import {TokenStorageService} from '../../../services/token/token-storage.service';
@@ -107,6 +107,11 @@ export class SendNotificationDialogComponent implements OnInit{
 
   cancel(): void {
     this.dialogRef.close();
+  }
+
+  @HostListener('window:keyup.esc')
+  onKeyUp(): void {
+    this.cancel();
   }
 
 }

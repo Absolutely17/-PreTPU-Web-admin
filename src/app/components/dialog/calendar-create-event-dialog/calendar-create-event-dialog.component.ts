@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, Inject, OnInit, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {UserService} from '../../../services/user/user.service';
@@ -113,5 +113,10 @@ export class CalendarCreateEventDialogComponent implements OnInit {
         return 'Обязательно для заполнения';
       }
     }
+  }
+
+  @HostListener('window:keyup.esc')
+  onKeyUp(): void {
+    this.cancel();
   }
 }

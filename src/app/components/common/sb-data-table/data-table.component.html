@@ -79,7 +79,7 @@
         (keyup.shift)="enableTextSelection()"
       >
         <td sb-data-table-cell class="sb-cell-for-button" *ngIf="iconColumn">
-          <a (click)="iconColumnClick(row)">
+          <a matTooltip="Редактировать" (click)="iconColumnClick(row)">
             <mat-icon color="accent">{{iconImg}}</mat-icon>
           </a>
         </td>

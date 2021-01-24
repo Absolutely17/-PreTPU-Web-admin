@@ -30,4 +30,20 @@ export class UserService {
   createCalendarEvent(request: any): Observable<any> {
     return this.http.post(this.appConfig.webServiceApi('/user/admin/calendarEvent'), request);
   }
+
+  getByEmail(email: string): Observable<any> {
+    return this.http.get(this.appConfig.webServiceApi(`/user/profile?email=${email}`))
+  }
+
+  create(userInfo: any): Observable<any> {
+    return this.http.post(this.appConfig.webServiceApi('/user/admin'), userInfo);
+  }
+
+  edit(userInfo: any, id: string): Observable<any> {
+    return this.http.put(this.appConfig.webServiceApi(`/user/admin/${id}`), userInfo);
+  }
+
+  delete(id: string): Observable<any> {
+    return this.http.delete(this.appConfig.webServiceApi(`/user/admin/${id}`));
+  }
 }

@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, HostListener, Inject, OnInit} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../../services/error/error.service';
@@ -168,5 +168,10 @@ export class MenuEditingDialogComponent implements OnInit {
     let win = window.open('');
     win.document.write(image.outerHTML);
 
+  }
+
+  @HostListener('window:keyup.esc')
+  onKeyUp(): void {
+    this.cancel();
   }
 }

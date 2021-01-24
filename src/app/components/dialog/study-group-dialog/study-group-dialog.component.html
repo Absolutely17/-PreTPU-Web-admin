@@ -42,6 +42,13 @@
               (click)="cancel()">Отменить
       </button>
       <button type="button" flex mat-raised-button
+              color="warn"
+              class="push-left-xs"
+              [disabled]="form.invalid"
+              #acceptBtn
+              (click)="delete()">Удалить
+      </button>
+      <button type="button" flex mat-raised-button
               color="primary"
               class="push-left-xs"
               [disabled]="form.invalid"

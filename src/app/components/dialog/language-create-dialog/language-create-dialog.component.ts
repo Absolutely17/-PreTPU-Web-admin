@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../../services/error/error.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -59,6 +59,11 @@ export class LanguageCreateDialogComponent implements OnInit {
     }, error => {
       this.errorService.handleServiceError(error);
     }).add(() => this.dialogRef.close());
+  }
+
+  @HostListener('window:keyup.esc')
+  onKeyUp(): void {
+    this.cancel();
   }
 
 }

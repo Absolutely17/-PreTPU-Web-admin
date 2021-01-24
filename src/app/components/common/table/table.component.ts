@@ -201,6 +201,7 @@ export abstract class TableComponent implements OnInit {
 
   enableSelectUsers(): void {
     this.selectable = !this.selectable;
+    this.selectedRows = [];
   }
 
   /**

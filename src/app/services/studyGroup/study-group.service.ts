@@ -29,4 +29,8 @@ export class StudyGroupService {
     return this.http.get<any>(this.appConfig.webServiceApi(`/studyGroup/${id}`));
   }
 
+  delete(id: string): Observable<any> {
+    return this.http.delete<any>(this.appConfig.webServiceApi(`/studyGroup/admin/${id}`));
+  }
+
 }

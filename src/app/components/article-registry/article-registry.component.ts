@@ -49,7 +49,7 @@ export class ArticleRegistryComponent extends TableComponent {
 
   iconColumn = true;
 
-  iconImg = 'subdirectory_arrow_right';
+  iconImg = 'edit';
 
   iconAction = this.editIconAction;
 
@@ -100,7 +100,11 @@ export class ArticleRegistryComponent extends TableComponent {
       articleId: id,
       mode: DialogMode.EDIT,
       dicts: this.dicts
-    }, '1000px').afterClosed().subscribe(() => this.refreshTable());
+    }, '1000px').afterClosed().subscribe(it => {
+      if (it) {
+        this.refreshTable()
+      }
+    });
   }
 
 

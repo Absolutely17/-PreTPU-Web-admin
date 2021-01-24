@@ -32,7 +32,7 @@ export class StudyGroupRegistryComponent extends TableComponent {
 
   iconColumn = true;
 
-  iconImg = 'subdirectory_arrow_right';
+  iconImg = 'edit';
 
   iconAction = this.editIconAction;
 

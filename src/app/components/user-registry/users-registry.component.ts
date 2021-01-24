@@ -4,12 +4,17 @@ import {UserService} from '../../services/user/user.service';
 import {DialogService} from '../../services/dialog/dialog.service';
 import {ComponentType} from '@angular/cdk/overlay';
 import {UploadDocumentDialogComponent} from '../dialog/upload-document-dialog/upload-document-dialog.component';
-import {SendNotificationDialogComponent, SendNotificationMode} from '../dialog/send-notification-dialog/send-notification-dialog.component';
+import {
+  SendNotificationDialogComponent,
+  SendNotificationMode
+} from '../dialog/send-notification-dialog/send-notification-dialog.component';
 import {TdLoadingService} from '@covalent/core/loading';
 import {ISbDataTableColumn} from '../common/sb-data-table/data-table.component';
 import {AdditionalMenuItem, TableActionConfig, TableActionType, TableComponent} from '../common/table/table.component';
 import {Observable} from 'rxjs';
 import {CalendarCreateEventDialogComponent} from '../dialog/calendar-create-event-dialog/calendar-create-event-dialog.component';
+import {DialogMode} from "../dialog/dialog-mode";
+import {UserDialogComponent} from "../dialog/user-dialog/user-dialog.component";
 
 @Component({
   selector: 'app-users-registry',
@@ -23,6 +28,8 @@ export class UsersRegistryComponent extends TableComponent {
 
   calendarEventCreateDialog: ComponentType<CalendarCreateEventDialogComponent> = CalendarCreateEventDialogComponent;
 
+  userDialog: ComponentType<UserDialogComponent> = UserDialogComponent;
+
   columns: ISbDataTableColumn[] = [
     {name: 'firstName', label: 'Имя', sortable: true, filter: true, width: 200},
     {name: 'lastName', label: 'Фамилия', sortable: true, filter: true, width: 200},
@@ -31,7 +38,7 @@ export class UsersRegistryComponent extends TableComponent {
     {name: 'groupName', label: 'Номер группы', sortable: true, filter: true, width: 200},
     {
       name: 'languageId', label: 'Язык', sortable: true, filter: true, format: value => {
-        if (this.dicts && this.dicts.languages) {
+        if(this.dicts && this.dicts.languages) {
           return this.dicts.languages.find(it => it.id === value).name;
         } else {
           return value;
@@ -47,13 +54,23 @@ export class UsersRegistryComponent extends TableComponent {
   ];
 
   additionalMenuItems: AdditionalMenuItem[] = [
-    {name: 'uploadDocument', func: this.uploadDocument.bind(this), icon: 'insert_drive_file', tooltip: 'Прикрепить документ пользователю'}
+    {
+      name: 'uploadDocument',
+      func: this.uploadDocument.bind(this),
+      icon: 'insert_drive_file',
+      tooltip: 'Прикрепить документ пользователю'
+    }
   ];
 
-  menuItemList = [{
-    id: TableActionType.SendOnUsersNotification,
-    name: 'Выборочное уведомление'
-  },
+  menuItemList = [
+    {
+      id: TableActionType.AddRow,
+      name: 'Создать пользователя'
+    },
+    {
+      id: TableActionType.SendOnUsersNotification,
+      name: 'Выборочное уведомление'
+    },
     {
       id: TableActionType.SendOnGroupNotification,
       name: 'Групповое уведомление'
@@ -76,6 +93,12 @@ export class UsersRegistryComponent extends TableComponent {
 
   sortBy = 'firstName';
 
+  iconColumn = true;
+
+  iconImg = 'edit';
+
+  iconAction = this.editIconAction;
+
   tableName = 'Реестр пользователей';
 
   constructor(
@@ -90,10 +113,6 @@ export class UsersRegistryComponent extends TableComponent {
 
   uploadDocument(row: any): void {
     this.dialogService.show(this.uploadDocumentDialog, row);
-  }
-
-  enableSelectUsers(): void {
-    this.selectable = !this.selectable;
   }
 
   sendUsersNotification(): void {
@@ -126,8 +145,11 @@ export class UsersRegistryComponent extends TableComponent {
   }
 
   menuItemClick(event: MouseEvent, menuItem: TableActionConfig): void {
-    if (menuItem) {
-      switch (menuItem.id) {
+    if(menuItem) {
+      switch(menuItem.id) {
+        case TableActionType.AddRow:
+          this.createUser();
+          break;
         case TableActionType.SendOnUsersNotification:
           this.sendUsersNotification();
           break;
@@ -139,6 +161,33 @@ export class UsersRegistryComponent extends TableComponent {
           break;
       }
     }
+  }
+
+  editIconAction(row: any, _this: UsersRegistryComponent): void {
+    _this.edit(row);
+  }
+
+  createUser() {
+    this.dialogService.show(this.userDialog, {
+      mode: DialogMode.CREATE,
+      dict: this.dicts
+    }, '1000px').afterClosed().subscribe(it => {
+      if(it) {
+        this.refreshTable();
+      }
+    })
+  }
+
+  edit(user: any) {
+    this.dialogService.show(this.userDialog, {
+      currentUser: user,
+      mode: DialogMode.EDIT,
+      dict: this.dicts
+    }, '1000px').afterClosed().subscribe(it => {
+      if(it) {
+        this.refreshTable();
+      }
+    });
   }
 
 }

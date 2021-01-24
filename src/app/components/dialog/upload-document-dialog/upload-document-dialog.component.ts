@@ -1,5 +1,5 @@
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, HostListener, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DocumentService} from '../../../services/document/document.service';
 import {Document} from '../../../models/document/document';
@@ -76,6 +76,11 @@ export class UploadDocumentDialogComponent implements OnInit{
 
   selectFile(file: File): void {
     this.form.get('fileName').setValue(file.name);
+  }
+
+  @HostListener('window:keyup.esc')
+  onKeyUp(): void {
+    this.cancel();
   }
 
 }

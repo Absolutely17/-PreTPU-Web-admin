@@ -1,20 +1,20 @@
- <td-dialog>
-    <td-dialog-title>Прикрепление документа пользователю</td-dialog-title>
-    <td-dialog-content>
-      <div flex="grow" class="simple-fields">
-        <div *ngIf="form">
-          <form [formGroup]="form">
-            <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
-              <mat-form-field class="fullwidth push-bottom-sm">
-                <mat-label>Название документа</mat-label>
-                <input matInput tdAutoTrim autocomplete="off"
-                       type="text"
-                       formControlName="documentName"
-                       [maxlength]="500"/>
-                <span class="error-label" *ngIf="isInvalid('documentName')" matTooltip="{{getError('documentName')}}">
+<td-dialog>
+  <td-dialog-title>Сохранение документа пользователю</td-dialog-title>
+  <td-dialog-content>
+    <div flex="grow" class="simple-fields">
+      <div *ngIf="form">
+        <form [formGroup]="form">
+          <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
+            <mat-form-field class="fullwidth push-bottom-sm">
+              <mat-label>Название документа</mat-label>
+              <input matInput tdAutoTrim autocomplete="off"
+                     type="text"
+                     formControlName="documentName"
+                     [maxlength]="500"/>
+              <span class="error-label" *ngIf="isInvalid('documentName')" matTooltip="{{getError('documentName')}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>
-              </mat-form-field>
+            </mat-form-field>
 
               <mat-form-field class="fullwidth push-bottom-sm">
                 <mat-label>Название файла</mat-label>
@@ -32,24 +32,24 @@
                   <mat-icon>attach_file</mat-icon>
                 </td-file-input>
             </div>
-          </form>
-        </div>
+        </form>
       </div>
-    </td-dialog-content>
-    <td-dialog-actions>
-      <button type="button" flex mat-button
-              color="primary"
-              class="push-right-xs"
-              #closeBtn
-              (click)="cancel()">Отменить
-      </button>
-      <button type="button" flex mat-raised-button
-              color="primary"
-              class="push-left-xs"
-              [disabled]="form.invalid"
-              #acceptBtn
-              (click)="accept()">Сохранить
-      </button>
-    </td-dialog-actions>
-  </td-dialog>
+    </div>
+  </td-dialog-content>
+  <td-dialog-actions>
+    <button type="button" flex mat-button
+            color="primary"
+            class="push-right-xs"
+            #closeBtn
+            (click)="cancel()">Отменить
+    </button>
+    <button type="button" flex mat-raised-button
+            color="primary"
+            class="push-left-xs"
+            [disabled]="form.invalid"
+            #acceptBtn
+            (click)="accept()">Сохранить
+    </button>
+  </td-dialog-actions>
+</td-dialog>
 

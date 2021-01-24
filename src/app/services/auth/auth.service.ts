@@ -4,6 +4,7 @@ import {Injectable} from '@angular/core';
 import {Auth} from '../../models/auth/auth';
 import {LoginInfo} from '../../models/auth/login-info';
 import {Observable} from 'rxjs';
+import {ResetPassword} from "../../models/auth/reset-password";
 
 @Injectable()
 export class AuthService {
@@ -19,5 +20,9 @@ export class AuthService {
    */
   login(loginInfo: LoginInfo): Observable<Auth> {
     return this.http.post<Auth>(this.appConfig.webServiceApi('/auth/admin/login'), loginInfo);
+  }
+
+  resetPassword(resetValue: ResetPassword): Observable<any> {
+    return this.http.post<any>(this.appConfig.webServiceApi('/auth/password/reset'), resetValue);
   }
 }

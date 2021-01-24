@@ -1,0 +1,157 @@
+<div class="loader-container"
+     *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
+  <td-dialog>
+    <td-dialog-title>{{currentMode == mode.EDIT ? 'Редактирование' : 'Создание'}} пользователя
+    </td-dialog-title>
+    <td-dialog-content>
+      <div flex="grow" class="simple-fields">
+        <div *ngIf="form">
+          <form [formGroup]="form">
+            <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
+
+              <mat-grid-list cols="3" rowHeight="70" gutterSize="10">
+
+                <mat-grid-tile colspan="1">
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <mat-label>Имя</mat-label>
+                    <input matInput tdAutoTrim autocomplete="off"
+                           type="text"
+                           formControlName="firstName"
+                           [maxlength]="500"/>
+                    <span class="error-label" *ngIf="isInvalid('firstName')" matTooltip="{{getError('firstName')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+                  </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile colspan="1">
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <mat-label>Фамилия</mat-label>
+                    <input  matInput tdAutoTrim autocomplete="off"
+                            type="text"
+                            formControlName="lastName"
+                            [maxlength]="500"/>
+                    <span class="error-label" *ngIf="isInvalid('lastName')" matTooltip="{{getError('lastName')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+                  </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile colspan="1">
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <mat-label>Отчество</mat-label>
+                    <input matInput tdAutoTrim autocomplete="off"
+                           type="text"
+                           formControlName="middleName"
+                           [maxlength]="500"/>
+                    <span class="error-label" *ngIf="isInvalid('middleName')" matTooltip="{{getError('middleName')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+                  </mat-form-field>
+                </mat-grid-tile>
+
+
+                <mat-grid-tile colspan="1">
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <mat-label>Электронная почта</mat-label>
+                    <input  matInput tdAutoTrim autocomplete="off"
+                            type="text"
+                            formControlName="email"
+                            [maxlength]="500"/>
+                    <span class="error-label" *ngIf="isInvalid('email')" matTooltip="{{getError('email')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+                  </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile *ngIf="currentMode === mode.CREATE" colspan="1">
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <mat-label>Пароль</mat-label>
+                    <input  matInput tdAutoTrim autocomplete="off"
+                            type="text"
+                            formControlName="password"
+                            [maxlength]="500"/>
+                    <span class="error-label" *ngIf="isInvalid('password')" matTooltip="{{getError('password')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+                  </mat-form-field>
+                </mat-grid-tile>
+
+
+                <mat-grid-tile colspan="1">
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <mat-label>Пол</mat-label>
+                    <mat-select formControlName="gender">
+                      <mat-option *ngFor="let gender of genders" [value]="gender.id">
+                        {{gender.name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile colspan="1">
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <mat-label>Учебная группа</mat-label>
+                    <mat-select formControlName="group">
+                      <mat-option *ngFor="let group of dict.groups" [value]="group.id">
+                        {{group.name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile colspan="1">
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <mat-label>Язык</mat-label>
+                    <mat-select formControlName="languageId">
+                      <mat-option *ngFor="let lang of dict.languages" [value]="lang.id">
+                        {{lang.name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </mat-grid-tile>
+
+                <mat-grid-tile colspan="1">
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <mat-label>Номер сотового телефона</mat-label>
+                    <input  matInput tdAutoTrim autocomplete="off"
+                            type="text"
+                            formControlName="phoneNumber"
+                            [maxlength]="500"/>
+                    <span class="error-label" *ngIf="isInvalid('phoneNumber')" matTooltip="{{getError('phoneNumber')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+                  </mat-form-field>
+                </mat-grid-tile>
+
+              </mat-grid-list>
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </td-dialog-content>
+    <td-dialog-actions>
+      <button type="button" flex mat-button
+              color="primary"
+              class="push-right-xs"
+              #closeBtn
+              (click)="cancel()">Отменить
+      </button>
+      <button *ngIf="currentMode === mode.EDIT" type="button" flex mat-raised-button
+              color="warn"
+              class="push-left-xs"
+              [disabled]="form.invalid"
+              #acceptBtn
+              (click)="delete()">Удалить
+      </button>
+      <button type="button" flex mat-raised-button
+              color="primary"
+              class="push-left-xs"
+              [disabled]="form.invalid"
+              #acceptBtn
+              (click)="accept()">Сохранить
+      </button>
+    </td-dialog-actions>
+  </td-dialog>
+</div>

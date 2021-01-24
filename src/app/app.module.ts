@@ -51,6 +51,8 @@ import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
 import {StudyGroupService} from "./services/studyGroup/study-group.service";
 import {StudyGroupRegistryComponent} from "./components/study-group-registry/study-group-registry.component";
 import {StudyGroupDialogComponent} from "./components/dialog/study-group-dialog/study-group-dialog.component";
+import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
+import {UserDialogComponent} from "./components/dialog/user-dialog/user-dialog.component";
 
 export const commonServices = [
   AppConfig,
@@ -104,7 +106,9 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
     LanguageCreateDialogComponent,
     CalendarCreateEventDialogComponent,
     StudyGroupRegistryComponent,
-    StudyGroupDialogComponent
+    StudyGroupDialogComponent,
+    ResetPasswordComponent,
+    UserDialogComponent
   ],
   imports: [
     HttpClientModule,
