@@ -53,7 +53,7 @@
             </form>
           </div>
         </mat-step>
-        <mat-step class="mat-step-large-height" label="Текст статьи">
+        <mat-step label="Текст статьи">
           <ckeditor [formControl]="textControl" (ready)="onReady($event)" [config]="ckConfig"
                     [editor]="Editor" data="<p>Hello, world!</p>"></ckeditor>
         </mat-step>
@@ -66,18 +66,31 @@
               #closeBtn
               (click)="cancel()">Отменить
       </button>
+      <button *ngIf="stepper.selectedIndex === 1" type="button" flex mat-button
+              color="primary"
+              class="push-right-xs"
+              #prevBtn
+              (click)="prevStep(stepper)">Назад
+      </button>
       <button *ngIf="currentArticleId" type="button" flex mat-raised-button
               color="warn"
               class="push-left-xs"
               #acceptBtn
               (click)="delete()">Удалить
       </button>
-      <button type="button" flex mat-raised-button
+      <button *ngIf="stepper.selectedIndex === 1" type="button" flex mat-raised-button
               color="primary"
               class="push-left-xs"
               [disabled]="generalInfoForm.invalid || textControl.invalid"
               #acceptBtn
-              (click)="accept()">Создать
+              (click)="accept()">{{currentMode === mode.EDIT ? 'Сохранить' : 'Создать'}}
+      </button>
+      <button *ngIf="stepper.selectedIndex !== 1" type="button" flex mat-raised-button
+              color="primary"
+              class="push-left-xs"
+              [disabled]="generalInfoForm.invalid"
+              #acceptBtn
+              (click)="nextStep(stepper)">Далее
       </button>
     </td-dialog-actions>
   </td-dialog>

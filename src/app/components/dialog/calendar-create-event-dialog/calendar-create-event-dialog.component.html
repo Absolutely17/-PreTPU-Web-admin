@@ -1,88 +1,108 @@
 <div class="loader-container"
      *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
-  <td-dialog>
+  <td-dialog class="large-height">
     <td-dialog-title>Создание события</td-dialog-title>
     <td-dialog-content>
-      <div flex="grow" class="simple-fields">
-        <div *ngIf="form && this.groups">
-          <form [formGroup]="form">
-            <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
+      <mat-horizontal-stepper #stepper>
+        <mat-step label="Данные события">
+          <div flex="grow" class="simple-fields">
+            <div *ngIf="generalInfoForm && this.groups">
+              <form [formGroup]="generalInfoForm">
+                <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
 
-              <mat-form-field class="fullwidth push-bottom-sm">
-                <mat-label>Название события</mat-label>
-                <input matInput tdAutoTrim autocomplete="off"
-                       type="text"
-                       formControlName="name"
-                       [maxlength]="500"/>
-                <span class="error-label" *ngIf="isInvalid('name')" matTooltip="{{getError('name')}}">
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <mat-label>Название события</mat-label>
+                    <input matInput tdAutoTrim autocomplete="off"
+                           type="text"
+                           formControlName="name"
+                           [maxlength]="500"/>
+                    <span class="error-label" *ngIf="isInvalid('name')" matTooltip="{{getError('name')}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>
-              </mat-form-field>
+                  </mat-form-field>
 
-              <mat-form-field class="fullwidth push-bottom-sm">
-                <mat-label>Описание</mat-label>
-                <input matInput tdAutoTrim autocomplete="off"
-                       type="text"
-                       formControlName="description"
-                       [maxlength]="500"/>
-                <span class="error-label" *ngIf="isInvalid('description')" matTooltip="{{getError('description')}}">
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <mat-label>Описание</mat-label>
+                    <input matInput tdAutoTrim autocomplete="off"
+                           type="text"
+                           formControlName="description"
+                           [maxlength]="500"/>
+                    <span class="error-label" *ngIf="isInvalid('description')" matTooltip="{{getError('description')}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>
-              </mat-form-field>
+                  </mat-form-field>
 
-              <mat-form-field class="fullwidth push-bottom-sm">
-                <input autocomplete="off" matInput [ngxMatDatetimePicker]="picker" placeholder="Дата"
-                       formControlName="date">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker #picker [showSeconds]="false">
-                </ngx-mat-datetime-picker>
-                <span class="error-label" *ngIf="isInvalid('date')" matTooltip="{{getError('date')}}">
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <input autocomplete="off" matInput [ngxMatDatetimePicker]="picker" placeholder="Дата"
+                           formControlName="date">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker #picker [showSeconds]="false">
+                    </ngx-mat-datetime-picker>
+                    <span class="error-label" *ngIf="isInvalid('date')" matTooltip="{{getError('date')}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>
-              </mat-form-field>
+                  </mat-form-field>
 
-              <mat-form-field class="fullwidth push-bottom-sm">
-                <mat-label>Получатели</mat-label>
-                <mat-select formControlName="groupTarget">
-                  <mat-option *ngFor="let groupTarget of groupTargets" [value]="groupTarget.id">
-                    {{groupTarget.value}}
-                  </mat-option>
-                </mat-select>
-                <span class="error-label" *ngIf="isInvalid('groupTarget')" matTooltip="{{getError('groupTarget')}}">
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <mat-label>Ссылка на онлайн-мероприятие</mat-label>
+                    <input matInput tdAutoTrim autocomplete="off"
+                           type="text"
+                           formControlName="onlineMeetingLink"
+                           [maxlength]="1000"/>
+                    <span class="error-label" *ngIf="isInvalid('onlineMeetingLink')" matTooltip="{{getError('onlineMeetingLink')}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>
-              </mat-form-field>
+                  </mat-form-field>
+
+                  <mat-form-field class="fullwidth push-bottom-sm">
+                    <mat-label>Получатели</mat-label>
+                    <mat-select formControlName="groupTarget">
+                      <mat-option *ngFor="let groupTarget of groupTargets" [value]="groupTarget.id">
+                        {{groupTarget.value}}
+                      </mat-option>
+                    </mat-select>
+                    <span class="error-label" *ngIf="isInvalid('groupTarget')" matTooltip="{{getError('groupTarget')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+                  </mat-form-field>
 
 
-              <span *ngIf="get('groupTarget').value === 'SELECTED_USERS'" class="pad-bottom-sm">Выбрано: {{selectedUsers.length}}
-                пользователей
+                  <span *ngIf="get('groupTarget').value === 'SELECTED_USERS'"
+                        class="pad-bottom-sm">Выбрано: {{selectedUsers.length}}
+                    пользователей
                 <mat-icon style="font-size: 14px; position: relative; top: 2px;" *ngIf="selectedUsers.length === 0"
                           color="warn" matTooltip="Необходимо выбрать пользователей">
                   warning
                 </mat-icon>
               </span>
 
-              <ng-container *ngIf="get('groupTarget').value === 'STUDY_GROUP' && groups"
-                            class="fullwidth push-bottom-sm">
-                <autocomplete-select
-                  [title]="'Группа'"
-                  [options]="groups"
-                  [multiple]="true"
-                  [value]="'id'"
-                  [display]="'name'"
-                >
-                </autocomplete-select>
-              </ng-container>
+                  <ng-container *ngIf="get('groupTarget').value === 'STUDY_GROUP' && groups"
+                                class="fullwidth push-bottom-sm">
+                    <autocomplete-select
+                      [title]="'Группа'"
+                      [options]="groups"
+                      [multiple]="true"
+                      [value]="'id'"
+                      [display]="'name'"
+                    >
+                    </autocomplete-select>
+                  </ng-container>
 
-              <mat-checkbox formControlName="sendNotification">
-                Отправить уведомление о назначении события
-              </mat-checkbox>
+                  <mat-checkbox formControlName="sendNotification">
+                    Отправить уведомление о назначении события
+                  </mat-checkbox>
 
 
+                </div>
+              </form>
             </div>
-          </form>
-        </div>
-      </div>
+          </div>
+        </mat-step>
+        <mat-step label="Подробное описание">
+          <ckeditor [formControl]="detailedMessageControl" (ready)="onReady($event)"
+                    [editor]="Editor" data="<p>Hello, world!</p>"></ckeditor>
+        </mat-step>
+      </mat-horizontal-stepper>
     </td-dialog-content>
     <td-dialog-actions>
       <button type="button" flex mat-button
@@ -91,13 +111,26 @@
               #closeBtn
               (click)="cancel()">Отменить
       </button>
-      <button type="button" flex mat-raised-button
+      <button *ngIf="stepper.selectedIndex === 1" type="button" flex mat-button
+              color="primary"
+              class="push-right-xs"
+              #prevBtn
+              (click)="prevStep(stepper)">Назад
+      </button>
+      <button *ngIf="stepper.selectedIndex === 1" type="button" flex mat-raised-button
               color="primary"
               class="push-left-xs"
-              [disabled]="form.invalid || acceptDisabled()"
+              [disabled]="generalInfoForm.invalid || acceptDisabled()"
               #acceptBtn
               (click)="accept()">Создать
       </button>
+        <button *ngIf="stepper.selectedIndex !== 1" type="button" flex mat-raised-button
+                color="primary"
+                class="push-left-xs"
+                [disabled]="generalInfoForm.invalid || acceptDisabled()"
+                #nextBtn
+                (click)="nextStep(stepper)">Далее
+        </button>
     </td-dialog-actions>
   </td-dialog>
 </div>

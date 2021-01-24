@@ -132,8 +132,9 @@ export class UsersRegistryComponent extends TableComponent {
   createCalendarEvent(): void {
     this.dialogService.show(this.calendarEventCreateDialog, {
       selectedUsers: this.selectedRows,
-      dicts: this.dicts
-    });
+      dicts: this.dicts,
+
+    }, '', '', true);
   }
 
   getTableData(): Observable<any> {

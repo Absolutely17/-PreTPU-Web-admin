@@ -6,6 +6,12 @@ import {TdLoadingService} from '@covalent/core/loading';
 import {AutocompleteSelectComponent} from '../../common/autocomplete-select/autocomplete-select.component';
 import {ErrorService} from '../../../services/error/error.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {CkEditorImageUploadComponent} from "../../common/ckeditor/ckeditor-image-upload.component";
+import {ImageService} from "../../../services/image/image.service";
+import {AppConfig} from "../../../app.config";
+import * as ClassicEditor from 'ckeditor-custom/packages/ckeditor5-build-classic';
+import {transformResultTextToHtml} from "../../common/ckeditor/utils-function";
+import {MatStepper} from "@angular/material/stepper";
 
 @Component({
   selector: 'calendar-create-event-dialog',
@@ -21,7 +27,11 @@ export class CalendarCreateEventDialogComponent implements OnInit {
     {id: 'ALL', value: 'Все'}
   ];
 
-  form: FormGroup;
+  generalInfoForm: FormGroup;
+
+  detailedMessageControl: FormControl;
+
+  public Editor = ClassicEditor;
 
   loaderName = 'calendarEventLoader';
 
@@ -37,6 +47,8 @@ export class CalendarCreateEventDialogComponent implements OnInit {
     private loadingService: TdLoadingService,
     private errorService: ErrorService,
     private snackbar: MatSnackBar,
+    private imageService: ImageService,
+    private appConfig: AppConfig,
     @Inject(MAT_DIALOG_DATA) data: any
   ) {
     if (data && data.selectedUsers) {
@@ -46,18 +58,26 @@ export class CalendarCreateEventDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadingService.register(this.loaderName);
-    this.form = new FormGroup({}, null, null);
-    this.form.addControl('name', new FormControl('', Validators.required));
-    this.form.addControl('description', new FormControl('', null));
-    this.form.addControl('date', new FormControl('', Validators.required));
-    this.form.addControl('groupTarget', new FormControl(null, Validators.required));
-    this.form.addControl('sendNotification', new FormControl(false, null));
+    this.generalInfoForm = new FormGroup({}, null, null);
+    this.generalInfoForm.addControl('name', new FormControl('', Validators.required));
+    this.generalInfoForm.addControl('description', new FormControl('', null));
+    this.generalInfoForm.addControl('date', new FormControl('', Validators.required));
+    this.generalInfoForm.addControl('groupTarget', new FormControl(null, Validators.required));
+    this.generalInfoForm.addControl('sendNotification', new FormControl(false, null));
+    this.generalInfoForm.addControl("onlineMeetingLink", new FormControl(null, null));
     this.userService.getGroups().subscribe(it => {
       if (it) {
         this.groups = it;
         this.loadingService.resolve(this.loaderName);
       }
     });
+    this.detailedMessageControl = new FormControl(null, null);
+  }
+
+  onReady(editor: any) {
+    editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+      return new CkEditorImageUploadComponent(loader, this.imageService, this.appConfig);
+    }
   }
 
   cancel() {
@@ -65,7 +85,7 @@ export class CalendarCreateEventDialogComponent implements OnInit {
   }
 
   get(name: string) {
-    return this.form.get(name);
+    return this.generalInfoForm.get(name);
   }
 
   acceptDisabled(): boolean {
@@ -82,14 +102,17 @@ export class CalendarCreateEventDialogComponent implements OnInit {
     const description = this.get('description').value ? this.get('description').value : null;
     const group = this.groupSelect && this.groupSelect.control.value ? this.groupSelect.control.value : [];
     const selectedUsersVal = this.get('groupTarget').value === 'SELECTED_USERS' ? this.selectedUsers.map(it => it.id) : [];
+    const resultDetailedMessageText = transformResultTextToHtml(this.detailedMessageControl.value);
     const createEventRequest = {
       title: this.get('name').value,
       description: description,
       groupTarget: this.get('groupTarget').value,
       date: this.get('date').value.unix(),
       groups: group,
+      onlineMeetingLink: this.get('onlineMeetingLink').value,
       selectedUsers: selectedUsersVal,
-      sendNotification: this.get('sendNotification').value
+      sendNotification: this.get('sendNotification').value,
+      detailedMessage: resultDetailedMessageText
     };
     this.userService.createCalendarEvent(createEventRequest).subscribe(() => {
         this.snackbar.open('Событие создано', 'Закрыть', {duration: 3000});
@@ -107,12 +130,20 @@ export class CalendarCreateEventDialogComponent implements OnInit {
   }
 
   getError(name: string) {
-    const error = this.form.get(name).errors;
+    const error = this.generalInfoForm.get(name).errors;
     if (error) {
       if (error.required) {
         return 'Обязательно для заполнения';
       }
     }
+  }
+
+  nextStep(stepper: MatStepper) {
+    stepper.next();
+  }
+
+  prevStep(stepper: MatStepper) {
+    stepper.previous();
   }
 
   @HostListener('window:keyup.esc')

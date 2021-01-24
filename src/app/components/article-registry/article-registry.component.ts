@@ -10,7 +10,7 @@ import {DialogMode} from '../dialog/dialog-mode';
 import {ArticleService} from '../../services/article/article.service';
 import {TableActionConfig, TableActionType, TableComponent} from '../common/table/table.component';
 import {Observable} from 'rxjs';
-import {MatDialog} from "@angular/material/dialog";
+import {DialogService} from "../../services/dialog/dialog.service";
 
 @Component({
   selector: 'app-article-registry',
@@ -60,7 +60,7 @@ export class ArticleRegistryComponent extends TableComponent {
     private sanitizer: DomSanitizer,
     private fb: FormBuilder,
     protected loadingService: TdLoadingService,
-    private dialog: MatDialog,
+    private dialogService: DialogService,
     private articleService: ArticleService
   ) {
     super(dataTableService, loadingService);
@@ -104,11 +104,8 @@ export class ArticleRegistryComponent extends TableComponent {
   }
 
   openArticleDialog(data: any) {
-    this.dialog.open(this.articleDialog, {
-      data,
-      disableClose: true,
-      panelClass: 'full-width-dialog'
-    }).afterClosed().subscribe(it => {
+    this.dialogService.show(this.articleDialog, data,
+      '', '', true).afterClosed().subscribe(it => {
       if (it) {
         this.refreshTable();
       }

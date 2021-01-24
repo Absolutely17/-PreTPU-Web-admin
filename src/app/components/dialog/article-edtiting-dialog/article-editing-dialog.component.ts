@@ -9,10 +9,10 @@ import {DialogMode} from '../dialog-mode';
 import {Article} from '../../../models/article/article';
 import {AppConfig} from '../../../app.config';
 import * as ClassicEditor from 'ckeditor-custom/packages/ckeditor5-build-classic';
-import {bottomTags, styles, topTags} from '../../common/ckeditor/ckeditor-constants';
-import * as juice from 'juice';
 import {CkEditorImageUploadComponent} from '../../common/ckeditor/ckeditor-image-upload.component';
 import {TdLoadingService} from '@covalent/core/loading';
+import {transformResultTextToHtml} from "../../common/ckeditor/utils-function";
+import {MatStepper} from "@angular/material/stepper";
 
 export interface ArticleEditingDialogData {
   articleId: string;
@@ -103,7 +103,7 @@ export class ArticleEditingDialogComponent implements OnInit {
   }
 
   accept(): void {
-    const htmlText = this.addMetaInfoToText();
+    const htmlText = transformResultTextToHtml(this.textControl.value);
     const articleInfo: Article = {
       name: this.get('name').value,
       topic: this.get('topic').value,
@@ -124,18 +124,6 @@ export class ArticleEditingDialogComponent implements OnInit {
 
   }
 
-  // Добавляем необходимые теги на HTML документа для его правильного отображения
-  addMetaInfoToText(): string {
-    let htmlText = juice.inlineContent(this.textControl.value, styles);
-    var rgbHex = /#([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])/gi
-    htmlText.replace(rgbHex, function (m, r, g, b) {
-      return 'rgb(' + parseInt(r, 16) + ','
-        + parseInt(g, 16) + ','
-        + parseInt(b, 16) + ')';
-    })
-    return htmlText.startsWith('<!DOCTYPE HTML>') ? htmlText : (topTags + htmlText + bottomTags);
-  }
-
   onReady(editor: any) {
     editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
       return new CkEditorImageUploadComponent(loader, this.imageService, this.appConfig);
@@ -147,6 +135,14 @@ export class ArticleEditingDialogComponent implements OnInit {
       this.snackBar.open('Статья удалена', 'Закрыть', {duration: 3000});
       this.dialogRef.close(true);
     }, error => this.errorService.handleServiceError(error))
+  }
+
+  nextStep(stepper: MatStepper) {
+    stepper.next();
+  }
+
+  prevStep(stepper: MatStepper) {
+    stepper.previous();
   }
 
   @HostListener('window:keyup.esc')

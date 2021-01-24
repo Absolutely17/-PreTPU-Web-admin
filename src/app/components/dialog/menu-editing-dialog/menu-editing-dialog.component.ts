@@ -117,7 +117,7 @@ export class MenuEditingDialogComponent implements OnInit {
     this.dialogService.show(this.articleDialog, {
       mode: DialogMode.CREATE,
       dicts: this.dicts
-    }, '1000px').afterClosed().subscribe((it) => {
+    }, '', '', true).afterClosed().subscribe((it) => {
       if (it) {
         this.selectedArticles.push(it);
       }
