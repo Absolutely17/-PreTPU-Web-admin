@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, HostListener, Inject, OnInit} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../../services/error/error.service';
@@ -9,8 +9,7 @@ import {DialogMode} from '../dialog-mode';
 import {Article} from '../../../models/article/article';
 import {AppConfig} from '../../../app.config';
 import * as ClassicEditor from 'ckeditor-custom/packages/ckeditor5-build-classic';
-import {ChangeEvent} from '@ckeditor/ckeditor5-angular';
-import {styles} from '../../common/ckeditor/ckeditor-constants';
+import {bottomTags, styles, topTags} from '../../common/ckeditor/ckeditor-constants';
 import * as juice from 'juice';
 import {CkEditorImageUploadComponent} from '../../common/ckeditor/ckeditor-image-upload.component';
 import {TdLoadingService} from '@covalent/core/loading';
@@ -27,9 +26,9 @@ export interface ArticleEditingDialogData {
 })
 export class ArticleEditingDialogComponent implements OnInit {
 
-  form: FormGroup;
+  generalInfoForm: FormGroup;
 
-  quillEditor: any;
+  textControl: FormControl;
 
   currentMode: DialogMode;
 
@@ -39,22 +38,11 @@ export class ArticleEditingDialogComponent implements OnInit {
 
   currentArticleId: string;
 
-  topTags = '<!DOCTYPE HTML>\n' +
-    '<html>\n' +
-    '<head>\n' +
-    '  <meta charset=\\"utf-8\\">\n' +
-    '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
-    '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
-    '<body>';
-
-  bottomTags = '</body></html>';
-
   loaderName = 'loader';
 
   public Editor = ClassicEditor;
 
-  ckConfig = {
-  };
+  ckConfig = {};
 
   constructor(
     private dialogRef: MatDialogRef<ArticleEditingDialogComponent>,
@@ -70,10 +58,11 @@ export class ArticleEditingDialogComponent implements OnInit {
     this.currentMode = data.mode;
     this.dicts = data.dicts;
     this.currentArticleId = data.articleId;
-    if (data.articleId) {
+    if(data.articleId) {
       this.articleService.getArticleById(data.articleId).subscribe(it => {
-        if (it) {
-          this.form.patchValue(it);
+        if(it) {
+          this.generalInfoForm.patchValue(it);
+          this.textControl.patchValue(it.text)
           this.loadingService.resolve(this.loaderName);
         }
       });
@@ -83,12 +72,12 @@ export class ArticleEditingDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form = new FormGroup({}, null, null);
-    this.form.addControl('name', new FormControl('', Validators.required));
-    this.form.addControl('topic', new FormControl('', Validators.required));
-    this.form.addControl('briefText', new FormControl('', null));
-    this.form.addControl('text', new FormControl('', null));
-    this.form.addControl('language', new FormControl('', Validators.required));
+    this.generalInfoForm = new FormGroup({}, null, null);
+    this.generalInfoForm.addControl('name', new FormControl('', Validators.required));
+    this.generalInfoForm.addControl('topic', new FormControl('', Validators.required));
+    this.generalInfoForm.addControl('briefText', new FormControl('', null));
+    this.generalInfoForm.addControl('language', new FormControl('', Validators.required));
+    this.textControl= new FormControl(null, Validators.required);
   }
 
   isInvalid(name: string): boolean {
@@ -97,42 +86,16 @@ export class ArticleEditingDialogComponent implements OnInit {
   }
 
   get(name: string): AbstractControl {
-    return this.form.get(name);
+    return this.generalInfoForm.get(name);
   }
 
   getError(name: string): string {
-    const error = this.form.get(name).errors;
-    if (error) {
-      if (error.required) {
+    const error = this.generalInfoForm.get(name).errors;
+    if(error) {
+      if(error.required) {
         return 'Обязательно для заполнения';
       }
     }
-  }
-
-  // Загружаем сначала изображение на сервер
-  uploadImage(): void {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.click();
-    input.onchange = () => {
-      const file = input.files[0];
-      if (/^image\//.test(file.type)) {
-        this.saveToServer(file);
-      } else {
-        this.snackBar.open('Можно загружать только изображения',
-          'Закрыть', {duration: 3000});
-      }
-    };
-  }
-
-  // Затем после успешной загрузки вписываем в поле quill редактора
-  saveToServer(file: File) {
-    this.imageService.upload(file).subscribe(it => {
-      if (it) {
-        const imageUrl = this.appConfig.webServiceFullUrl + '/media/img/' + it;
-        this.quillEditor.insertEmbed(this.quillEditor.getSelection().index, 'image', imageUrl, 'user');
-      }
-    })
   }
 
   cancel(): void {
@@ -148,27 +111,46 @@ export class ArticleEditingDialogComponent implements OnInit {
       text: htmlText,
       language: this.get('language').value
     };
-    if (this.currentMode === this.mode.CREATE) {
+    if(this.currentMode === this.mode.CREATE) {
       this.articleService.create(articleInfo).subscribe(() => {
-      }, error => this.errorService.handleServiceError(error)).add(() => this.dialogRef.close());
+        this.dialogRef.close(true);
+      }, error => this.errorService.handleServiceError(error));
     } else {
       this.articleService.update(articleInfo, this.currentArticleId).subscribe(
-        it => this.dialogRef.close(),
+        () => this.dialogRef.close(true),
         error => this.errorService.handleServiceError(error)
-      ).add(() => this.dialogRef.close());
+      );
     }
 
   }
 
   // Добавляем необходимые теги на HTML документа для его правильного отображения
   addMetaInfoToText(): string {
-    let htmlText = juice.inlineContent(this.get('text').value, styles);
-    return this.topTags + htmlText + this.bottomTags;
+    let htmlText = juice.inlineContent(this.textControl.value, styles);
+    var rgbHex = /#([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])/gi
+    htmlText.replace(rgbHex, function (m, r, g, b) {
+      return 'rgb(' + parseInt(r, 16) + ','
+        + parseInt(g, 16) + ','
+        + parseInt(b, 16) + ')';
+    })
+    return htmlText.startsWith('<!DOCTYPE HTML>') ? htmlText : (topTags + htmlText + bottomTags);
   }
 
   onReady(editor: any) {
     editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
       return new CkEditorImageUploadComponent(loader, this.imageService, this.appConfig);
     }
+  }
+
+  delete() {
+    this.articleService.delete(this.currentArticleId).subscribe(() => {
+      this.snackBar.open('Статья удалена', 'Закрыть', {duration: 3000});
+      this.dialogRef.close(true);
+    }, error => this.errorService.handleServiceError(error))
+  }
+
+  @HostListener('window:keyup.esc')
+  onKeyUp(): void {
+    this.cancel();
   }
 }

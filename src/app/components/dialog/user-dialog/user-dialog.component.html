@@ -141,7 +141,6 @@
       <button *ngIf="currentMode === mode.EDIT" type="button" flex mat-raised-button
               color="warn"
               class="push-left-xs"
-              [disabled]="form.invalid"
               #acceptBtn
               (click)="delete()">Удалить
       </button>

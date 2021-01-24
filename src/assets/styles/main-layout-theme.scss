@@ -26,16 +26,44 @@
     }
   }
 
+  /* Стили для диалога редактора статей */
+
+  .full-width-dialog {
+    max-width: 1200px;
+    min-width: 1200px;
+  }
+
+  .large-height .td-dialog-content {
+    max-height:780px;
+    overflow:auto;
+    padding:0 16px 0 0;
+    height: 780px;
+  }
+
   .ck-editor__editable {
-    max-height: 400px;
+    max-height: 640px;
+  }
+
+  @media (max-height: 868px) {
+    .td-dialog-content,
+    .large-height .td-dialog-content {
+      max-height:600px; overflow:auto; padding:0 16px 0 0;
+      height: 600px;
+    }
+
+    .ck-editor__editable {
+      max-height: 450px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .full-width-dialog {
+      max-width: 900px;
+      min-width: 900px;
+    }
   }
 
   /* Общие стили */
-  .full-width-dialog {
-    max-width: 1600px !important;
-    width: auto !important;
-    overflow: auto;
-  }
   .app-container {
     position: absolute;
     width: 100%;

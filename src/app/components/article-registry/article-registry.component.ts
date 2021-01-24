@@ -4,13 +4,13 @@ import {FormBuilder} from '@angular/forms';
 import {ISbDataTableColumn} from '../common/sb-data-table/data-table.component';
 import {TdDataTableService} from '@covalent/core/data-table';
 import {TdLoadingService} from '@covalent/core/loading';
-import {DialogService} from '../../services/dialog/dialog.service';
 import {ComponentType} from '@angular/cdk/overlay';
 import {ArticleEditingDialogComponent} from '../dialog/article-edtiting-dialog/article-editing-dialog.component';
 import {DialogMode} from '../dialog/dialog-mode';
 import {ArticleService} from '../../services/article/article.service';
 import {TableActionConfig, TableActionType, TableComponent} from '../common/table/table.component';
 import {Observable} from 'rxjs';
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-article-registry',
@@ -60,7 +60,7 @@ export class ArticleRegistryComponent extends TableComponent {
     private sanitizer: DomSanitizer,
     private fb: FormBuilder,
     protected loadingService: TdLoadingService,
-    private dialogService: DialogService,
+    private dialog: MatDialog,
     private articleService: ArticleService
   ) {
     super(dataTableService, loadingService);
@@ -85,10 +85,10 @@ export class ArticleRegistryComponent extends TableComponent {
   }
 
   create(): void {
-    this.dialogService.show(this.articleDialog, {
+    this.openArticleDialog({
       mode: DialogMode.CREATE,
       dicts: this.dicts
-    }, '1000px').afterClosed().subscribe(() => this.refreshTable());
+    });
   }
 
   editIconAction(row: any, _this: ArticleRegistryComponent): void {
@@ -96,16 +96,23 @@ export class ArticleRegistryComponent extends TableComponent {
   }
 
   edit(id: string): void {
-    this.dialogService.show(this.articleDialog, {
+    this.openArticleDialog({
       articleId: id,
       mode: DialogMode.EDIT,
       dicts: this.dicts
-    }, '1000px').afterClosed().subscribe(it => {
-      if (it) {
-        this.refreshTable()
-      }
     });
   }
 
+  openArticleDialog(data: any) {
+    this.dialog.open(this.articleDialog, {
+      data,
+      disableClose: true,
+      panelClass: 'full-width-dialog'
+    }).afterClosed().subscribe(it => {
+      if (it) {
+        this.refreshTable();
+      }
+    });
+  }
 
 }
