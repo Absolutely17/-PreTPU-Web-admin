@@ -166,7 +166,7 @@ export class UserDialogComponent {
         this.userService.delete(this.currentUser.id).subscribe(() => {
           this.snackBar.open(
             'Пользователь ' + (this.currentUser.lastName ? this.currentUser.lastName + ' ' : '') +
-            this.currentUser.firstName + 'удален',
+            this.currentUser.firstName + ' удален',
             'Закрыть',
             {duration: 3000}
           );

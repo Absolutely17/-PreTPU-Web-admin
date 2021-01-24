@@ -8,6 +8,6 @@ export interface SendNotificationData {
 
   users?: string[];
 
-  language?: string;
+  languageId?: string;
 
 }

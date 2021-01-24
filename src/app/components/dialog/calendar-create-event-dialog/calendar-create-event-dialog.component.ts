@@ -51,7 +51,7 @@ export class CalendarCreateEventDialogComponent implements OnInit {
     private appConfig: AppConfig,
     @Inject(MAT_DIALOG_DATA) data: any
   ) {
-    if (data && data.selectedUsers) {
+    if(data && data.selectedUsers) {
       this.selectedUsers = data.selectedUsers;
     }
   }
@@ -66,7 +66,7 @@ export class CalendarCreateEventDialogComponent implements OnInit {
     this.generalInfoForm.addControl('sendNotification', new FormControl(false, null));
     this.generalInfoForm.addControl("onlineMeetingLink", new FormControl(null, null));
     this.userService.getGroups().subscribe(it => {
-      if (it) {
+      if(it) {
         this.groups = it;
         this.loadingService.resolve(this.loaderName);
       }
@@ -89,10 +89,10 @@ export class CalendarCreateEventDialogComponent implements OnInit {
   }
 
   acceptDisabled(): boolean {
-    if (this.get('groupTarget').value === 'SELECTED_USERS' && this.selectedUsers.length <= 0) {
+    if(this.get('groupTarget').value === 'SELECTED_USERS' && this.selectedUsers.length <= 0) {
       return true;
     }
-    if (this.groupSelect && this.groupSelect.control.invalid) {
+    if(this.groupSelect && this.groupSelect.control.invalid) {
       return true;
     }
   }
@@ -102,7 +102,10 @@ export class CalendarCreateEventDialogComponent implements OnInit {
     const description = this.get('description').value ? this.get('description').value : null;
     const group = this.groupSelect && this.groupSelect.control.value ? this.groupSelect.control.value : [];
     const selectedUsersVal = this.get('groupTarget').value === 'SELECTED_USERS' ? this.selectedUsers.map(it => it.id) : [];
-    const resultDetailedMessageText = transformResultTextToHtml(this.detailedMessageControl.value);
+    let resultDetailedMessageText;
+    if (this.detailedMessageControl.value) {
+      resultDetailedMessageText = transformResultTextToHtml(this.detailedMessageControl.value);
+    }
     const createEventRequest = {
       title: this.get('name').value,
       description: description,
@@ -114,14 +117,18 @@ export class CalendarCreateEventDialogComponent implements OnInit {
       sendNotification: this.get('sendNotification').value,
       detailedMessage: resultDetailedMessageText
     };
-    this.userService.createCalendarEvent(createEventRequest).subscribe(() => {
+    this.userService.createCalendarEvent(createEventRequest).subscribe(
+      () => {
         this.snackbar.open('Событие создано', 'Закрыть', {duration: 3000});
-      },
-      error => this.errorService.handleServiceError(error))
-      .add(() => {
-        this.loadingService.resolve(this.loaderName);
         this.dialogRef.close();
-      });
+        this.loadingService.resolve(this.loaderName);
+      },
+      error => {
+        this.errorService.handleServiceError(error);
+        this.dialogRef.close();
+        this.loadingService.resolve(this.loaderName);
+      }
+    );
   }
 
   isInvalid(name: string) {
@@ -131,8 +138,8 @@ export class CalendarCreateEventDialogComponent implements OnInit {
 
   getError(name: string) {
     const error = this.generalInfoForm.get(name).errors;
-    if (error) {
-      if (error.required) {
+    if(error) {
+      if(error.required) {
         return 'Обязательно для заполнения';
       }
     }

@@ -96,7 +96,7 @@ export class SendNotificationDialogComponent implements OnInit{
         title: this.form.get('title').value,
         message: this.form.get('message').value,
         adminEmail: this.tokenService.getUser().email,
-        language: this.form.get('language').value
+        languageId: this.form.get('language').value
       };
       this.notificationService.sendNotificationOnGroup(sendData).subscribe(it => {
         this.snackBar.open(`Уведомление отправлено`,
