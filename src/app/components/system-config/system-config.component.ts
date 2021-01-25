@@ -118,6 +118,7 @@ export class SystemConfigComponent {
 
   removeRow(index: number) {
     this.get().removeAt(index);
+    this.form.markAsDirty();
     this.updateView();
   }
 
