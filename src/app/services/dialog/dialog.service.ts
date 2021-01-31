@@ -14,10 +14,10 @@ export class DialogService {
   /**
    * Показывает диалог подтверждения
    */
-  showConfirmDialog(config: ConfirmDialogData): MatDialogRef<ConfirmDialogComponent> {
+  showConfirmDialog(config: ConfirmDialogData, _width?: string): MatDialogRef<ConfirmDialogComponent> {
     return this.dialog.open(ConfirmDialogComponent, {
       data: config,
-      width: '500px',
+      width: _width || '500px',
       disableClose: true
     });
   }

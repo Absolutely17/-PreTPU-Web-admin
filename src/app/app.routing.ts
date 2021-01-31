@@ -5,7 +5,7 @@ import {AuthGuard} from './services/auth/auth.guard';
 import {ForbiddenComponent} from './components/common/forbidden/forbidden.component';
 import {ErrorComponent} from './components/common/error/error.component';
 import {UsersRegistryComponent} from './components/user-registry/users-registry.component';
-import {MenuRegistryComponent} from './components/menu/menu-registry.component';
+import {MenuRegistryComponent} from './components/menu-registry/menu-registry.component';
 import {ArticleRegistryComponent} from './components/article-registry/article-registry.component';
 import {MainPageComponent} from './components/common/main-page/main-page.component';
 import {SystemConfigComponent} from './components/system-config/system-config.component';

@@ -7,6 +7,7 @@ import {UserInfo} from '../../../models/user/user-info';
 import {TokenStorageService} from '../../../services/token/token-storage.service';
 import {ErrorService} from '../../../services/error/error.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {TdLoadingService} from "@covalent/core/loading";
 
 
 @Component({
@@ -19,6 +20,8 @@ export class UploadDocumentDialogComponent implements OnInit{
 
   form: FormGroup;
 
+  loaderName = 'loader';
+
   constructor(
     private dialogRef: MatDialogRef<UploadDocumentDialogComponent>,
     private docService: DocumentService,
@@ -26,15 +29,15 @@ export class UploadDocumentDialogComponent implements OnInit{
     private tokenService: TokenStorageService,
     private errorService: ErrorService,
     protected snackBar: MatSnackBar,
+    private loadingService: TdLoadingService
   ) {
     this.user = data;
   }
 
   ngOnInit(): void {
     this.form = new FormGroup({}, null, null);
-    this.form.addControl('documentName', new FormControl('', Validators.required));
-    this.form.addControl('fileName', new FormControl('', Validators.required));
-    this.form.addControl('file', new FormControl(''));
+    this.form.addControl('documentName', new FormControl(null, Validators.required));
+    this.form.addControl('file', new FormControl(null, Validators.required));
   }
 
   isInvalid(name: string): boolean {
@@ -49,33 +52,32 @@ export class UploadDocumentDialogComponent implements OnInit{
   getError(name: string): string {
     const error = this.form.get(name).errors;
     if (error) {
-      if (error.required && name === 'fileName') {
-        return 'Необходимо загрузить документ';
-      } else {
+      if (error.required) {
         return 'Обязательно для заполнения';
       }
     }
   }
 
   accept(): void {
+    this.loadingService.register(this.loaderName);
+    const file = this.form.get('file').value;
     const documentData: Document = {
       adminEmail: this.tokenService.getUser().email,
       userEmail: this.user.email,
       documentName: this.form.get('documentName').value,
-      fileName: this.form.get('fileName').value
+      fileName: file.name
     };
-    this.docService.uploadDocument(documentData, this.form.get('file').value).subscribe(it => {
+    this.docService.uploadDocument(documentData, file).subscribe(it => {
       this.snackBar.open(`Документ успешно прикреплен к пользователю ${documentData.userEmail}`,
         'Закрыть', {duration: 3000});
-    }, error => this.errorService.handleFormError(error, this.form)).add(() => this.dialogRef.close());
+    }, error => this.errorService.handleServiceError(error)).add(() => {
+      this.dialogRef.close();
+      this.loadingService.resolve(this.loaderName);
+    });
   }
 
   cancel(): void {
     this.dialogRef.close();
-  }
-
-  selectFile(file: File): void {
-    this.form.get('fileName').setValue(file.name);
   }
 
   @HostListener('window:keyup.esc')

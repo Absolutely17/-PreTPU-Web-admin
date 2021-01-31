@@ -7,6 +7,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {SendNotificationData} from '../../../models/notification/send-notification-data';
 import {NotificationService} from '../../../services/notification/notification.service';
+import {TdLoadingService} from "@covalent/core/loading";
 
 export enum SendNotificationMode {
   GROUP ,
@@ -38,13 +39,16 @@ export class SendNotificationDialogComponent implements OnInit{
 
   dicts: any;
 
+  loaderName = "loader";
+
   constructor(
     private dialogRef: MatDialogRef<SendNotificationDialogComponent>,
     private notificationService: NotificationService,
     @Inject(MAT_DIALOG_DATA) data: SendNotificationDialogData,
     private tokenService: TokenStorageService,
     private errorService: ErrorService,
-    protected snackBar: MatSnackBar
+    protected snackBar: MatSnackBar,
+    private loadingService: TdLoadingService
   ) {
     this.selectedUsers = data.users;
     this.currentMode = data.mode;
@@ -79,6 +83,7 @@ export class SendNotificationDialogComponent implements OnInit{
   }
 
   accept(): void {
+    this.loadingService.register(this.loaderName);
     if (this.currentMode === SendNotificationMode.USERS) {
       const users: string[] = this.selectedUsers.map(it => it.id);
       const sendData: SendNotificationData = {
@@ -90,7 +95,10 @@ export class SendNotificationDialogComponent implements OnInit{
       this.notificationService.sendNotificationOnUsers(sendData).subscribe(it => {
         this.snackBar.open(`Уведомление отправлено`,
           'Закрыть', {duration: 3000});
-      }, error => this.errorService.handleFormError(error, this.form)).add(() => this.dialogRef.close());
+      }, error => this.errorService.handleFormError(error, this.form)).add(() => {
+        this.dialogRef.close();
+        this.loadingService.resolve(this.loaderName);
+      });
     } else {
       const sendData: SendNotificationData = {
         title: this.form.get('title').value,
@@ -101,7 +109,10 @@ export class SendNotificationDialogComponent implements OnInit{
       this.notificationService.sendNotificationOnGroup(sendData).subscribe(it => {
         this.snackBar.open(`Уведомление отправлено`,
           'Закрыть', {duration: 3000});
-      }, error => this.errorService.handleFormError(error, this.form)).add(() => this.dialogRef.close());
+      }, error => this.errorService.handleFormError(error, this.form)).add(() => {
+        this.dialogRef.close();
+        this.loadingService.resolve(this.loaderName);
+      });
     }
   }
 

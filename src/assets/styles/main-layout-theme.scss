@@ -31,6 +31,7 @@
   .full-width-dialog {
     max-width: 1200px !important;
     min-width: 1200px;
+    overflow: auto;
   }
 
   .large-height .td-dialog-content {

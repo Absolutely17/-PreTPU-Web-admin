@@ -1,0 +1,28 @@
+<div class="container-file-input">
+  <button
+    mat-raised-button
+    class="td-file-input"
+    type="button"
+    [color]="color"
+    [multiple]="multiple"
+    [disabled]="disabled"
+    (keyup.enter)="fileInput.click()"
+    (click)="fileInput.click()"
+    (fileDrop)="handleSelect($event)"
+    tdFileDrop
+  >
+    <ng-content></ng-content>
+  </button>
+  <input
+    #fileInput
+    class="td-file-input-hidden"
+    type="file"
+    [attr.accept]="accept"
+    (fileSelect)="handleSelect($event)"
+    [multiple]="multiple"
+    [disabled]="disabled"
+    tdFileSelect
+  />
+  <input *ngIf="showFileNameInput" [readonly]="true" class="file-input-name" matInput [formControl]="fileInputName"/>
+</div>
+<span class="info-span">Макс. размер файла {{maxSize ? maxSize : '20'}} МБ</span>

@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../../services/error/error.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MenuService} from '../../../services/menu/menu.service';
-import {MenuItem} from '../../menu/menu-registry.component';
+import {MenuItem} from '../../menu-registry/menu-registry.component';
 import {DialogService} from '../../../services/dialog/dialog.service';
 import {ArticleEditingDialogComponent} from '../article-edtiting-dialog/article-editing-dialog.component';
 import {ComponentType} from '@angular/cdk/overlay';

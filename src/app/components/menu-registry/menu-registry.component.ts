@@ -1,4 +1,4 @@
-import {Component, ElementRef, Injectable, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Injectable, OnInit, ViewChild} from '@angular/core';
 import {FlatTreeControl} from '@angular/cdk/tree';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import {BehaviorSubject} from 'rxjs';
@@ -9,6 +9,7 @@ import {MenuEditingDialogComponent} from '../dialog/menu-editing-dialog/menu-edi
 import {TdLoadingService} from '@covalent/core/loading';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {DialogMode} from '../dialog/dialog-mode';
+import {MenuRegistryReferenceComponent} from "../dialog/menu-registry-reference-dialog/menu-registry-reference.component";
 
 export class MenuItem {
   id: string;
@@ -288,9 +289,11 @@ export class ChecklistDatabase {
   templateUrl: './menu-registry.component.html',
   styleUrls: ['./menu-registry.component.scss'],
 })
-export class MenuRegistryComponent implements OnInit {
+export class MenuRegistryComponent implements OnInit, AfterViewInit {
 
   menuEditingDialog: ComponentType<MenuEditingDialogComponent> = MenuEditingDialogComponent;
+
+  referenceDialog: ComponentType<MenuRegistryReferenceComponent> = MenuRegistryReferenceComponent;
 
   /** Map from flat node to nested node. This helps us finding the nested node to be modified */
   flatNodeMap = new Map<MenuItemFlat, MenuItem>();
@@ -386,20 +389,39 @@ export class MenuRegistryComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit(): void {
+    if (!window.localStorage || !window.localStorage.getItem('menu-registry.reference')) {
+      this.dialogService.showConfirmDialog({
+        title: 'Открыть справку по редактированию пунктов меню',
+        message: 'Кажется, Вы здесь впервые. Рекомендуем прочитать справку по редактированию пунктов меню. Хотите открыть её?',
+        acceptButton: 'Да',
+        cancelButton: 'Нет'
+      }, '700px').afterClosed().subscribe(it => {
+        if (it) {
+          this.openReference();
+        }
+      })
+      window.localStorage.setItem('menu-registry.reference', 'true');
+    }
+  }
+
+
+
   // Добавляем новый пункт меню. Работае только в корне или у пунктов меню с типом LINKS_LIST
   addNewItem(node?: MenuItemFlat) {
-    this.hasAnyChange = true;
     this.dialogService.show(this.menuEditingDialog, {
       mode: DialogMode.CREATE,
       dicts: this.dicts
     }).afterClosed().subscribe(it => {
       if (it) {
         if (node) {
+          this.hasAnyChange = true;
           const parentNode = this.flatNodeMap.get(node);
           this.addToLog(LogAction.ADD_CHILD, it.name, parentNode.name);
           this.database.insertNewItem({...it, languageId: this.currentLanguage} as MenuItem, parentNode);
           this.treeControl.expand(node);
         } else {
+          this.hasAnyChange = true;
           this.addToLog(LogAction.ADD_ROOT, it.name);
           this.database.insertNewItem({...it, languageId: this.currentLanguage} as MenuItem);
         }
@@ -448,7 +470,6 @@ export class MenuRegistryComponent implements OnInit {
 
   handleDrop(event, node) {
     event.preventDefault();
-    this.hasAnyChange = true;
     if (node !== this.dragNode) {
       let newItem: MenuItem;
       if (this.dragNodeExpandOverArea === 'above') {
@@ -464,6 +485,7 @@ export class MenuRegistryComponent implements OnInit {
       this.nestedNodeMap.delete(this.flatNodeMap.get(this.dragNode));
       this.flatNodeMap.delete(this.dragNode);
       this.addToLog(LogAction.MOVED, this.dragNode.name);
+      this.hasAnyChange = true;
       //this.treeControl.expandDescendants(this.nestedNodeMap.get(newItem));
     }
     this.dragNode = null;
@@ -498,7 +520,6 @@ export class MenuRegistryComponent implements OnInit {
   }
 
   edit(node: MenuItemFlat): void {
-    this.hasAnyChange = true;
     const origNode = this.flatNodeMap.get(node);
     this.dialogService.show(this.menuEditingDialog, {
       mode: DialogMode.EDIT,
@@ -506,6 +527,7 @@ export class MenuRegistryComponent implements OnInit {
       dicts: this.dicts
     }).afterClosed().subscribe(it => {
       if (it) {
+        this.hasAnyChange = true;
         this.addToLog(LogAction.EDIT, node.name);
         this.database.editItem(origNode, it);
       }
@@ -513,7 +535,6 @@ export class MenuRegistryComponent implements OnInit {
   }
 
   remove(node: MenuItemFlat): void {
-    this.hasAnyChange = true;
     this.deletedItems.push(node.id);
     const menuItem = this.flatNodeMap.get(node);
     if (menuItem) {
@@ -524,6 +545,7 @@ export class MenuRegistryComponent implements OnInit {
         cancelButton: 'Отмена'
       }).afterClosed().subscribe(it => {
         if (it) {
+          this.hasAnyChange = true;
           this.addToLog(LogAction.DELETE, node.name);
           this.database.deleteItem(this.flatNodeMap.get(node));
         }
@@ -631,5 +653,8 @@ export class MenuRegistryComponent implements OnInit {
     }
   }
 
+  openReference(): void {
+    this.dialogService.show(this.referenceDialog, {}, '', '', true);
+  }
 }
 

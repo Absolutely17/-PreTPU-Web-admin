@@ -1,0 +1,49 @@
+:host ::ng-deep .mat-horizontal-stepper-header-container {
+  display: none !important;
+}
+
+hr {
+  line-height: 1em;
+  opacity: .5;
+  outline: 0;
+  border: 0;
+  background: linear-gradient(to right, transparent, #a7a7a7, transparent);
+  height: 2px;
+}
+
+.text-header {
+  text-align: center;
+
+  span {
+    font-size: 21px;
+  }
+}
+
+.gif-container {
+  img {
+    display: block;
+    margin: auto;
+  }
+}
+
+.step-buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.img-with-text {
+  margin-top: 10px;
+  display: flex;
+
+  .float-img {
+    height: 40px;
+  }
+
+  .text-for-img {
+    margin-left: 5px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+  }
+}

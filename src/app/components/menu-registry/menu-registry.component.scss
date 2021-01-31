@@ -68,28 +68,28 @@
       flex: 1;
       align-items: center;
       background-color: #429dfd;
-      padding-right: 10px;
-
+      padding-right: 20px;
+      border-radius: 4px;
     }
 
     .buttons {
       height: 40px;
 
       .add-btn {
-        border-radius: 0;
+        margin-left: 5px;
         background: #288a28;
         height: 40px;
       }
 
       .remove-btn {
-        border-radius: 0;
+        margin-left: 5px;
         background: #9b1616;
         height: 40px;
       }
 
       .edit-btn {
+        margin-left: 5px;
         background: #2466a7;
-        border-radius: 0;
         height: 40px;
       }
 

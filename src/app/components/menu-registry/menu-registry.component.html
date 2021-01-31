@@ -9,10 +9,14 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <div class="add-menu-item" *ngIf="currentLanguage">
-        <button mat-button (click)="addNewItem()">
+      <div class="add-menu-item">
+        <button *ngIf="currentLanguage" mat-button (click)="addNewItem()">
           <mat-icon>add</mat-icon>
           Добавить пункт меню
+        </button>
+        <button mat-button (click)="openReference()">
+          <mat-icon>help</mat-icon>
+          Справка
         </button>
       </div>
     </div>

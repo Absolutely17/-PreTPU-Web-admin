@@ -25,7 +25,7 @@ import {authInterceptorProviders} from './http-interceptor';
 import {SendNotificationDialogComponent} from './components/dialog/send-notification-dialog/send-notification-dialog.component';
 import {NotificationService} from './services/notification/notification.service';
 import {sbDataTableComponents} from './components/common/sb-data-table/data-table.module';
-import {ChecklistDatabase, MenuRegistryComponent} from './components/menu/menu-registry.component';
+import {ChecklistDatabase, MenuRegistryComponent} from './components/menu-registry/menu-registry.component';
 import {MenuService} from './services/menu/menu.service';
 import {MenuEditingDialogComponent} from './components/dialog/menu-editing-dialog/menu-editing-dialog.component';
 import {QuillModule} from 'ngx-quill';
@@ -53,6 +53,8 @@ import {StudyGroupRegistryComponent} from "./components/study-group-registry/stu
 import {StudyGroupDialogComponent} from "./components/dialog/study-group-dialog/study-group-dialog.component";
 import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
 import {UserDialogComponent} from "./components/dialog/user-dialog/user-dialog.component";
+import {TdFileInputComponent} from "./components/common/file-input/file-input.component";
+import {MenuRegistryReferenceComponent} from "./components/dialog/menu-registry-reference-dialog/menu-registry-reference.component";
 
 export const commonServices = [
   AppConfig,
@@ -71,7 +73,8 @@ export const commonComponents = [
   ErrorComponent,
   AutocompleteSelectComponent,
   SaveFormButtonComponent,
-  ConfirmDialogComponent
+  ConfirmDialogComponent,
+  TdFileInputComponent
 ];
 
 
@@ -108,7 +111,8 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
     StudyGroupRegistryComponent,
     StudyGroupDialogComponent,
     ResetPasswordComponent,
-    UserDialogComponent
+    UserDialogComponent,
+    MenuRegistryReferenceComponent
   ],
   imports: [
     HttpClientModule,
