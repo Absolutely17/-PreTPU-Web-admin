@@ -18,6 +18,20 @@
                 </span>
               </mat-form-field>
 
+
+                <div class="push-bottom-md">
+                  <button color="primary" style="width: fit-content" matTooltip="Текущие выбранные пользователи будут выделены в таблице" mat-raised-button
+                          (click)="selectUsers()">Выбрать пользователей
+                  </button>
+                  <span class="pad-left-sm">Выбрано: {{selectedUsers.length}}
+                    пользователей
+                    <mat-icon style="font-size: 18px; position: relative; top: 3px;" *ngIf="selectedUsers.length === 0"
+                              color="warn" matTooltip="Необходимо выбрать пользователей">
+                      warning
+                    </mat-icon>
+                    </span>
+                </div>
+
               <td-custom-file-input [showFileNameInput]="true" formControlName="file" color="primary" maxSize="20">
                 <mat-icon>attach_file</mat-icon>
               </td-custom-file-input>
@@ -36,7 +50,7 @@
       <button type="button" flex mat-raised-button
               color="primary"
               class="push-left-xs"
-              [disabled]="form.invalid"
+              [disabled]="form.invalid || selectedUsers.length < 1"
               #acceptBtn
               (click)="accept()">Сохранить
       </button>

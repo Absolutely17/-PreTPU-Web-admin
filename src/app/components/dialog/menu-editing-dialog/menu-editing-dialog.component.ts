@@ -7,7 +7,6 @@ import {MenuService} from '../../../services/menu/menu.service';
 import {MenuItem} from '../../menu-registry/menu-registry.component';
 import {DialogService} from '../../../services/dialog/dialog.service';
 import {ArticleEditingDialogComponent} from '../article-edtiting-dialog/article-editing-dialog.component';
-import {ComponentType} from '@angular/cdk/overlay';
 import {DialogMode} from '../dialog-mode';
 import {AppConfig} from '../../../app.config';
 import {ImageService} from '../../../services/image/image.service';
@@ -25,10 +24,6 @@ export interface MenuEditingData {
   templateUrl: './menu-editing-dialog.component.html'
 })
 export class MenuEditingDialogComponent implements OnInit {
-
-  articleDialog: ComponentType<ArticleEditingDialogComponent> = ArticleEditingDialogComponent;
-
-  articleChooseDialog: ComponentType<ArticleChooseDialogComponent> = ArticleChooseDialogComponent;
 
   currentMode: DialogMode;
 
@@ -114,7 +109,7 @@ export class MenuEditingDialogComponent implements OnInit {
   }
 
   createArticle(): void {
-    this.dialogService.show(this.articleDialog, {
+    this.dialogService.show(ArticleEditingDialogComponent, {
       mode: DialogMode.CREATE,
       dicts: this.dicts
     }, '', '', true).afterClosed().subscribe((it) => {
@@ -125,7 +120,7 @@ export class MenuEditingDialogComponent implements OnInit {
   }
 
   selectArticle(multiple: boolean = false): void {
-    this.dialogService.show(this.articleChooseDialog, {
+    this.dialogService.show(ArticleChooseDialogComponent, {
       selectedArticles: this.selectedArticles,
       multiple: multiple
     }, '1400px').afterClosed().subscribe(it => {

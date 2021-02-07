@@ -5,8 +5,6 @@
         <span>{{tableName}}</span>
       </div>
       <div *ngIf="!isDialogView" layout-align="end center" layout="row">
-        <button *ngIf="selectableButton" mat-button
-                (click)="enableSelectUsers()">{{this.selectable ? textCancelSelectable : textEnableSelectable}}</button>
         <button *ngIf="menuItemList.length" type="button" mat-icon-button matTooltip="Список функций"
                 [matMenuTriggerFor]="registryMenu">
           <mat-icon color="grey">more_vert</mat-icon>
@@ -27,7 +25,7 @@
               <div class="layout-scroll-container-inner">
                 <div class="layout-scroll-content display-table-view">
                   <div class="loader-container"
-                       *tdLoading="loadingKey; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
+                       *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
                     <div class="layout-scroll-container">
                       <div class="layout-scroll-container-inner">
                         <div class="layout-scroll-content display-table-container">
@@ -41,7 +39,7 @@
                               [multiple]="multiple"
                               [sortable]="true"
                               [sortBy]="sortBy"
-                              [(ngModel)]="selectedRows"
+                              [value]="selectedRows"
                               [sortOrder]="sortOrder"
                               (sortChange)="sort($event)"
                               [iconColumn]="iconColumn"

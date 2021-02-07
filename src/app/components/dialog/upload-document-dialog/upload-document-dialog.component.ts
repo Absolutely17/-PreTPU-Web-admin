@@ -3,35 +3,35 @@ import {Component, HostListener, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {DocumentService} from '../../../services/document/document.service';
 import {Document} from '../../../models/document/document';
-import {UserInfo} from '../../../models/user/user-info';
 import {TokenStorageService} from '../../../services/token/token-storage.service';
 import {ErrorService} from '../../../services/error/error.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {TdLoadingService} from "@covalent/core/loading";
+import {UserChooseDialogComponent} from "../user-choose-dialog/user-choose-dialog.component";
+import {DialogService} from "../../../services/dialog/dialog.service";
 
 
 @Component({
   selector: 'app-document-upload-dialog',
   templateUrl: './upload-document-dialog.component.html'
 })
-export class UploadDocumentDialogComponent implements OnInit{
-
-  user: UserInfo;
+export class UploadDocumentDialogComponent implements OnInit {
 
   form: FormGroup;
 
   loaderName = 'loader';
 
+  selectedUsers: string[] = [];
+
   constructor(
     private dialogRef: MatDialogRef<UploadDocumentDialogComponent>,
     private docService: DocumentService,
-    @Inject(MAT_DIALOG_DATA) data: UserInfo,
     private tokenService: TokenStorageService,
     private errorService: ErrorService,
     protected snackBar: MatSnackBar,
-    private loadingService: TdLoadingService
+    private loadingService: TdLoadingService,
+    private diagService: DialogService
   ) {
-    this.user = data;
   }
 
   ngOnInit(): void {
@@ -51,11 +51,21 @@ export class UploadDocumentDialogComponent implements OnInit{
 
   getError(name: string): string {
     const error = this.form.get(name).errors;
-    if (error) {
-      if (error.required) {
+    if(error) {
+      if(error.required) {
         return 'Обязательно для заполнения';
       }
     }
+  }
+
+  selectUsers() {
+    this.diagService.show(UserChooseDialogComponent, {
+      selectedUsers: this.selectedUsers
+    }, '', '', true).afterClosed().subscribe(it => {
+      if(it) {
+        this.selectedUsers = it;
+      }
+    })
   }
 
   accept(): void {
@@ -63,17 +73,17 @@ export class UploadDocumentDialogComponent implements OnInit{
     const file = this.form.get('file').value;
     const documentData: Document = {
       adminEmail: this.tokenService.getUser().email,
-      userEmail: this.user.email,
+      userIds: this.selectedUsers,
       documentName: this.form.get('documentName').value,
       fileName: file.name
     };
     this.docService.uploadDocument(documentData, file).subscribe(it => {
-      this.snackBar.open(`Документ успешно прикреплен к пользователю ${documentData.userEmail}`,
-        'Закрыть', {duration: 3000});
-    }, error => this.errorService.handleServiceError(error)).add(() => {
-      this.dialogRef.close();
-      this.loadingService.resolve(this.loaderName);
-    });
+      this.snackBar.open('Документ успешно прикреплен', 'Закрыть', {duration: 3000});
+    }, error => this.errorService.handleServiceError(error))
+      .add(() => {
+        this.dialogRef.close();
+        this.loadingService.resolve(this.loaderName);
+      });
   }
 
   cancel(): void {

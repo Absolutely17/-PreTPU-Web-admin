@@ -7,7 +7,6 @@ import {DialogService} from "../../services/dialog/dialog.service";
 import {Observable} from "rxjs";
 import {StudyGroupService} from "../../services/studyGroup/study-group.service";
 import {DialogMode} from "../dialog/dialog-mode";
-import {ComponentType} from "@angular/cdk/overlay";
 import {StudyGroupDialogComponent} from "../dialog/study-group-dialog/study-group-dialog.component";
 
 @Component({
@@ -15,8 +14,6 @@ import {StudyGroupDialogComponent} from "../dialog/study-group-dialog/study-grou
   templateUrl: '../common/table/table.component.html'
 })
 export class StudyGroupRegistryComponent extends TableComponent {
-
-  studyGroupDialog: ComponentType<StudyGroupDialogComponent> = StudyGroupDialogComponent;
 
   columns: ISbDataTableColumn[] = [
     {name: 'name', label: 'Название группы', sortable: true, filter: true, width: 200},
@@ -35,8 +32,6 @@ export class StudyGroupRegistryComponent extends TableComponent {
   iconImg = 'edit';
 
   iconAction = this.editIconAction;
-
-  loadingKey = 'groupRegistryLoading';
 
   sortBy = 'name';
 
@@ -73,14 +68,14 @@ export class StudyGroupRegistryComponent extends TableComponent {
   }
 
   edit(id: string): void {
-    this.dialogService.show(this.studyGroupDialog, {
+    this.dialogService.show(StudyGroupDialogComponent, {
       groupId: id,
       mode: DialogMode.EDIT
     }, '500px').afterClosed().subscribe(() => this.refreshTable());
   }
 
   create(): void {
-    this.dialogService.show(this.studyGroupDialog, {
+    this.dialogService.show(StudyGroupDialogComponent, {
       mode: DialogMode.CREATE
     }, '500px').afterClosed().subscribe(() => this.refreshTable());
   }

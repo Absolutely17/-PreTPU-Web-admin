@@ -10,7 +10,8 @@ export enum TableActionType {
   SendOnUsersNotification = 'SendOnUsersNotification',
   SendOnGroupNotification = 'SendOnGroupNotification',
   AddRow = 'AddRow',
-  CalendarCreateEvent = 'CalendarCreateEvent'
+  CalendarCreateEvent = 'CalendarCreateEvent',
+  AttachDocument = 'AttachDocument'
 }
 
 export interface TableActionConfig {
@@ -64,17 +65,16 @@ export abstract class TableComponent implements OnInit {
     return this._multiple;
   }
 
+  // Старый метод выделения уже имеющихся строк. Пока пусть останется
   @Input('defaultSelected')
   defaultSelected: string[];
 
   filteredData: any[];
   filteredTotal: number;
-  selectedRows: any[] = [];
 
-  /**
-   * Переопределить
-   */
-  loadingKey = 'tableLoader';
+  @Input() selectedRows: any[];
+
+  @Input() loaderName = 'tableLoading';
 
   fromRow = 1;
   currentPage = 1;
@@ -91,22 +91,6 @@ export abstract class TableComponent implements OnInit {
    * Список функций
    */
   menuItemList: TableActionConfig[] = [];
-
-  /**
-   * Текст для кнопки с включением возможности выбора объектов таблицы
-   */
-  textEnableSelectable: string;
-
-  /**
-   * Текст для кнопки выключения возможности выбора объектов таблицы
-   */
-  textCancelSelectable: string;
-
-
-  /**
-   * Нужна ли кнопка с выбором объектов таблицы
-   */
-  selectableButton: boolean;
 
   additionalMenuItems: AdditionalMenuItem[];
 
@@ -147,7 +131,7 @@ export abstract class TableComponent implements OnInit {
   abstract getDictsTableData(): Observable<any>;
 
   ngOnInit(): void {
-    this.loadingService.register(this.loadingKey);
+    this.loadingService.register(this.loaderName);
     this.initTableData();
     // todo Тут подумать. Надо выделять статьи тогда, когда компонент уже загрузился.
     setTimeout(() => {
@@ -184,7 +168,7 @@ export abstract class TableComponent implements OnInit {
 
   refreshTable(initRefresh: boolean = false): void {
     if (!initRefresh) {
-      this.loadingService.register(this.loadingKey);
+      this.loadingService.register(this.loaderName);
     }
     this.getTableData().subscribe(it => {
       if (it) {
@@ -194,7 +178,7 @@ export abstract class TableComponent implements OnInit {
         newData = this.dataTableService.sortData(newData, this.sortBy, this.sortOrder);
         newData = this.dataTableService.pageData(newData, this.fromRow, this.currentPage * this.pageSize);
         this.filteredData = newData;
-        this.loadingService.resolve(this.loadingKey);
+        this.loadingService.resolve(this.loaderName);
       }
     });
   }

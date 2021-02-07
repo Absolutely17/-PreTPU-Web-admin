@@ -32,9 +32,9 @@ export class DialogService {
     } else {
       return this.dialog.open(dialog, {
         data,
-        width: width || '500px',
-        minWidth: width || '500px',
-        maxWidth: width || '500px',
+        width: width || '550px',
+        minWidth: width || '550px',
+        maxWidth: width || '550px',
         disableClose: true,
         panelClass: isUseFullWidth ? 'full-width-dialog' : ''
       });

@@ -1,7 +1,7 @@
 <div class="loader-container"
      *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
   <td-dialog>
-    <td-dialog-title>Отправка уведомлений</td-dialog-title>
+    <td-dialog-title>Отправка {{currentMode === mode.GROUP ? 'группового' : 'выборочного'}} уведомления</td-dialog-title>
     <td-dialog-content>
       <div flex="grow" class="simple-fields">
         <div *ngIf="form">
@@ -38,7 +38,20 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
-              <span *ngIf="currentMode === mode.USERS">Выбрано: {{selectedUsers.length}} пользователей</span>
+              <ng-container *ngIf="currentMode === mode.USERS">
+                <div class="push-bottom-md">
+                  <button color="primary" style="width: fit-content" matTooltip="Текущие выбранные пользователи будут выделены в таблице" mat-raised-button
+                          (click)="selectUsers()">Выбрать пользователей
+                  </button>
+                  <span class="pad-left-sm">Выбрано: {{selectedUsers.length}}
+                    пользователей
+                    <mat-icon style="font-size: 18px; position: relative; top: 3px;" *ngIf="selectedUsers.length === 0"
+                              color="warn" matTooltip="Необходимо выбрать пользователей">
+                      warning
+                    </mat-icon>
+                    </span>
+                </div>
+              </ng-container>
 
             </div>
           </form>

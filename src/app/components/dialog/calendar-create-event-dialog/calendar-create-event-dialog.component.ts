@@ -12,6 +12,8 @@ import {AppConfig} from "../../../app.config";
 import * as ClassicEditor from 'ckeditor-custom/packages/ckeditor5-build-classic';
 import {transformResultTextToHtml} from "../../common/ckeditor/utils-function";
 import {MatStepper} from "@angular/material/stepper";
+import {DialogService} from "../../../services/dialog/dialog.service";
+import {UserChooseDialogComponent} from "../user-choose-dialog/user-choose-dialog.component";
 
 @Component({
   selector: 'calendar-create-event-dialog',
@@ -37,7 +39,7 @@ export class CalendarCreateEventDialogComponent implements OnInit {
 
   picker: any;
 
-  selectedUsers = [];
+  selectedUsers: string[] = [];
 
   groups: any[];
 
@@ -49,11 +51,9 @@ export class CalendarCreateEventDialogComponent implements OnInit {
     private snackbar: MatSnackBar,
     private imageService: ImageService,
     private appConfig: AppConfig,
+    private diagService: DialogService,
     @Inject(MAT_DIALOG_DATA) data: any
   ) {
-    if(data && data.selectedUsers) {
-      this.selectedUsers = data.selectedUsers;
-    }
   }
 
   ngOnInit(): void {
@@ -88,6 +88,16 @@ export class CalendarCreateEventDialogComponent implements OnInit {
     return this.generalInfoForm.get(name);
   }
 
+  selectUsers() {
+    this.diagService.show(UserChooseDialogComponent, {
+      selectedUsers: this.selectedUsers
+    }, '', '', true).afterClosed().subscribe(it => {
+      if (it) {
+        this.selectedUsers = it;
+      }
+    })
+  }
+
   acceptDisabled(): boolean {
     if(this.get('groupTarget').value === 'SELECTED_USERS' && this.selectedUsers.length <= 0) {
       return true;
@@ -101,7 +111,7 @@ export class CalendarCreateEventDialogComponent implements OnInit {
     this.loadingService.register(this.loaderName);
     const description = this.get('description').value ? this.get('description').value : null;
     const group = this.groupSelect && this.groupSelect.control.value ? this.groupSelect.control.value : [];
-    const selectedUsersVal = this.get('groupTarget').value === 'SELECTED_USERS' ? this.selectedUsers.map(it => it.id) : [];
+    const selectedUsersVal = this.get('groupTarget').value === 'SELECTED_USERS' ? this.selectedUsers : [];
     let resultDetailedMessageText;
     if (this.detailedMessageControl.value) {
       resultDetailedMessageText = transformResultTextToHtml(this.detailedMessageControl.value);

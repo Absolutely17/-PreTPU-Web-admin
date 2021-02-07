@@ -4,7 +4,6 @@ import {FormBuilder} from '@angular/forms';
 import {ISbDataTableColumn} from '../common/sb-data-table/data-table.component';
 import {TdDataTableService} from '@covalent/core/data-table';
 import {TdLoadingService} from '@covalent/core/loading';
-import {ComponentType} from '@angular/cdk/overlay';
 import {ArticleEditingDialogComponent} from '../dialog/article-edtiting-dialog/article-editing-dialog.component';
 import {DialogMode} from '../dialog/dialog-mode';
 import {ArticleService} from '../../services/article/article.service';
@@ -17,8 +16,6 @@ import {DialogService} from "../../services/dialog/dialog.service";
   templateUrl: '../common/table/table.component.html'
 })
 export class ArticleRegistryComponent extends TableComponent {
-
-  articleDialog: ComponentType<ArticleEditingDialogComponent> = ArticleEditingDialogComponent;
 
   columns: ISbDataTableColumn[] = [
     {name: 'name', label: 'Название статьи', sortable: true, filter: true, width: 500},
@@ -41,9 +38,6 @@ export class ArticleRegistryComponent extends TableComponent {
     name: 'Создать статью'
   }
   ];
-
-  loadingKey = 'articleRegistryLoading';
-
 
   sortBy = 'name';
 
@@ -104,7 +98,7 @@ export class ArticleRegistryComponent extends TableComponent {
   }
 
   openArticleDialog(data: any) {
-    this.dialogService.show(this.articleDialog, data,
+    this.dialogService.show(ArticleEditingDialogComponent, data,
       '', '', true).afterClosed().subscribe(it => {
       if (it) {
         this.refreshTable();

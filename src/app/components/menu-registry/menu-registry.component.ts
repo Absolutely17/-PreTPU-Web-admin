@@ -4,7 +4,6 @@ import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import {BehaviorSubject} from 'rxjs';
 import {MenuService} from '../../services/menu/menu.service';
 import {DialogService} from '../../services/dialog/dialog.service';
-import {ComponentType} from '@angular/cdk/overlay';
 import {MenuEditingDialogComponent} from '../dialog/menu-editing-dialog/menu-editing-dialog.component';
 import {TdLoadingService} from '@covalent/core/loading';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -291,10 +290,6 @@ export class ChecklistDatabase {
 })
 export class MenuRegistryComponent implements OnInit, AfterViewInit {
 
-  menuEditingDialog: ComponentType<MenuEditingDialogComponent> = MenuEditingDialogComponent;
-
-  referenceDialog: ComponentType<MenuRegistryReferenceComponent> = MenuRegistryReferenceComponent;
-
   /** Map from flat node to nested node. This helps us finding the nested node to be modified */
   flatNodeMap = new Map<MenuItemFlat, MenuItem>();
 
@@ -409,7 +404,7 @@ export class MenuRegistryComponent implements OnInit, AfterViewInit {
 
   // Добавляем новый пункт меню. Работае только в корне или у пунктов меню с типом LINKS_LIST
   addNewItem(node?: MenuItemFlat) {
-    this.dialogService.show(this.menuEditingDialog, {
+    this.dialogService.show(MenuEditingDialogComponent, {
       mode: DialogMode.CREATE,
       dicts: this.dicts
     }).afterClosed().subscribe(it => {
@@ -521,7 +516,7 @@ export class MenuRegistryComponent implements OnInit, AfterViewInit {
 
   edit(node: MenuItemFlat): void {
     const origNode = this.flatNodeMap.get(node);
-    this.dialogService.show(this.menuEditingDialog, {
+    this.dialogService.show(MenuEditingDialogComponent, {
       mode: DialogMode.EDIT,
       item: origNode,
       dicts: this.dicts
@@ -654,7 +649,7 @@ export class MenuRegistryComponent implements OnInit, AfterViewInit {
   }
 
   openReference(): void {
-    this.dialogService.show(this.referenceDialog, {}, '', '', true);
+    this.dialogService.show(MenuRegistryReferenceComponent, {}, '', '', true);
   }
 }
 

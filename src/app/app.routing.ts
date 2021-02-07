@@ -12,6 +12,7 @@ import {SystemConfigComponent} from './components/system-config/system-config.co
 import {LanguageRegistryComponent} from './components/language-registry/language-registry.component';
 import {StudyGroupRegistryComponent} from "./components/study-group-registry/study-group-registry.component";
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { UserNotificationComponent } from './components/user-notification/user-notification.component';
 
 // @ts-ignore
 const routes: Routes = [
@@ -48,6 +49,10 @@ const routes: Routes = [
       {
         path: 'studyGroup',
         component: StudyGroupRegistryComponent
+      },
+      {
+        path: 'notification',
+        component: UserNotificationComponent
       }
     ]
   },

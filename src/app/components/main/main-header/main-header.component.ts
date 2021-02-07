@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -34,6 +34,10 @@ export const userMenuItems: MenuItem[] = [
   {
     name: 'Учебные группы',
     url: '/studyGroup'
+  },
+  {
+    name: 'Уведомления',
+    url: '/notification'
   }
 ];
 
@@ -60,6 +64,12 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   isMatMenu2Open = false;
   prevButtonTrigger;
 
+  activeLine = {
+    width: 0,
+    left: null,
+    visible: false
+  };
+
   constructor(private errorService: ErrorService,
               private router: Router,
               private authService: AuthService,
@@ -68,16 +78,22 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
               private snackBar: MatSnackBar,
               private route: ActivatedRoute,
               private cdr: ChangeDetectorRef,
-              private tokenService: TokenStorageService
+              private tokenService: TokenStorageService,
+              private elRef: ElementRef
   ) {
   }
 
   ngOnInit(): void {
+    this.subscriptions.add(this.routerSubscription());
     this.isLoggedIn = !!this.tokenService.getToken();
-    this.rootMenuItems = userMenuItems;
+    this.createMenu();
     this.overlayContainer.getContainerElement()
       .classList
       .add('data-table-dialog');
+  }
+
+  ngAfterViewInit(): void {
+    this.changeLine();
   }
 
   ngOnDestroy(): void {
@@ -89,9 +105,36 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     this.router.navigate(['login']);
   }
 
+  routerSubscription(): Subscription {
+    return this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.createMenu();
+        setTimeout(() => {
+          this.changeLine();
+        }, 10);
+      }
+    });
+  }
+
+  createMenu() {
+    this.rootMenuItems = userMenuItems;
+    this.rootMenuItems.forEach(path => {
+      const activeChild = path.children && path.children.find(child =>
+        child.url && child.url.endsWith(this.router.url.split('?')[0]));
+
+      if (path.url && path.url.endsWith(this.router.url.split('?')[0])) {
+        path.active = true;
+      } else if (activeChild) {
+        activeChild.active = true;
+      }
+    });
+  }
+
   navigateTo(menuItem: MenuItem): void {
     if (menuItem.url) {
       this.router.navigate([menuItem.url]);
+      this.dropActiveMenu();
+      menuItem.active = true;
     }
   }
 
@@ -162,4 +205,41 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       }
     }, 100);
   }
+
+  menuItemIsActive(menuItem: MenuItem): boolean {
+    return menuItem.active || menuItem.children && menuItem.children.filter(child => child.active).length > 0;
+  }
+
+  dropActiveMenu(): void {
+    this.rootMenuItems.filter(item =>
+      item.children && item.children.filter(child => child.active).length > 0 || item.active
+    ).forEach(it => {
+      it.active = false;
+      if (it.children) {
+        it.children.forEach(child => {
+          child.active = false;
+        });
+      }
+    });
+  }
+
+  changeLine(): void {
+    const activeElem = this.getActiveElem();
+    this.changeLineWidth(activeElem);
+    this.changeLinePosition(activeElem);
+    this.activeLine.visible = !!activeElem;
+  }
+
+  getActiveElem(): any {
+    return this.elRef.nativeElement.querySelector('.active-item');
+  }
+
+  changeLineWidth(activeElem: any): void {
+    this.activeLine.width = activeElem ? activeElem.offsetWidth : this.activeLine.width;
+  }
+
+  changeLinePosition(activeElem: any): void {
+    this.activeLine.left = activeElem ? activeElem.offsetLeft : 0;
+  }
+
 }

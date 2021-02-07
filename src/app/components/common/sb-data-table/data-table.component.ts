@@ -557,7 +557,7 @@ export class SbDataTableComponent
    * Default comparation is by reference
    */
   @Input() compareWith: (row: any, model: any) => boolean = (row: any, model: any) => {
-    return row === model;
+    return row.id === model.id;
   };
 
   /**

@@ -2,33 +2,20 @@ import {TdDataTableService} from '@covalent/core/data-table';
 import {Component} from '@angular/core';
 import {UserService} from '../../services/user/user.service';
 import {DialogService} from '../../services/dialog/dialog.service';
-import {ComponentType} from '@angular/cdk/overlay';
 import {UploadDocumentDialogComponent} from '../dialog/upload-document-dialog/upload-document-dialog.component';
-import {
-  SendNotificationDialogComponent,
-  SendNotificationMode
-} from '../dialog/send-notification-dialog/send-notification-dialog.component';
 import {TdLoadingService} from '@covalent/core/loading';
 import {ISbDataTableColumn} from '../common/sb-data-table/data-table.component';
-import {AdditionalMenuItem, TableActionConfig, TableActionType, TableComponent} from '../common/table/table.component';
+import {TableActionConfig, TableActionType, TableComponent} from '../common/table/table.component';
 import {Observable} from 'rxjs';
 import {CalendarCreateEventDialogComponent} from '../dialog/calendar-create-event-dialog/calendar-create-event-dialog.component';
 import {DialogMode} from "../dialog/dialog-mode";
-import {UserDialogComponent} from "../dialog/user-dialog/user-dialog.component";
+import {UserEditDialogComponent} from "../dialog/user-edit-dialog/user-edit-dialog.component";
 
 @Component({
   selector: 'app-users-registry',
   templateUrl: '../common/table/table.component.html'
 })
 export class UsersRegistryComponent extends TableComponent {
-
-  uploadDocumentDialog: ComponentType<UploadDocumentDialogComponent> = UploadDocumentDialogComponent;
-
-  sendNotificationDialog: ComponentType<SendNotificationDialogComponent> = SendNotificationDialogComponent;
-
-  calendarEventCreateDialog: ComponentType<CalendarCreateEventDialogComponent> = CalendarCreateEventDialogComponent;
-
-  userDialog: ComponentType<UserDialogComponent> = UserDialogComponent;
 
   columns: ISbDataTableColumn[] = [
     {name: 'firstName', label: 'Имя', sortable: true, filter: true, width: 200},
@@ -49,16 +36,6 @@ export class UsersRegistryComponent extends TableComponent {
       name: 'activeFcmToken', label: 'Доступны уведомления', sortable: true, width: 150, format: value => {
         return value ? 'Да' : 'Нет';
       }
-    },
-    {name: 'uploadDocument', label: '', sortable: true, filter: true, width: 100}
-  ];
-
-  additionalMenuItems: AdditionalMenuItem[] = [
-    {
-      name: 'uploadDocument',
-      func: this.uploadDocument.bind(this),
-      icon: 'insert_drive_file',
-      tooltip: 'Прикрепить документ пользователю'
     }
   ];
 
@@ -68,28 +45,16 @@ export class UsersRegistryComponent extends TableComponent {
       name: 'Создать пользователя'
     },
     {
-      id: TableActionType.SendOnUsersNotification,
-      name: 'Выборочное уведомление'
-    },
-    {
-      id: TableActionType.SendOnGroupNotification,
-      name: 'Групповое уведомление'
-    },
-    {
       id: TableActionType.CalendarCreateEvent,
       name: 'Добавить событие'
+    },
+    {
+      id: TableActionType.AttachDocument,
+      name: 'Прикрепить документ'
     }
   ];
 
   multiple = true;
-
-  selectableButton = true;
-
-  textEnableSelectable = 'Выбрать пользователей';
-
-  textCancelSelectable = 'Отменить выбор пользователей';
-
-  loadingKey = 'userRegistryLoading';
 
   sortBy = 'firstName';
 
@@ -111,27 +76,12 @@ export class UsersRegistryComponent extends TableComponent {
   }
 
 
-  uploadDocument(row: any): void {
-    this.dialogService.show(this.uploadDocumentDialog, row);
-  }
-
-  sendUsersNotification(): void {
-    this.dialogService.show(this.sendNotificationDialog, {
-      mode: SendNotificationMode.USERS,
-      users: this.selectedRows
-    });
-  }
-
-  sendGroupNotification(): void {
-    this.dialogService.show(this.sendNotificationDialog, {
-      mode: SendNotificationMode.GROUP,
-      dicts: this.dicts
-    });
+  uploadDocument(): void {
+    this.dialogService.show(UploadDocumentDialogComponent);
   }
 
   createCalendarEvent(): void {
-    this.dialogService.show(this.calendarEventCreateDialog, {
-      selectedUsers: this.selectedRows,
+    this.dialogService.show(CalendarCreateEventDialogComponent, {
       dicts: this.dicts,
 
     }, '', '', true);
@@ -151,14 +101,11 @@ export class UsersRegistryComponent extends TableComponent {
         case TableActionType.AddRow:
           this.createUser();
           break;
-        case TableActionType.SendOnUsersNotification:
-          this.sendUsersNotification();
-          break;
-        case TableActionType.SendOnGroupNotification:
-          this.sendGroupNotification();
-          break;
         case TableActionType.CalendarCreateEvent:
           this.createCalendarEvent();
+          break;
+        case TableActionType.AttachDocument:
+          this.uploadDocument();
           break;
       }
     }
@@ -169,7 +116,7 @@ export class UsersRegistryComponent extends TableComponent {
   }
 
   createUser() {
-    this.dialogService.show(this.userDialog, {
+    this.dialogService.show(UserEditDialogComponent, {
       mode: DialogMode.CREATE,
       dict: this.dicts
     }, '1000px').afterClosed().subscribe(it => {
@@ -180,7 +127,7 @@ export class UsersRegistryComponent extends TableComponent {
   }
 
   edit(user: any) {
-    this.dialogService.show(this.userDialog, {
+    this.dialogService.show(UserEditDialogComponent, {
       currentUser: user,
       mode: DialogMode.EDIT,
       dict: this.dicts

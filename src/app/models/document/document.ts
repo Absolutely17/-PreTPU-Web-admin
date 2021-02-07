@@ -2,7 +2,7 @@ export interface Document {
 
   adminEmail: string;
 
-  userEmail: string;
+  userIds: string[];
 
   fileName: string;
 

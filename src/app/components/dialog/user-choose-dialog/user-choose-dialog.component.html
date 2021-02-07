@@ -1,14 +1,15 @@
 <td-dialog>
-  <td-dialog-title>Выбор статьи</td-dialog-title>
+  <td-dialog-title>Выбор пользователей</td-dialog-title>
   <td-dialog-content>
     <div style="height: 700px">
-      <app-article-registry #tableComponent
-                            [isDialogView]="true"
-                            [selectable]="true"
-                            [multiple]="multiple"
-                            [iconColumn]="false"
-                            [selectedRows]="selectedArticles">
-      </app-article-registry>
+      <app-users-registry #tableComponent
+                          [isDialogView]="true"
+                          [selectable]="true"
+                          [multiple]="true"
+                          [iconColumn]="false"
+                          [selectedRows]="selectedUsers"
+                          [loaderName]="'selectUserDialog'">
+      </app-users-registry>
     </div>
   </td-dialog-content>
   <td-dialog-actions>

@@ -52,9 +52,11 @@ import {StudyGroupService} from "./services/studyGroup/study-group.service";
 import {StudyGroupRegistryComponent} from "./components/study-group-registry/study-group-registry.component";
 import {StudyGroupDialogComponent} from "./components/dialog/study-group-dialog/study-group-dialog.component";
 import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
-import {UserDialogComponent} from "./components/dialog/user-dialog/user-dialog.component";
+import {UserEditDialogComponent} from "./components/dialog/user-edit-dialog/user-edit-dialog.component";
 import {TdFileInputComponent} from "./components/common/file-input/file-input.component";
 import {MenuRegistryReferenceComponent} from "./components/dialog/menu-registry-reference-dialog/menu-registry-reference.component";
+import {UserChooseDialogComponent} from "./components/dialog/user-choose-dialog/user-choose-dialog.component";
+import {UserNotificationComponent} from "./components/user-notification/user-notification.component";
 
 export const commonServices = [
   AppConfig,
@@ -111,8 +113,10 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
     StudyGroupRegistryComponent,
     StudyGroupDialogComponent,
     ResetPasswordComponent,
-    UserDialogComponent,
-    MenuRegistryReferenceComponent
+    UserEditDialogComponent,
+    MenuRegistryReferenceComponent,
+    UserChooseDialogComponent,
+    UserNotificationComponent
   ],
   imports: [
     HttpClientModule,

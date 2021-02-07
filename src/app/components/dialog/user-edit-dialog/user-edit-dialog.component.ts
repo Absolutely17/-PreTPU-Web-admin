@@ -11,10 +11,10 @@ import {ErrorService} from "../../../services/error/error.service";
 import {DialogService} from "../../../services/dialog/dialog.service";
 
 @Component({
-  selector: 'app-user-dialog',
-  templateUrl: './user-dialog.component.html'
+  selector: 'app-user-edit-dialog',
+  templateUrl: './user-edit-dialog.component.html'
 })
-export class UserDialogComponent {
+export class UserEditDialogComponent {
 
   form: FormGroup;
 
@@ -31,7 +31,7 @@ export class UserDialogComponent {
   loaderName = 'loader';
 
   constructor(
-    private dialogRef: MatDialogRef<UserDialogComponent>,
+    private dialogRef: MatDialogRef<UserEditDialogComponent>,
     private docService: DocumentService,
     @Inject(MAT_DIALOG_DATA) data: any,
     protected snackBar: MatSnackBar,

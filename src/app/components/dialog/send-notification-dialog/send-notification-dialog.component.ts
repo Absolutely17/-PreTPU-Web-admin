@@ -1,6 +1,5 @@
 import {Component, HostListener, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {UserInfo} from '../../../models/user/user-info';
 import {TokenStorageService} from '../../../services/token/token-storage.service';
 import {ErrorService} from '../../../services/error/error.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -8,19 +7,13 @@ import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/form
 import {SendNotificationData} from '../../../models/notification/send-notification-data';
 import {NotificationService} from '../../../services/notification/notification.service';
 import {TdLoadingService} from "@covalent/core/loading";
+import {UserChooseDialogComponent} from "../user-choose-dialog/user-choose-dialog.component";
+import {DialogService} from "../../../services/dialog/dialog.service";
+import {UserService} from "../../../services/user/user.service";
 
 export enum SendNotificationMode {
   GROUP ,
   USERS
-}
-
-export interface SendNotificationDialogData {
-
-  mode: SendNotificationMode;
-
-  users?: UserInfo[];
-
-  dicts?: any;
 }
 
 @Component({
@@ -33,7 +26,7 @@ export class SendNotificationDialogComponent implements OnInit{
 
   mode = SendNotificationMode;
 
-  selectedUsers: UserInfo[];
+  selectedUsers: string[] = [];
 
   form: FormGroup;
 
@@ -44,15 +37,23 @@ export class SendNotificationDialogComponent implements OnInit{
   constructor(
     private dialogRef: MatDialogRef<SendNotificationDialogComponent>,
     private notificationService: NotificationService,
-    @Inject(MAT_DIALOG_DATA) data: SendNotificationDialogData,
+    @Inject(MAT_DIALOG_DATA) data: any,
     private tokenService: TokenStorageService,
     private errorService: ErrorService,
     protected snackBar: MatSnackBar,
-    private loadingService: TdLoadingService
+    private loadingService: TdLoadingService,
+    private diagService: DialogService,
+    private userService: UserService
   ) {
-    this.selectedUsers = data.users;
+    this.loadingService.register(this.loaderName);
     this.currentMode = data.mode;
-    this.dicts = data.dicts;
+    userService.getDicts().subscribe(it => {
+      if (it) {
+        this.dicts = it;
+      }
+    }, error => errorService.handleServiceError(error)).add(() => {
+      this.loadingService.resolve(this.loaderName);
+    })
   }
 
   ngOnInit(): void {
@@ -82,10 +83,20 @@ export class SendNotificationDialogComponent implements OnInit{
     }
   }
 
+  selectUsers() {
+    this.diagService.show(UserChooseDialogComponent, {
+      selectedUsers: this.selectedUsers
+    }, '', '', true).afterClosed().subscribe(it => {
+      if (it) {
+        this.selectedUsers = it;
+      }
+    })
+  }
+
   accept(): void {
     this.loadingService.register(this.loaderName);
     if (this.currentMode === SendNotificationMode.USERS) {
-      const users: string[] = this.selectedUsers.map(it => it.id);
+      const users: string[] = this.selectedUsers;
       const sendData: SendNotificationData = {
         title: this.form.get('title').value,
         message: this.form.get('message').value,

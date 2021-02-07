@@ -6,12 +6,19 @@
              title="PreTPU. Администраторская панель" class="header-logo">
       </a>
       <div class="menu-top fullheight" layout="row" layout-align="start center">
+        <div class="active-border"
+             (window:resize)="changeLine()"
+             [style.width.px]="activeLine.width"
+             [style.left.px]="activeLine.left"
+             [style.opacity]="activeLine.visible ? 1 : 0"
+        ></div>
         <ng-container *ngIf="isLoggedIn">
           <!-- меню для больших экранов -->
           <div class="header-menu-big" layout="row" layout-fill layout-align="start center">
             <ng-container *ngFor="let menuItem of rootMenuItems">
               <ng-container *ngIf="menuItem.children && menuItem.children.length">
                 <button #menuTrigger [matMenuTriggerFor]="menu" class="menu-top-item"
+                        [ngClass]="menuItemIsActive(menuItem) ? 'active-item' : ''"
                         #levelOneTrigger="matMenuTrigger"
                         (mouseenter)="buttonEnter(levelOneTrigger)"
                         (mouseleave)="buttonLeave(levelOneTrigger)">
@@ -32,7 +39,8 @@
                 </mat-menu>
               </ng-container>
               <ng-container *ngIf="!menuItem.children || !menuItem.children.length">
-                <button (click)="navigateTo(menuItem)" class="menu-top-item">{{menuItem.name}}</button>
+                <button (click)="navigateTo(menuItem)" class="menu-top-item"
+                        [ngClass]="menuItemIsActive(menuItem) ? 'active-item' : ''">{{menuItem.name}}</button>
               </ng-container>
             </ng-container>
 
@@ -55,7 +63,8 @@
                   <ng-container *ngIf="menuItem.children && menuItem.children.length > 0">
                     <button mat-menu-item
                             #levelTwoTrigger="matMenuTrigger"
-                            [matMenuTriggerFor]="levelTwo">
+                            [matMenuTriggerFor]="levelTwo"
+                            [ngClass]="menuItemIsActive(menuItem) ? 'active-item' : ''">
                       {{ menuItem.name }}
                       <mat-divider *ngIf="!last"></mat-divider>
                     </button>
@@ -64,7 +73,8 @@
                       <div (mouseenter)="menu2Enter()" (mouseleave)="menu2Leave(levelOneTrigger,levelTwoTrigger)">
                         <button mat-menu-item
                                 *ngFor="let childItem of menuItem.children"
-                                (click)="navigateTo(childItem)">
+                                (click)="navigateTo(childItem)"
+                                [ngClass]="menuItemIsActive(menuItem) ? 'active-item' : ''">
                           {{ childItem.name }}
                           <mat-divider></mat-divider>
                         </button>
@@ -74,7 +84,9 @@
 
                   <ng-container *ngIf="!menuItem.children">
                     <button mat-menu-item
-                            (click)="navigateTo(menuItem)">
+                            (click)="navigateTo(menuItem)"
+                            [ngClass]="menuItemIsActive(menuItem) ? 'active-item' : ''">
+
                       {{ menuItem.name }}
                       <mat-divider></mat-divider>
                     </button>

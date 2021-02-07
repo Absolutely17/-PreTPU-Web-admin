@@ -8,7 +8,6 @@ import {TdLoadingService} from '@covalent/core/loading';
 import {DialogService} from '../../services/dialog/dialog.service';
 import {Observable} from 'rxjs';
 import {LanguageService} from '../../services/language/language.service';
-import {ComponentType} from '@angular/cdk/overlay';
 import {LanguageCreateDialogComponent} from '../dialog/language-create-dialog/language-create-dialog.component';
 
 export interface Language {
@@ -24,8 +23,6 @@ export interface Language {
 })
 export class LanguageRegistryComponent extends TableComponent {
 
-  languageCreateDialog: ComponentType<LanguageCreateDialogComponent> = LanguageCreateDialogComponent;
-
   columns: ISbDataTableColumn[] = [
     {name: 'name', label: 'Язык', sortable: true, filter: true, width: 200},
     {name: 'shortName', label: 'Аббревиатура', sortable: true, filter: true, width: 100},
@@ -37,8 +34,6 @@ export class LanguageRegistryComponent extends TableComponent {
     name: 'Добавить язык'
   }
   ];
-
-  loadingKey = 'languageRegistryLoading';
 
   sortBy = 'shortName';
 
@@ -74,7 +69,7 @@ export class LanguageRegistryComponent extends TableComponent {
   }
 
   create(): void {
-    this.dialogService.show(this.languageCreateDialog, {}, '500px').afterClosed().subscribe(() => this.refreshTable());
+    this.dialogService.show(LanguageCreateDialogComponent, {}, '500px').afterClosed().subscribe(() => this.refreshTable());
   }
 
 }

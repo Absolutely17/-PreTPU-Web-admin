@@ -895,25 +895,13 @@
     }
   }
 
-  /* Главная страница */
-  $card-color: (
-    0: #2F83D5,
-    1: #5799F2,
-    2: #B88DED,
-    3: #F99D17,
-    4: #3FCDCE,
-    5: #67C5A4,
-    6: #DB8898,
-    7: #F7957C
-  );
-
   .main-card {
-    width: calc(25% - 100px);
-    max-height: 50%;
-    height: calc(50% - 160px);
+    width: calc(50% - 100px);
+    max-height: 100%;
+    height: calc(100% - 160px);
     margin: 24px;
     border-radius: 8px;
-    box-shadow: 0px -3px 12px rgba(30, 135, 240, 0.1);
+    box-shadow: 2px -3px 21px rgb(0 0 0 / 10%);
     font-weight: bold;
     font-size: 36px;
     line-height: 45px;
@@ -921,8 +909,8 @@
     cursor: pointer;
     background-blend-mode: overlay;
     @media (max-width: 1600px) {
-      width: calc(25% - 50px);
-      height: calc(50% - 74px);
+      width: calc(50% - 50px);
+      height: calc(100% - 74px);
       font-size: 28px;
       line-height: 36px;
       word-break: break-all;
@@ -935,12 +923,17 @@
       height: 100%;
     }
 
-    @for $i from 0 through 7 {
-      &-#{$i} {
-        .title {
-          color: map-get($card-color, $i);
-        }
-      }
+    .title {
+      color: mat-color($primary, 400)
+    }
+
+
+    .image {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 
