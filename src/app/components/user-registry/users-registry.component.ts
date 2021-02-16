@@ -24,18 +24,10 @@ export class UsersRegistryComponent extends TableComponent {
     {name: 'gender', label: 'Пол', sortable: true, filter: true, width: 200},
     {name: 'groupName', label: 'Номер группы', sortable: true, filter: true, width: 200},
     {
-      name: 'languageId', label: 'Язык', sortable: true, filter: true, format: value => {
-        if(this.dicts && this.dicts.languages) {
-          return this.dicts.languages.find(it => it.id === value).name;
-        } else {
-          return value;
-        }
-      }, width: 200
+      name: 'languageId', label: 'Язык', sortable: true, filter: true, width: 200
     },
     {
-      name: 'activeFcmToken', label: 'Доступны уведомления', sortable: true, width: 150, format: value => {
-        return value ? 'Да' : 'Нет';
-      }
+      name: 'activeFcmToken', label: 'Доступны уведомления', sortable: true, width: 150
     }
   ];
 
@@ -75,6 +67,19 @@ export class UsersRegistryComponent extends TableComponent {
     super(dataTableService, loadingService);
   }
 
+  protected customizeTableRows(tableRows: any[]): any[] {
+    tableRows.forEach(f => {
+      if (f.activeFcmToken) {
+        f.activeFcmToken = "Да";
+      } else {
+        f.activeFcmToken = "Нет";
+      }
+      if (f.languageId && this.dicts && this.dicts.languages) {
+        f.languageId = this.dicts.languages.find(it => it.id === f.languageId).name;
+      }
+    });
+    return tableRows;
+  }
 
   uploadDocument(): void {
     this.dialogService.show(UploadDocumentDialogComponent);

@@ -34,6 +34,8 @@ export class SendNotificationDialogComponent implements OnInit{
 
   loaderName = "loader";
 
+  title: string;
+
   constructor(
     private dialogRef: MatDialogRef<SendNotificationDialogComponent>,
     private notificationService: NotificationService,
@@ -57,6 +59,9 @@ export class SendNotificationDialogComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    this.title = this.currentMode === this.mode.GROUP
+      ? 'Отправка уведомлений по языку пользователей'
+      : 'Отправка выборочного уведомления';
     this.form = new FormGroup({}, null, null);
     this.form.addControl('title', new FormControl('', Validators.required));
     this.form.addControl('message', new FormControl('', Validators.required));

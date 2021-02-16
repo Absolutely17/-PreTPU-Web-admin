@@ -57,6 +57,7 @@ import {TdFileInputComponent} from "./components/common/file-input/file-input.co
 import {MenuRegistryReferenceComponent} from "./components/dialog/menu-registry-reference-dialog/menu-registry-reference.component";
 import {UserChooseDialogComponent} from "./components/dialog/user-choose-dialog/user-choose-dialog.component";
 import {UserNotificationComponent} from "./components/user-notification/user-notification.component";
+import {TdSearchBoxComponent} from "./components/common/search-input/search-box.component";
 
 export const commonServices = [
   AppConfig,
@@ -76,7 +77,8 @@ export const commonComponents = [
   AutocompleteSelectComponent,
   SaveFormButtonComponent,
   ConfirmDialogComponent,
-  TdFileInputComponent
+  TdFileInputComponent,
+  TdSearchBoxComponent
 ];
 
 

@@ -1,18 +1,28 @@
 <div class="fullheight" layout="column">
   <div flex="auto">
     <div class="breadcrumbs-container">
-      <div class="table-name">
+      <div class="table-name-and-filter">
         <span>{{tableName}}</span>
       </div>
-      <div *ngIf="!isDialogView" layout-align="end center" layout="row">
-        <button *ngIf="menuItemList.length" type="button" mat-icon-button matTooltip="Список функций"
-                [matMenuTriggerFor]="registryMenu">
-          <mat-icon color="grey">more_vert</mat-icon>
-        </button>
-        <mat-menu #registryMenu="matMenu">
-          <button type="button" mat-menu-item *ngFor="let menuItem of menuItemList"
-                  (click)="menuItemClick($event, menuItem)">{{menuItem.name}}</button>
-        </mat-menu>
+      <div layout-align="end center" layout="row">
+        <td-custom-search-box
+          #searchBox
+          backIcon="arrow_back"
+          placeholder="Фильтр"
+          [showUnderline]="true"
+          (searchDebounce)="filter($event)"
+          flex
+        ></td-custom-search-box>
+        <div *ngIf="!isDialogView">
+          <button *ngIf="menuItemList.length && !isDialogView" type="button" mat-icon-button matTooltip="Список функций"
+                  [matMenuTriggerFor]="registryMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #registryMenu="matMenu">
+            <button type="button" mat-menu-item *ngFor="let menuItem of menuItemList"
+                    (click)="menuItemClick($event, menuItem)">{{menuItem.name}}</button>
+          </mat-menu>
+        </div>
       </div>
     </div>
   </div>

@@ -753,6 +753,7 @@
         @media (max-width: 1200px) {
           padding: 0 15px;
         }
+
         &:focus {
           outline: none;
         }
@@ -768,7 +769,7 @@
     }
   }
 
-  .table-name {
+  .table-name-and-filter {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -785,7 +786,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 24px 28px 25px;
+    padding: 24px 28px 5px;
   }
   .td-breadcrumb {
     color: $black;

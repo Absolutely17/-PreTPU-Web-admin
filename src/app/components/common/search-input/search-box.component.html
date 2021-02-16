@@ -1,0 +1,19 @@
+<div class="td-search-box">
+  <td-search-input
+    #searchInput
+    [@inputState]="alwaysVisible || searchVisible"
+    [debounce]="debounce"
+    [(ngModel)]="value"
+    [showUnderline]="true"
+    [placeholder]="'Фильтр'"
+    [clearIcon]="clearIcon"
+    (searchDebounce)="handleSearchDebounce($event)"
+    (search)="handleSearch($event)"
+    (clear)="handleClear(); toggleVisibility()"
+    (blur)="handleBlur()"
+  ></td-search-input>
+  <button mat-icon-button type="button" class="td-search-icon" (click)="searchClicked()">
+    <mat-icon matTooltip="Фильтр" *ngIf="!searchVisible || alwaysVisible">{{ searchIcon }}</mat-icon>
+    <mat-icon matTooltip="Закрыть" *ngIf="searchVisible && !alwaysVisible">{{ backIcon }}</mat-icon>
+  </button>
+</div>

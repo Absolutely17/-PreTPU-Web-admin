@@ -1,4 +1,4 @@
-import {TdDataTableService} from '@covalent/core/data-table';
+import {TdDataTableService, TdDataTableSortingOrder} from '@covalent/core/data-table';
 import {Input, OnInit, ViewChild} from '@angular/core';
 import {IPageChangeEvent, TdPagingBarComponent} from '@covalent/core/paging';
 import {TdLoadingService} from '@covalent/core/loading';
@@ -46,6 +46,8 @@ export abstract class TableComponent implements OnInit {
   _multiple: boolean;
 
   tableName: string;
+
+  filterTerm: string;
 
   @Input('selectable')
   set selectable(selectDefault: boolean) {
@@ -172,15 +174,53 @@ export abstract class TableComponent implements OnInit {
     }
     this.getTableData().subscribe(it => {
       if (it) {
-        let newData: any[] = it;
+        let newData: any[] = this.customizeTableRows(it);
         this.filteredTotal = newData.length;
+        const excludedColumns: string[] = this.columns
+          .filter((column: ISbDataTableColumn) => {
+            return (
+              (column.filter === undefined && column.hidden === true) ||
+              (column.filter !== undefined && column.filter === false)
+            );
+          })
+          .map((column: ISbDataTableColumn) => {
+            return column.name;
+          });
+        newData = this.dataTableService.filterData(newData, this.filterTerm, true, excludedColumns);
         // @ts-ignore
-        newData = this.dataTableService.sortData(newData, this.sortBy, this.sortOrder);
+        newData = this.sortData(newData, this.sortBy, this.sortOrder);
         newData = this.dataTableService.pageData(newData, this.fromRow, this.currentPage * this.pageSize);
         this.filteredData = newData;
         this.loadingService.resolve(this.loaderName);
       }
     });
+  }
+
+  // Сортируем данные. Вынес из сервиса дефолтного, дабы переопределить функцию сортировки
+  sortData(data: any[], sortBy: string, sortOrder: TdDataTableSortingOrder = TdDataTableSortingOrder.Ascending): any[] {
+    if (sortBy) {
+      data = Array.from(data);
+      data.sort((a: any, b: any) => {
+        const compA: any = a[sortBy];
+        const compB: any = b[sortBy];
+        let direction: number = 0;
+        if (!Number.isNaN(Number.parseFloat(compA)) && !Number.isNaN(Number.parseFloat(compB))) {
+          direction = Number.parseFloat(compA) - Number.parseFloat(compB);
+        } else {
+          if (!compA && compB) {
+            direction = -1;
+          } else if (!compB && compA) {
+            direction = 1
+          } else if (compA < compB) {
+            direction = -1;
+          } else if (compA > compB) {
+            direction = 1;
+          }
+        }
+        return direction * (sortOrder === TdDataTableSortingOrder.Descending ? -1 : 1);
+      });
+    }
+    return data;
   }
 
   enableSelectUsers(): void {
@@ -193,6 +233,19 @@ export abstract class TableComponent implements OnInit {
    */
   menuItemClick(event: MouseEvent, menuItem: TableActionConfig): void {
     return;
+  }
+
+  filter(filterTerm: string) {
+    this.filterTerm = filterTerm;
+    this.pagingBar.navigateToPage(1);
+    this.refreshTable();
+  }
+
+  /**
+   * Выставляет спицифические параметры для строк, которые пришли с сервера.
+   */
+  protected customizeTableRows(tableRows: any[]): any[] {
+    return tableRows;
   }
 
 }
