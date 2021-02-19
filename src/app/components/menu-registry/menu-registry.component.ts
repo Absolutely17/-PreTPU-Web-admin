@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Injectable, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, Injectable, OnInit, ViewChild} from '@angular/core';
 import {FlatTreeControl} from '@angular/cdk/tree';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import {BehaviorSubject} from 'rxjs';
@@ -9,6 +9,7 @@ import {TdLoadingService} from '@covalent/core/loading';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {DialogMode} from '../dialog/dialog-mode';
 import {MenuRegistryReferenceComponent} from "../dialog/menu-registry-reference-dialog/menu-registry-reference.component";
+import {ShepherdService} from "angular-shepherd";
 
 export class MenuItem {
   id: string;
@@ -332,7 +333,8 @@ export class MenuRegistryComponent implements OnInit, AfterViewInit {
     private dialogService: DialogService,
     private menuService: MenuService,
     private loadingService: TdLoadingService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private shepherdService: ShepherdService
   ) {
     this.logInfo = [];
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel, this.isExpandable, this.getChildren);
@@ -382,6 +384,25 @@ export class MenuRegistryComponent implements OnInit, AfterViewInit {
         }
       }
     });
+    this.shepherdService.modal = true;
+    this.shepherdService.addSteps([{
+      title: 'Сохранение данных',
+      text: 'У вас есть несохраненные изменения. Чтобы сохранить их нажмите на кнопку ниже.',
+      attachTo: {
+        element: '#save-btn',
+        on: 'top'
+      },
+      buttons: [
+        {
+          action() {
+            return this.cancel();
+          },
+          classes: 'shepherd-button-secondary',
+          text: 'Закрыть'
+        }
+      ],
+      id: 'creating'
+    }]);
   }
 
   ngAfterViewInit(): void {
@@ -650,6 +671,19 @@ export class MenuRegistryComponent implements OnInit, AfterViewInit {
 
   openReference(): void {
     this.dialogService.show(MenuRegistryReferenceComponent, {}, '', '', true);
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any) {
+    if (this.hasAnyChange) {
+      this.markSaveButton();
+      $event.returnValue = true;
+    }
+  }
+
+  markSaveButton() {
+    this.shepherdService.start();
+    setTimeout(this.shepherdService.cancel, 3000);
   }
 }
 

@@ -10,8 +10,7 @@ export enum TableActionType {
   SendOnUsersNotification = 'SendOnUsersNotification',
   SendOnGroupNotification = 'SendOnGroupNotification',
   AddRow = 'AddRow',
-  CalendarCreateEvent = 'CalendarCreateEvent',
-  AttachDocument = 'AttachDocument'
+  CalendarCreateEvent = 'CalendarCreateEvent'
 }
 
 export interface TableActionConfig {

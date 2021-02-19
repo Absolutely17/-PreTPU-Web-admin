@@ -39,10 +39,6 @@ export class UsersRegistryComponent extends TableComponent {
     {
       id: TableActionType.CalendarCreateEvent,
       name: 'Добавить событие'
-    },
-    {
-      id: TableActionType.AttachDocument,
-      name: 'Прикрепить документ'
     }
   ];
 
@@ -81,10 +77,6 @@ export class UsersRegistryComponent extends TableComponent {
     return tableRows;
   }
 
-  uploadDocument(): void {
-    this.dialogService.show(UploadDocumentDialogComponent);
-  }
-
   createCalendarEvent(): void {
     this.dialogService.show(CalendarCreateEventDialogComponent, {
       dicts: this.dicts,
@@ -108,9 +100,6 @@ export class UsersRegistryComponent extends TableComponent {
           break;
         case TableActionType.CalendarCreateEvent:
           this.createCalendarEvent();
-          break;
-        case TableActionType.AttachDocument:
-          this.uploadDocument();
           break;
       }
     }

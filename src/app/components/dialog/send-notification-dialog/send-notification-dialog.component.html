@@ -1,12 +1,25 @@
 <div class="loader-container"
      *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
   <td-dialog>
-    <td-dialog-title>{{title}}</td-dialog-title>
+    <td-dialog-title>Отправка уведомления</td-dialog-title>
     <td-dialog-content>
       <div flex="grow" class="simple-fields">
         <div *ngIf="form">
           <form [formGroup]="form">
             <div layout="column" layout-align="start stretch" class="fullheight fullwidth">
+
+              <mat-form-field class="fullwidth push-bottom-sm">
+                <mat-label>Тип уведомления</mat-label>
+                <mat-select formControlName="type">
+                  <mat-option *ngFor="let mode of modes" [value]="mode.id">
+                    {{mode.name}}
+                  </mat-option>
+                </mat-select>
+                <span class="error-label" *ngIf="isInvalid('type')" matTooltip="{{getError('type')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+              </mat-form-field>
+
               <mat-form-field class="fullwidth push-bottom-sm">
                 <mat-label>Заголовок уведомления</mat-label>
                 <input matInput tdAutoTrim autocomplete="off"
@@ -29,7 +42,7 @@
                 </span>
               </mat-form-field>
 
-              <mat-form-field *ngIf="currentMode === mode.GROUP && dicts && dicts.languages"
+              <mat-form-field *ngIf="currentMode && currentMode === mode.GROUP && dicts && dicts.languages"
                               class="fullwidth push-bottom-sm">
                 <mat-label>Язык пользователей</mat-label>
                 <mat-select formControlName="language">
@@ -38,7 +51,7 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
-              <ng-container *ngIf="currentMode === mode.USERS">
+              <ng-container *ngIf="currentMode && currentMode === mode.USERS">
                 <div class="push-bottom-md">
                   <button color="primary" style="width: fit-content" matTooltip="Текущие выбранные пользователи будут выделены в таблице" mat-raised-button
                           (click)="selectUsers()">Выбрать пользователей

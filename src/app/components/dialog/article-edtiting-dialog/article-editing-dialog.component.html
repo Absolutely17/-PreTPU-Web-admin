@@ -1,6 +1,6 @@
 <div class="loader-container"
      *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
-  <td-dialog class="large-height">
+  <td-dialog [ngClass]="stepper.selectedIndex === 1 ? 'large-height' : ''">
     <td-dialog-title>{{currentMode === mode.EDIT ? 'Редактирование' : 'Создание'}} статьи</td-dialog-title>
     <td-dialog-content>
       <mat-horizontal-stepper #stepper>
@@ -49,6 +49,11 @@
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
+
+                 <mat-checkbox color="primary" formControlName="useBackground">
+                   Использовать фон
+                 </mat-checkbox>
+
               </div>
             </form>
           </div>

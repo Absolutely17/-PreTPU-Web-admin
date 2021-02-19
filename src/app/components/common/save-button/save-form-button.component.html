@@ -1,5 +1,5 @@
 <div class="edit-form-button-container">
-  <button type="button" mat-fab color="primary" matTooltipPosition="before" matTooltip="Сохранить" (click)="onSave()"
+  <button id="save-btn" type="button" mat-fab color="primary" matTooltipPosition="before" matTooltip="Сохранить" (click)="onSave()"
           [disabled]="disableSave || savingForm">
     <mat-icon *ngIf="!savingForm" class="md-36">save</mat-icon>
     <mat-icon *ngIf="savingForm" class="spinner">autorenew</mat-icon>

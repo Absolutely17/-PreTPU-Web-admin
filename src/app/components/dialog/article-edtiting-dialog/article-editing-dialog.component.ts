@@ -26,6 +26,9 @@ export interface ArticleEditingDialogData {
 })
 export class ArticleEditingDialogComponent implements OnInit {
 
+  backgroundImageStyle = 'body { background-image: ' +
+    'url(https://internationals.tpu.ru:8080/api/media/img/7CDAEA5F-BC6D-461B-B214-12A975E88A55) }';
+
   generalInfoForm: FormGroup;
 
   textControl: FormControl;
@@ -62,6 +65,9 @@ export class ArticleEditingDialogComponent implements OnInit {
       this.articleService.getArticleById(data.articleId).subscribe(it => {
         if(it) {
           this.generalInfoForm.patchValue(it);
+          if (this.hasBackgroundStyle(it.text)) {
+            this.generalInfoForm.patchValue({useBackground: true});
+          }
           this.textControl.patchValue(it.text)
           this.loadingService.resolve(this.loaderName);
         }
@@ -77,6 +83,7 @@ export class ArticleEditingDialogComponent implements OnInit {
     this.generalInfoForm.addControl('topic', new FormControl('', Validators.required));
     this.generalInfoForm.addControl('briefText', new FormControl('', null));
     this.generalInfoForm.addControl('language', new FormControl('', Validators.required));
+    this.generalInfoForm.addControl('useBackground', new FormControl(false, Validators.required));
     this.textControl= new FormControl(null, Validators.required);
   }
 
@@ -103,7 +110,11 @@ export class ArticleEditingDialogComponent implements OnInit {
   }
 
   accept(): void {
-    const htmlText = transformResultTextToHtml(this.textControl.value);
+    let htmlText = transformResultTextToHtml(this.textControl.value);
+    const useBackground = this.generalInfoForm.get('useBackground').value;
+    if (useBackground && !this.hasBackgroundStyle(htmlText)) {
+      htmlText = this.addBackgroundStyle(htmlText);
+    }
     const articleInfo: Article = {
       name: this.get('name').value,
       topic: this.get('topic').value,
@@ -121,7 +132,19 @@ export class ArticleEditingDialogComponent implements OnInit {
         error => this.errorService.handleServiceError(error)
       );
     }
+  }
 
+  private addBackgroundStyle(text: string): string {
+    if (!this.hasBackgroundStyle(text)) {
+      const lastIndexStyles = text.search('</style>');
+      if (lastIndexStyles !== -1) {
+        return text.slice(0, lastIndexStyles) + this.backgroundImageStyle + text.slice(lastIndexStyles);
+      }
+    }
+  }
+
+  private hasBackgroundStyle(text: string): boolean {
+    return text.indexOf(this.backgroundImageStyle) !== -1;
   }
 
   onReady(editor: any) {

@@ -12,7 +12,8 @@ import {SystemConfigComponent} from './components/system-config/system-config.co
 import {LanguageRegistryComponent} from './components/language-registry/language-registry.component';
 import {StudyGroupRegistryComponent} from "./components/study-group-registry/study-group-registry.component";
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
-import { UserNotificationComponent } from './components/user-notification/user-notification.component';
+import { UserAttachContentComponent } from './components/user-attach-content/user-attach-content.component';
+import {CanDeactivateGuard} from "./services/menu/can-deactivate-guard";
 
 // @ts-ignore
 const routes: Routes = [
@@ -28,7 +29,8 @@ const routes: Routes = [
       },
       {
         path: 'menu',
-        component: MenuRegistryComponent
+        component: MenuRegistryComponent,
+        canDeactivate: [CanDeactivateGuard]
       },
       {
         path: 'users',
@@ -51,8 +53,8 @@ const routes: Routes = [
         component: StudyGroupRegistryComponent
       },
       {
-        path: 'notification',
-        component: UserNotificationComponent
+        path: 'userContent',
+        component: UserAttachContentComponent
       }
     ]
   },

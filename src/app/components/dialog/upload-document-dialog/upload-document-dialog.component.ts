@@ -38,6 +38,7 @@ export class UploadDocumentDialogComponent implements OnInit {
     this.form = new FormGroup({}, null, null);
     this.form.addControl('documentName', new FormControl(null, Validators.required));
     this.form.addControl('file', new FormControl(null, Validators.required));
+    this.form.addControl('sendNotification', new FormControl(false, Validators.required));
   }
 
   isInvalid(name: string): boolean {

@@ -1,7 +1,7 @@
 <div class="loader-container"
      *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
   <td-dialog>
-    <td-dialog-title>Сохранение документа пользователю</td-dialog-title>
+    <td-dialog-title>Прикрепление документа пользователю</td-dialog-title>
     <td-dialog-content>
       <div flex="grow" class="simple-fields">
         <div *ngIf="form">
@@ -52,7 +52,7 @@
               class="push-left-xs"
               [disabled]="form.invalid || selectedUsers.length < 1"
               #acceptBtn
-              (click)="accept()">Сохранить
+              (click)="accept()">Прикрепить
       </button>
     </td-dialog-actions>
   </td-dialog>

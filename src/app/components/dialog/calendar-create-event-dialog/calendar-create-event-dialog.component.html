@@ -1,6 +1,6 @@
 <div class="loader-container"
      *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
-  <td-dialog class="large-height">
+  <td-dialog [ngClass]="stepper.selectedIndex === 1 ? 'large-height' : ''">
     <td-dialog-title>Создание события</td-dialog-title>
     <td-dialog-content>
       <mat-horizontal-stepper #stepper>

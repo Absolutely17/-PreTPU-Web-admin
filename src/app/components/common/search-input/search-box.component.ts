@@ -144,8 +144,6 @@ export class TdSearchBoxComponent extends _TdSearchBoxMixinBase implements ICont
     if (!this.alwaysVisible && this._searchVisible) {
       this.value = '';
       this.handleClear();
-    } else if (this.alwaysVisible || !this._searchVisible) {
-      this._searchInput.focus();
     }
     this.toggleVisibility();
   }

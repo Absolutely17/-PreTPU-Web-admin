@@ -56,8 +56,9 @@ import {UserEditDialogComponent} from "./components/dialog/user-edit-dialog/user
 import {TdFileInputComponent} from "./components/common/file-input/file-input.component";
 import {MenuRegistryReferenceComponent} from "./components/dialog/menu-registry-reference-dialog/menu-registry-reference.component";
 import {UserChooseDialogComponent} from "./components/dialog/user-choose-dialog/user-choose-dialog.component";
-import {UserNotificationComponent} from "./components/user-notification/user-notification.component";
+import {UserAttachContentComponent} from "./components/user-attach-content/user-attach-content.component";
 import {TdSearchBoxComponent} from "./components/common/search-input/search-box.component";
+import {CanDeactivateGuard} from "./services/menu/can-deactivate-guard";
 
 export const commonServices = [
   AppConfig,
@@ -118,7 +119,7 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
     UserEditDialogComponent,
     MenuRegistryReferenceComponent,
     UserChooseDialogComponent,
-    UserNotificationComponent
+    UserAttachContentComponent
   ],
   imports: [
     HttpClientModule,
@@ -150,7 +151,8 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
     ArticleService,
     SystemConfigService,
     LanguageService,
-    StudyGroupService
+    StudyGroupService,
+    CanDeactivateGuard
   ],
   bootstrap: [RootComponent]
 })

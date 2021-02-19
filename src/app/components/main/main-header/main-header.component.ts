@@ -36,8 +36,12 @@ export const userMenuItems: MenuItem[] = [
     url: '/studyGroup'
   },
   {
-    name: 'Уведомления',
-    url: '/notification'
+    name: 'Документы и уведомления',
+    url: '/userContent'
+  },
+  {
+    name: 'События',
+    url: '/calendarEvent'
   }
 ];
 

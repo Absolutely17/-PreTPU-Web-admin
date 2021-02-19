@@ -46,7 +46,6 @@
   }
 
   @media (max-height: 868px) {
-    .td-dialog-content,
     .large-height .td-dialog-content {
       max-height:600px; overflow:auto; padding:0 16px 0 0;
       height: 600px;
@@ -903,6 +902,7 @@
     margin: 24px;
     border-radius: 8px;
     box-shadow: 2px -3px 21px rgb(0 0 0 / 10%);
+    transition: box-shadow 1s ease-in-out;
     font-weight: bold;
     font-size: 36px;
     line-height: 45px;
@@ -935,7 +935,16 @@
       display: flex;
       justify-content: center;
       align-items: center;
+
+      img {
+        max-width: 65%;
+      }
     }
+  }
+
+  .main-card:hover {
+    box-shadow: 0px 0px 16px 8px rgb(0 0 0 / 20%);
+    transition: box-shadow 1s ease-in-out;
   }
 
   /* Карточки */
