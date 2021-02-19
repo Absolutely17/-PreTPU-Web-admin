@@ -5,6 +5,9 @@
         <span>{{tableName}}</span>
       </div>
       <div layout-align="end center" layout="row">
+        <!--Сделано чтобы не давать фокус при загрузке инпуту поиска-->
+        <a tabindex="1">
+        </a>
         <td-custom-search-box
           #searchBox
           backIcon="arrow_forward"
