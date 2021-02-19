@@ -398,7 +398,7 @@ export class MenuRegistryComponent implements OnInit, AfterViewInit {
             return this.cancel();
           },
           classes: 'shepherd-button-secondary',
-          text: 'Закрыть'
+          text: 'Понятно'
         }
       ],
       id: 'creating'
@@ -683,7 +683,9 @@ export class MenuRegistryComponent implements OnInit, AfterViewInit {
 
   markSaveButton() {
     this.shepherdService.start();
-    setTimeout(this.shepherdService.cancel, 3000);
+    setTimeout(() => {
+      this.shepherdService.cancel();
+    }, 3000);
   }
 }
 
