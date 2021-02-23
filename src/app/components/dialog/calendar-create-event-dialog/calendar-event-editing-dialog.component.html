@@ -1,6 +1,4 @@
-<div class="loader-container"
-     *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
-  <td-dialog [ngClass]="stepper.selectedIndex === 1 ? 'large-height' : ''">
+<td-dialog *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay'; color:'accent'" [ngClass]="stepper.selectedIndex === 1 ? 'large-height' : ''">
     <td-dialog-title>{{currentMode === dialogMode.CREATE ? 'Создание' : 'Редактирование'}} события</td-dialog-title>
     <td-dialog-content>
       <mat-horizontal-stepper #stepper>
@@ -146,4 +144,3 @@
       </button>
     </td-dialog-actions>
   </td-dialog>
-</div>

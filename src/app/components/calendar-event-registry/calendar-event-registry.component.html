@@ -1,69 +1,75 @@
 <div class="row text-center">
-    <div class="btn-group">
-      <button
-        mat-raised-button
-        mwlCalendarPreviousView
-        color="primary"
-        [view]="view"
-        [(viewDate)]="viewDate"
-        (viewDateChange)="closeOpenMonthViewDay()">
-        Предыдущий
-      </button>
-      <button
-        style="margin-left: 5px;"
-        mat-raised-button
-        mwlCalendarToday
-        [(viewDate)]="viewDate">
-        Сегодня
-      </button>
-      <button
-        style="margin-left: 5px;"
-        mat-raised-button
-        mwlCalendarNextView
-        color="primary"
-        [view]="view"
-        [(viewDate)]="viewDate"
-        (viewDateChange)="closeOpenMonthViewDay()">
-        Следующий
-      </button>
-    </div>
+  <div class="btn-group">
+    <button
+      mat-raised-button
+      mwlCalendarPreviousView
+      color="primary"
+      [view]="view"
+      [(viewDate)]="viewDate"
+      (viewDateChange)="closeOpenMonthViewDay()">
+      Предыдущий
+    </button>
+    <button
+      style="margin-left: 5px;"
+      mat-raised-button
+      mwlCalendarToday
+      [(viewDate)]="viewDate">
+      Сегодня
+    </button>
+    <button
+      style="margin-left: 5px;"
+      mat-raised-button
+      mwlCalendarNextView
+      color="primary"
+      [view]="view"
+      [(viewDate)]="viewDate"
+      (viewDateChange)="closeOpenMonthViewDay()">
+      Следующий
+    </button>
+  </div>
   <div>
     <h3 style="text-transform: capitalize">{{ viewDate | calendarDate:(view + 'ViewTitle'):locale:weekStartsOn }}</h3>
   </div>
   <div>
-    <div> <span>Выбрать события</span></div>
+    <div class="filter"><span>Фильтр <mat-icon
+      matTooltip="Выберите чьи события загрузить. Выбранный фильтр выделен более темным цветом.">info</mat-icon></span>
+    </div>
     <div class="target-buttons">
       <div style="margin-left: 5px;" [class.active]="currentGroup">
-        <mat-form-field appearance="fill">
-          <mat-label>Группа</mat-label>
+        <mat-form-field appearance="outline" floatLabel="auto">
           <mat-select #groupSelect (selectionChange)="selectGroup($event)">
             <mat-option *ngFor="let group of studyGroups" [value]="group.id">
               {{group.name}}
             </mat-option>
           </mat-select>
+          <mat-label>Группа</mat-label>
         </mat-form-field>
       </div>
-      <button style="margin-left: 5px;" [class.active]="currentUser" type="button" color="primary" mat-raised-button (click)="selectUser()">Пользователь</button>
-      <button style="margin-left: 5px;" [class.active]="isAll" type="button" color="primary" mat-raised-button (click)="selectAll()">Все</button>
+      <button style="margin-left: 5px;" [class.active]="currentUser" type="button" color="primary" mat-raised-button
+              (click)="selectUser()">Пользователь
+      </button>
+      <button style="margin-left: 5px;" [class.active]="isAll" type="button" color="primary" mat-raised-button
+              (click)="selectAll()">Все
+      </button>
     </div>
   </div>
 </div>
 <br/>
 <div class="loader-container"
      *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
-<mwl-calendar-month-view
-  [viewDate]="viewDate"
-  [events]="events"
-  [activeDayIsOpen]="activeDayIsOpen"
-  (dayClicked)="dayClicked($event.day)"
-  (eventClicked)="editEvent($event.event)"
-  [locale]="locale"
-  [refresh]="refresh"
-  [weekStartsOn]="weekStartsOn"
-  [weekendDays]="weekendDays"
-  [openDayEventsTemplate]="customTemplate"
->
-</mwl-calendar-month-view>
+  <mwl-calendar-month-view
+    [viewDate]="viewDate"
+    [events]="events"
+    [activeDayIsOpen]="activeDayIsOpen"
+    (dayClicked)="dayClicked($event.day)"
+    (eventClicked)="editEvent($event.event)"
+    [locale]="locale"
+    [refresh]="refresh"
+    [weekStartsOn]="weekStartsOn"
+    [weekendDays]="weekendDays"
+    [openDayEventsTemplate]="customTemplate"
+  >
+  </mwl-calendar-month-view>
 </div>
 <ng-template
   #customTemplate
@@ -114,7 +120,10 @@
       &ngsp;
     </div>
     <div class="add-new-event-btn">
-      <button mat-button (click)="addEvent()"><mat-icon>add</mat-icon>Добавить событие</button>
+      <button mat-button (click)="addEvent()">
+        <mat-icon>add</mat-icon>
+        Добавить событие
+      </button>
     </div>
   </div>
 </ng-template>

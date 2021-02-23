@@ -74,19 +74,20 @@ export class CalendarEventEditingDialogComponent implements OnInit {
     private userService: UserService,
     @Inject(MAT_DIALOG_DATA) data: any
   ) {
+    this.loadingService.register(this.loaderName);
     if(data) {
       this.data = data;
     }
+    this.userService.getGroups().subscribe(it => {
+      if(it) {
+        this.groups = it;
+      }
+    });
   }
 
   ngOnInit(): void {
-    this.loadingService.register(this.loaderName);
     this.createForm();
-    if(this.data) {
-      this.patchInitValue();
-    }
-    this.loadingService.resolve(this.loaderName);
-
+    this.patchInitValue();
   }
 
   private patchInitValue() {
@@ -107,6 +108,7 @@ export class CalendarEventEditingDialogComponent implements OnInit {
           }
           this.prevSendNotification = event.sendNotification;
           this.detailedMessageControl.patchValue(event.detailedMessage);
+          this.loadingService.resolve(this.loaderName);
         }
       })
     } else {
@@ -126,6 +128,7 @@ export class CalendarEventEditingDialogComponent implements OnInit {
       if (this.data.selectedGroup) {
         this.defaultSelectedGroup = this.data.selectedGroup;
       }
+      this.loadingService.resolve(this.loaderName);
     }
   }
 
@@ -137,11 +140,6 @@ export class CalendarEventEditingDialogComponent implements OnInit {
     this.generalInfoForm.addControl('groupTarget', new FormControl(null, Validators.required));
     this.generalInfoForm.addControl('sendNotification', new FormControl(false, null));
     this.generalInfoForm.addControl("onlineMeetingLink", new FormControl(null, null));
-    this.userService.getGroups().subscribe(it => {
-      if(it) {
-        this.groups = it;
-      }
-    });
     this.detailedMessageControl = new FormControl(null, null);
   }
 

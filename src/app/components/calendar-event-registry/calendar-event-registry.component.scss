@@ -9,6 +9,14 @@
   text-align: center !important;
 }
 
+.filter {
+  margin-bottom: 10px;
+
+  mat-icon {
+    font-size: 20px;
+  }
+}
+
 .target-buttons {
   display: flex;
   flex-direction: row;
@@ -26,6 +34,10 @@
 
 :host::ng-deep {
 
+  .td-loading-wrapper {
+    height: auto !important;
+  }
+
   .mat-form-field-label {
     margin-top: 0;
   }
@@ -36,8 +48,30 @@
     .mat-form-field-flex {
       height: 43px;
       padding: .25em .75em 0 .75em;
+
+      .mat-form-field-outline-gap {
+        border-top-color: transparent;
+        width: 45px !important;
+      }
+
+      .mat-form-field-label-wrapper {
+        top: -0.95625em;
+      }
+
+      .mat-form-field-infix {
+        padding: 0.35em 0 1em 0;
+      }
+
+      .mat-select-arrow-wrapper {
+        transform: translateY(-10%);
+      }
+
+      .mat-select-value {
+        font-size: 16px !important;
+      }
     }
   }
+
   .cal-month-view .cal-day-cell {
     min-height: 120px !important;
   }
