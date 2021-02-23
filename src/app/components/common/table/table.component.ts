@@ -222,11 +222,6 @@ export abstract class TableComponent implements OnInit {
     return data;
   }
 
-  enableSelectUsers(): void {
-    this.selectable = !this.selectable;
-    this.selectedRows = [];
-  }
-
   /**
    * Обработка нажатия кнопки. Переопределить если добавляются пункты меню
    */

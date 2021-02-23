@@ -43,7 +43,7 @@ import {LanguageRegistryComponent} from './components/language-registry/language
 import {LanguageService} from './services/language/language.service';
 import {LanguageCreateDialogComponent} from './components/dialog/language-create-dialog/language-create-dialog.component';
 import {AutocompleteSelectComponent} from './components/common/autocomplete-select/autocomplete-select.component';
-import {CalendarCreateEventDialogComponent} from './components/dialog/calendar-create-event-dialog/calendar-create-event-dialog.component';
+import {CalendarEventEditingDialogComponent} from './components/dialog/calendar-create-event-dialog/calendar-event-editing-dialog.component';
 import {NGX_MAT_DATE_FORMATS, NgxMatDateFormats, NgxMatDatetimePickerModule} from '@angular-material-components/datetime-picker';
 import {NgxMatMomentModule} from '@angular-material-components/moment-adapter';
 import {MAT_DATE_LOCALE} from '@angular/material/core';
@@ -59,6 +59,11 @@ import {UserChooseDialogComponent} from "./components/dialog/user-choose-dialog/
 import {UserAttachContentComponent} from "./components/user-attach-content/user-attach-content.component";
 import {TdSearchBoxComponent} from "./components/common/search-input/search-box.component";
 import {CanDeactivateGuard} from "./services/menu/can-deactivate-guard";
+import {CalendarEventRegistryComponent} from "./components/calendar-event-registry/calendar-event-registry.component";
+import {CalendarModule, DateAdapter} from "angular-calendar";
+import {adapterFactory} from "angular-calendar/date-adapters/date-fns";
+import localeRu from '@angular/common/locales/ru';
+import { registerLocaleData } from '@angular/common';
 
 export const commonServices = [
   AppConfig,
@@ -95,6 +100,8 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
   }
 };
 
+registerLocaleData(localeRu);
+
 @NgModule({
   declarations: [
     ...sbDataTableComponents,
@@ -112,14 +119,15 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
     SystemConfigComponent,
     LanguageRegistryComponent,
     LanguageCreateDialogComponent,
-    CalendarCreateEventDialogComponent,
+    CalendarEventEditingDialogComponent,
     StudyGroupRegistryComponent,
     StudyGroupDialogComponent,
     ResetPasswordComponent,
     UserEditDialogComponent,
     MenuRegistryReferenceComponent,
     UserChooseDialogComponent,
-    UserAttachContentComponent
+    UserAttachContentComponent,
+    CalendarEventRegistryComponent
   ],
   imports: [
     HttpClientModule,
@@ -133,6 +141,10 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
       modules: {
         imageResize: true
       }
+    }),
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory
     }),
     appRouting
   ],

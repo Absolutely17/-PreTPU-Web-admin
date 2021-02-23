@@ -14,6 +14,7 @@ import {StudyGroupRegistryComponent} from "./components/study-group-registry/stu
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { UserAttachContentComponent } from './components/user-attach-content/user-attach-content.component';
 import {CanDeactivateGuard} from "./services/menu/can-deactivate-guard";
+import {CalendarEventRegistryComponent} from "./components/calendar-event-registry/calendar-event-registry.component";
 
 // @ts-ignore
 const routes: Routes = [
@@ -55,6 +56,10 @@ const routes: Routes = [
       {
         path: 'userContent',
         component: UserAttachContentComponent
+      },
+      {
+        path: 'calendarEvent',
+        component: CalendarEventRegistryComponent
       }
     ]
   },

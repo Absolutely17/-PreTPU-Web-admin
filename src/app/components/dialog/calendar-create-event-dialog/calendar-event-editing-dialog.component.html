@@ -1,7 +1,7 @@
 <div class="loader-container"
      *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
   <td-dialog [ngClass]="stepper.selectedIndex === 1 ? 'large-height' : ''">
-    <td-dialog-title>Создание события</td-dialog-title>
+    <td-dialog-title>{{currentMode === dialogMode.CREATE ? 'Создание' : 'Редактирование'}} события</td-dialog-title>
     <td-dialog-content>
       <mat-horizontal-stepper #stepper>
         <mat-step label="Данные события">
@@ -14,9 +14,9 @@
                     <mat-label>Название события</mat-label>
                     <input matInput tdAutoTrim autocomplete="off"
                            type="text"
-                           formControlName="name"
+                           formControlName="title"
                            [maxlength]="500"/>
-                    <span class="error-label" *ngIf="isInvalid('name')" matTooltip="{{getError('name')}}">
+                    <span class="error-label" *ngIf="isInvalid('title')" matTooltip="{{getError('title')}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>
                   </mat-form-field>
@@ -69,7 +69,8 @@
 
                   <ng-container *ngIf="get('groupTarget').value === 'SELECTED_USERS'">
                     <div class="push-bottom-md">
-                      <button color="primary" style="width: fit-content" matTooltip="Текущие выбранные пользователи будут выделены в таблице" mat-raised-button
+                      <button color="primary" style="width: fit-content"
+                              matTooltip="Текущие выбранные пользователи будут выделены в таблице" mat-raised-button
                               (click)="selectUsers()">Выбрать пользователей
                       </button>
                       <span class="pad-left-sm">Выбрано: {{selectedUsers.length}}
@@ -87,6 +88,7 @@
                                 class="fullwidth push-bottom-sm">
                     <autocomplete-select
                       [title]="'Группа'"
+                      [defaultSelected]="defaultSelectedGroup"
                       [options]="groups"
                       [multiple]="true"
                       [value]="'id'"
@@ -97,6 +99,10 @@
 
                   <mat-checkbox formControlName="sendNotification">
                     Отправить уведомление о назначении события
+                    <mat-icon *ngIf="prevSendNotification"
+                      matTooltip="Уведомление уже было отправлено ранее при создании этого события. Выбрав этот пункт, уведомление будет отправлено повторно.">
+                      info
+                    </mat-icon>
                   </mat-checkbox>
 
 
@@ -127,14 +133,14 @@
       <button *ngIf="stepper.selectedIndex === 1" type="button" flex mat-raised-button
               color="primary"
               class="push-left-xs"
-              [disabled]="generalInfoForm.invalid || acceptDisabled()"
+              [disabled]="generalInfoForm.invalid || isAcceptBtnDisabled()"
               #acceptBtn
-              (click)="accept()">Создать
+              (click)="accept()">{{currentMode === dialogMode.CREATE ? 'Создать' : 'Сохранить'}}
       </button>
       <button *ngIf="stepper.selectedIndex !== 1" type="button" flex mat-raised-button
               color="primary"
               class="push-left-xs"
-              [disabled]="generalInfoForm.invalid || acceptDisabled()"
+              [disabled]="generalInfoForm.invalid || isAcceptBtnDisabled()"
               #nextBtn
               (click)="nextStep(stepper)">Далее
       </button>

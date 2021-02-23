@@ -29,7 +29,8 @@
               "src/material-theme.scss",
               "src/styles.scss",
               "node_modules/@covalent/core/common/platform.scss",
-              "node_modules/shepherd.js/dist/css/shepherd.css"
+              "node_modules/shepherd.js/dist/css/shepherd.css",
+              "node_modules/angular-calendar/css/angular-calendar.css"
             ],
             "scripts": [
               "node_modules/quill/dist/quill.min.js"

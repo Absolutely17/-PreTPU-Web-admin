@@ -11,21 +11,33 @@ export class UserChooseDialogComponent {
 
   selectedUsers: Identifable[];
 
+  multiple: boolean;
+
   constructor(
     private dialogRef: MatDialogRef<UserChooseDialogComponent>,
     private errorService: ErrorService,
     @Inject(MAT_DIALOG_DATA) data: any,
   ) {
-    if (data && data.selectedUsers) {
-      this.selectedUsers = data.selectedUsers.map(s => {
-        return {id: s};
-      });
+    if (data) {
+      if (data.selectedUsers) {
+        if (data.selectedUsers instanceof Array) {
+          this.selectedUsers = data.selectedUsers.map(s => {
+            return {id: s};
+          });
+        } else {
+          this.selectedUsers = [];
+          this.selectedUsers.push({id: data.selectedUsers});
+        }
+      } else {
+        this.selectedUsers = [];
+      }
+      this.multiple = data.multiple;
     }
   }
 
   accept(): void {
-    const selectedArticles = this.selectedUsers.map(it => it.id);
-    this.dialogRef.close(selectedArticles);
+    const selected = this.selectedUsers.map(it => it.id);
+    this.dialogRef.close(selected);
   }
 
   cancel(): void {

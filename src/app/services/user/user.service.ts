@@ -27,10 +27,6 @@ export class UserService {
     return this.http.get<any>(this.appConfig.webServiceApi('/studyGroup'));
   }
 
-  createCalendarEvent(request: any): Observable<any> {
-    return this.http.post(this.appConfig.webServiceApi('/user/admin/calendarEvent'), request);
-  }
-
   getByEmail(email: string): Observable<any> {
     return this.http.get(this.appConfig.webServiceApi(`/user/profile?email=${email}`))
   }

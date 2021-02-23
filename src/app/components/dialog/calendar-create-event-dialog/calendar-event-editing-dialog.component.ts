@@ -14,19 +14,28 @@ import {transformResultTextToHtml} from "../../common/ckeditor/utils-function";
 import {MatStepper} from "@angular/material/stepper";
 import {DialogService} from "../../../services/dialog/dialog.service";
 import {UserChooseDialogComponent} from "../user-choose-dialog/user-choose-dialog.component";
+import {CalendarEventService} from "../../../services/calendarEvent/calendar-event.service";
+import {DialogMode} from "../dialog-mode";
+import * as moment from "moment";
+
+export enum CalendarEventGroupTarget {
+  SELECTED_USERS = 'SELECTED_USERS',
+  STUDY_GROUP = 'STUDY_GROUP',
+  ALL = 'ALL'
+}
 
 @Component({
-  selector: 'calendar-create-event-dialog',
-  templateUrl: './calendar-create-event-dialog.component.html'
+  selector: 'calendar-event-editing-dialog',
+  templateUrl: './calendar-event-editing-dialog.component.html'
 })
-export class CalendarCreateEventDialogComponent implements OnInit {
+export class CalendarEventEditingDialogComponent implements OnInit {
 
   @ViewChild(AutocompleteSelectComponent) groupSelect: AutocompleteSelectComponent;
 
   groupTargets = [
-    {id: 'SELECTED_USERS', value: 'Выбранные пользователи'},
-    {id: 'STUDY_GROUP', value: 'Учебная группа'},
-    {id: 'ALL', value: 'Все'}
+    {id: CalendarEventGroupTarget.SELECTED_USERS, value: 'Выбранные пользователи'},
+    {id: CalendarEventGroupTarget.STUDY_GROUP, value: 'Учебная группа'},
+    {id: CalendarEventGroupTarget.ALL, value: 'Все'}
   ];
 
   generalInfoForm: FormGroup;
@@ -43,23 +52,86 @@ export class CalendarCreateEventDialogComponent implements OnInit {
 
   groups: any[];
 
+  defaultSelectedGroup: any;
+
+  data: any;
+
+  dialogMode = DialogMode;
+
+  currentMode: DialogMode;
+
+  prevSendNotification: boolean;
+
   constructor(
-    private dialogRef: MatDialogRef<CalendarCreateEventDialogComponent>,
-    private userService: UserService,
+    private dialogRef: MatDialogRef<CalendarEventEditingDialogComponent>,
+    private calendarEventService: CalendarEventService,
     private loadingService: TdLoadingService,
     private errorService: ErrorService,
     private snackbar: MatSnackBar,
     private imageService: ImageService,
     private appConfig: AppConfig,
     private diagService: DialogService,
+    private userService: UserService,
     @Inject(MAT_DIALOG_DATA) data: any
   ) {
+    if(data) {
+      this.data = data;
+    }
   }
 
   ngOnInit(): void {
     this.loadingService.register(this.loaderName);
+    this.createForm();
+    if(this.data) {
+      this.patchInitValue();
+    }
+    this.loadingService.resolve(this.loaderName);
+
+  }
+
+  private patchInitValue() {
+    this.currentMode = this.data.mode;
+    if(this.data.currentEventId) {
+      this.calendarEventService.getDetailedEvent(this.data.currentEventId).subscribe(event => {
+        if(event) {
+          this.generalInfoForm.patchValue({
+            title: event.title,
+            description: event.description,
+            date: moment.unix(event.timestamp),
+            groupTarget: event.groupTarget,
+            onlineMeetingLink: event.onlineMeetingLink
+          });
+          this.selectedUsers = event.selectedUsers && event.selectedUsers.length > 0 ? event.selectedUsers : [];
+          if(event.selectedGroups && event.selectedGroups.length > 0) {
+            this.defaultSelectedGroup = event.selectedGroups;
+          }
+          this.prevSendNotification = event.sendNotification;
+          this.detailedMessageControl.patchValue(event.detailedMessage);
+        }
+      })
+    } else {
+      if(this.data.selectDate) {
+        this.generalInfoForm.patchValue({
+          date: moment(this.data.selectDate)
+        });
+      }
+      if (this.data.groupTarget) {
+        this.generalInfoForm.patchValue({
+          groupTarget: this.data.groupTarget
+        });
+      }
+      if (this.data.selectedUser) {
+        this.selectedUsers.push(this.data.selectedUser);
+      }
+      if (this.data.selectedGroup) {
+        this.defaultSelectedGroup = this.data.selectedGroup;
+      }
+    }
+  }
+
+  createForm() {
     this.generalInfoForm = new FormGroup({}, null, null);
-    this.generalInfoForm.addControl('name', new FormControl('', Validators.required));
+    this.generalInfoForm.addControl('title', new FormControl('', Validators.required));
     this.generalInfoForm.addControl('description', new FormControl('', null));
     this.generalInfoForm.addControl('date', new FormControl('', Validators.required));
     this.generalInfoForm.addControl('groupTarget', new FormControl(null, Validators.required));
@@ -68,7 +140,6 @@ export class CalendarCreateEventDialogComponent implements OnInit {
     this.userService.getGroups().subscribe(it => {
       if(it) {
         this.groups = it;
-        this.loadingService.resolve(this.loaderName);
       }
     });
     this.detailedMessageControl = new FormControl(null, null);
@@ -90,15 +161,16 @@ export class CalendarCreateEventDialogComponent implements OnInit {
 
   selectUsers() {
     this.diagService.show(UserChooseDialogComponent, {
-      selectedUsers: this.selectedUsers
+      selectedUsers: this.selectedUsers,
+      multiple: true
     }, '', '', true).afterClosed().subscribe(it => {
-      if (it) {
+      if(it) {
         this.selectedUsers = it;
       }
     })
   }
 
-  acceptDisabled(): boolean {
+  isAcceptBtnDisabled(): boolean {
     if(this.get('groupTarget').value === 'SELECTED_USERS' && this.selectedUsers.length <= 0) {
       return true;
     }
@@ -113,32 +185,43 @@ export class CalendarCreateEventDialogComponent implements OnInit {
     const group = this.groupSelect && this.groupSelect.control.value ? this.groupSelect.control.value : [];
     const selectedUsersVal = this.get('groupTarget').value === 'SELECTED_USERS' ? this.selectedUsers : [];
     let resultDetailedMessageText;
-    if (this.detailedMessageControl.value) {
+    if(this.detailedMessageControl.value) {
       resultDetailedMessageText = transformResultTextToHtml(this.detailedMessageControl.value);
     }
     const createEventRequest = {
-      title: this.get('name').value,
+      title: this.get('title').value,
       description: description,
       groupTarget: this.get('groupTarget').value,
-      date: this.get('date').value.unix(),
+      timestamp: this.get('date').value.unix(),
       groups: group,
       onlineMeetingLink: this.get('onlineMeetingLink').value,
       selectedUsers: selectedUsersVal,
       sendNotification: this.get('sendNotification').value,
       detailedMessage: resultDetailedMessageText
     };
-    this.userService.createCalendarEvent(createEventRequest).subscribe(
-      () => {
-        this.snackbar.open('Событие создано', 'Закрыть', {duration: 3000});
-        this.dialogRef.close();
+    if(this.currentMode === DialogMode.CREATE) {
+      this.calendarEventService.createCalendarEvent(createEventRequest).subscribe(
+        () => {
+          this.snackbar.open('Событие создано', 'Закрыть', {duration: 3000});
+        },
+        error => {
+          this.errorService.handleServiceError(error);
+        }
+      ).add(() => {
+        this.dialogRef.close(true);
         this.loadingService.resolve(this.loaderName);
-      },
-      error => {
-        this.errorService.handleServiceError(error);
-        this.dialogRef.close();
-        this.loadingService.resolve(this.loaderName);
-      }
-    );
+      });
+    } else {
+      this.calendarEventService.editEvent(createEventRequest, this.data.currentEventId).subscribe(() => {
+        this.snackbar.open('Событие отредактировано', 'Закрыть', {duration: 3000});
+      }, error => this.errorService.handleServiceError(error))
+        .add(() => {
+          this.dialogRef.close(true);
+          this.loadingService.resolve(this.loaderName);
+        })
+
+    }
+
   }
 
   isInvalid(name: string) {

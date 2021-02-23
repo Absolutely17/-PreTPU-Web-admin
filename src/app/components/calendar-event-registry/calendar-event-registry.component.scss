@@ -1,0 +1,70 @@
+.row {
+  margin: 20px 10px 0 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.target-buttons {
+  display: flex;
+  flex-direction: row;
+  height: 36px;
+  align-items: center;
+
+  button.active {
+    background-color: #4e8151;
+  }
+
+  .mat-form-field {
+    height: 43px;
+  }
+}
+
+:host::ng-deep {
+
+  .mat-form-field-label {
+    margin-top: 0;
+  }
+
+  .mat-form-field-wrapper {
+    height: 43px;
+
+    .mat-form-field-flex {
+      height: 43px;
+      padding: .25em .75em 0 .75em;
+    }
+  }
+  .cal-month-view .cal-day-cell {
+    min-height: 120px !important;
+  }
+
+  .cal-open {
+    background-color: #e1e1e1;
+  }
+
+  .cal-day-cell {
+    cursor: pointer;
+  }
+
+  .cal-month-view .cal-event {
+    background-color: #4caf50;
+  }
+}
+
+.add-new-event-btn {
+  height: 19px;
+  margin-top: 5px;
+
+  button {
+    letter-spacing: 0;
+    padding: 0;
+    margin-left: -7px;
+    text-align: start;
+    height: 19px;
+    line-height: 0;
+  }
+}

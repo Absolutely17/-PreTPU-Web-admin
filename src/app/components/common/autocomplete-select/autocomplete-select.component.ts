@@ -1,5 +1,5 @@
 import {FormControl, Validators} from '@angular/forms';
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 
 
 @Component({
@@ -7,7 +7,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
   templateUrl: 'autocomplete-select.component.html',
   styleUrls: ['autocomplete-select.component.scss']
 })
-export class AutocompleteSelectComponent implements OnInit {
+export class AutocompleteSelectComponent implements OnInit, OnChanges {
 
   control = new FormControl(null, [Validators.required]);
 
@@ -18,6 +18,8 @@ export class AutocompleteSelectComponent implements OnInit {
   selectAllChecked = false;
 
   displayString = '';
+
+  @Input() defaultSelected: any;
 
   @Input()
   labelCount = 5;
@@ -50,6 +52,21 @@ export class AutocompleteSelectComponent implements OnInit {
   ngOnInit() {
     if (this.required) {
       this.control.setValidators(Validators.required);
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.defaultSelected && changes.defaultSelected.currentValue) {
+      const currentValue = changes.defaultSelected.currentValue;
+      this.doDefaultSelect(currentValue);
+    }
+  }
+
+  private doDefaultSelect(value: any) {
+    if (value instanceof Array) {
+      this.selectedValue = this._options.filter(opt => value.includes(opt.id)).map(opt => opt.id);
+    } else {
+      this.selectedValue = this._options.filter(opt => opt.id === value).map(opt => opt.id);
     }
   }
 

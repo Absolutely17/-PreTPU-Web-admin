@@ -1,0 +1,120 @@
+<div class="row text-center">
+    <div class="btn-group">
+      <button
+        mat-raised-button
+        mwlCalendarPreviousView
+        color="primary"
+        [view]="view"
+        [(viewDate)]="viewDate"
+        (viewDateChange)="closeOpenMonthViewDay()">
+        Предыдущий
+      </button>
+      <button
+        style="margin-left: 5px;"
+        mat-raised-button
+        mwlCalendarToday
+        [(viewDate)]="viewDate">
+        Сегодня
+      </button>
+      <button
+        style="margin-left: 5px;"
+        mat-raised-button
+        mwlCalendarNextView
+        color="primary"
+        [view]="view"
+        [(viewDate)]="viewDate"
+        (viewDateChange)="closeOpenMonthViewDay()">
+        Следующий
+      </button>
+    </div>
+  <div>
+    <h3 style="text-transform: capitalize">{{ viewDate | calendarDate:(view + 'ViewTitle'):locale:weekStartsOn }}</h3>
+  </div>
+  <div>
+    <div> <span>Выбрать события</span></div>
+    <div class="target-buttons">
+      <div style="margin-left: 5px;" [class.active]="currentGroup">
+        <mat-form-field appearance="fill">
+          <mat-label>Группа</mat-label>
+          <mat-select #groupSelect (selectionChange)="selectGroup($event)">
+            <mat-option *ngFor="let group of studyGroups" [value]="group.id">
+              {{group.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <button style="margin-left: 5px;" [class.active]="currentUser" type="button" color="primary" mat-raised-button (click)="selectUser()">Пользователь</button>
+      <button style="margin-left: 5px;" [class.active]="isAll" type="button" color="primary" mat-raised-button (click)="selectAll()">Все</button>
+    </div>
+  </div>
+</div>
+<br/>
+<div class="loader-container"
+     *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
+<mwl-calendar-month-view
+  [viewDate]="viewDate"
+  [events]="events"
+  [activeDayIsOpen]="activeDayIsOpen"
+  (dayClicked)="dayClicked($event.day)"
+  (eventClicked)="editEvent($event.event)"
+  [locale]="locale"
+  [refresh]="refresh"
+  [weekStartsOn]="weekStartsOn"
+  [weekendDays]="weekendDays"
+  [openDayEventsTemplate]="customTemplate"
+>
+</mwl-calendar-month-view>
+</div>
+<ng-template
+  #customTemplate
+  let-events="events"
+  let-eventClicked="eventClicked"
+  let-isOpen="isOpen"
+  let-trackByEventId="trackByEventId"
+  let-validateDrag="validateDrag"
+  let-locale="locale"
+>
+  <div
+    class="cal-open-day-events"
+    [@collapse]
+    *ngIf="isOpen"
+    role="application"
+  >
+    <div
+      *ngFor="let event of events; index as i; trackBy: trackByEventId;"
+      [ngClass]="event?.cssClass"
+      mwlDraggable
+      [class.cal-draggable]="event.draggable"
+      dragActiveClass="cal-drag-active"
+      [dropData]="{ event: event }"
+      [dragAxis]="{ x: event.draggable, y: event.draggable }"
+      [validateDrag]="validateDrag"
+      [touchStartLongPress]="{ delay: 300, delta: 30 }"
+    >
+          <span>
+            {{i + 1}}.
+          </span>
+      &ngsp;
+      <mwl-calendar-event-title
+        [event]="event"
+        view="month"
+        (mwlClick)="
+              eventClicked.emit({ event: event, sourceEvent: $event })
+            "
+        (mwlKeydownEnter)="
+              eventClicked.emit({ event: event, sourceEvent: $event })
+            "
+        tabindex="0"
+        [attr.aria-label]="
+              { event: event, locale: locale }
+                | calendarA11y: 'eventDescription'
+            "
+      >
+      </mwl-calendar-event-title>
+      &ngsp;
+    </div>
+    <div class="add-new-event-btn">
+      <button mat-button (click)="addEvent()"><mat-icon>add</mat-icon>Добавить событие</button>
+    </div>
+  </div>
+</ng-template>

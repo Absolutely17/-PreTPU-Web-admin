@@ -101,7 +101,8 @@ export class SendNotificationDialogComponent implements OnInit {
 
   selectUsers() {
     this.diagService.show(UserChooseDialogComponent, {
-      selectedUsers: this.selectedUsers
+      selectedUsers: this.selectedUsers,
+      multiple: true
     }, '', '', true).afterClosed().subscribe(it => {
       if(it) {
         this.selectedUsers = it;

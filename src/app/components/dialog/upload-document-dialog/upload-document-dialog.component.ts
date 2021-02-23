@@ -61,7 +61,8 @@ export class UploadDocumentDialogComponent implements OnInit {
 
   selectUsers() {
     this.diagService.show(UserChooseDialogComponent, {
-      selectedUsers: this.selectedUsers
+      selectedUsers: this.selectedUsers,
+      multiple: true
     }, '', '', true).afterClosed().subscribe(it => {
       if(it) {
         this.selectedUsers = it;
@@ -79,7 +80,7 @@ export class UploadDocumentDialogComponent implements OnInit {
       fileName: file.name
     };
     this.docService.uploadDocument(documentData, file).subscribe(it => {
-      this.snackBar.open('Документ успешно прикреплен', 'Закрыть', {duration: 3000});
+      this.snackBar.open('Документ успешно отправлен', 'Закрыть', {duration: 3000});
     }, error => this.errorService.handleServiceError(error))
       .add(() => {
         this.dialogRef.close();

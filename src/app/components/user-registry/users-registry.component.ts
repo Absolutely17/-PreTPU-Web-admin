@@ -2,12 +2,10 @@ import {TdDataTableService} from '@covalent/core/data-table';
 import {Component} from '@angular/core';
 import {UserService} from '../../services/user/user.service';
 import {DialogService} from '../../services/dialog/dialog.service';
-import {UploadDocumentDialogComponent} from '../dialog/upload-document-dialog/upload-document-dialog.component';
 import {TdLoadingService} from '@covalent/core/loading';
 import {ISbDataTableColumn} from '../common/sb-data-table/data-table.component';
 import {TableActionConfig, TableActionType, TableComponent} from '../common/table/table.component';
 import {Observable} from 'rxjs';
-import {CalendarCreateEventDialogComponent} from '../dialog/calendar-create-event-dialog/calendar-create-event-dialog.component';
 import {DialogMode} from "../dialog/dialog-mode";
 import {UserEditDialogComponent} from "../dialog/user-edit-dialog/user-edit-dialog.component";
 
@@ -35,10 +33,6 @@ export class UsersRegistryComponent extends TableComponent {
     {
       id: TableActionType.AddRow,
       name: 'Создать пользователя'
-    },
-    {
-      id: TableActionType.CalendarCreateEvent,
-      name: 'Добавить событие'
     }
   ];
 
@@ -77,13 +71,6 @@ export class UsersRegistryComponent extends TableComponent {
     return tableRows;
   }
 
-  createCalendarEvent(): void {
-    this.dialogService.show(CalendarCreateEventDialogComponent, {
-      dicts: this.dicts,
-
-    }, '', '', true);
-  }
-
   getTableData(): Observable<any> {
     return this.userService.getUsersTable();
   }
@@ -97,9 +84,6 @@ export class UsersRegistryComponent extends TableComponent {
       switch(menuItem.id) {
         case TableActionType.AddRow:
           this.createUser();
-          break;
-        case TableActionType.CalendarCreateEvent:
-          this.createCalendarEvent();
           break;
       }
     }
