@@ -1,0 +1,30 @@
+<div class="loader-container"
+     *tdLoading="loaderName; mode:'indeterminate'; type:'circle'; strategy:'overlay';">
+  <td-dialog>
+    <td-dialog-title>Выбор пункта меню</td-dialog-title>
+    <td-dialog-content>
+      <div flex="grow">
+      <app-menu-registry
+      [isDialogView]="true"
+      (selectedEvent)="selectedItem = $event"
+      [initialSelectedId]="initialSelectedId">
+      </app-menu-registry>
+      </div>
+    </td-dialog-content>
+    <td-dialog-actions>
+      <button type="button" flex mat-button
+              color="primary"
+              class="push-right-xs"
+              #closeBtn
+              (click)="cancel()">Отменить
+      </button>
+      <button type="button" flex mat-raised-button
+              color="primary"
+              class="push-left-xs"
+              [disabled]="!selectedItem"
+              #acceptBtn
+              (click)="accept()">Выбрать
+      </button>
+    </td-dialog-actions>
+  </td-dialog>
+</div>

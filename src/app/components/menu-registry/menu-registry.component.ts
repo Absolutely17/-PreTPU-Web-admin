@@ -1,4 +1,14 @@
-import {AfterViewInit, Component, ElementRef, HostListener, Injectable, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef, EventEmitter,
+  HostListener,
+  Injectable,
+  Input,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {FlatTreeControl} from '@angular/cdk/tree';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import {BehaviorSubject} from 'rxjs';
@@ -297,9 +307,6 @@ export class MenuRegistryComponent implements OnInit, AfterViewInit {
   /** Map from nested node to flattened node. This helps us to keep the same object for selection */
   nestedNodeMap = new Map<MenuItem, MenuItemFlat>();
 
-  /** The new item's name */
-  newItemName = '';
-
   treeControl: FlatTreeControl<MenuItemFlat>;
 
   treeFlattener: MatTreeFlattener<MenuItem, MenuItemFlat>;
@@ -317,6 +324,20 @@ export class MenuRegistryComponent implements OnInit, AfterViewInit {
   addBtnTooltip = 'Создать дочерний пункт меню внутри выбранного';
 
   logInfo: string[];
+
+  // Для селекта пунктов меню
+
+  @Input() initialSelectedId: string;
+
+  @Input() isDialogView: boolean;
+
+  typesForSelected = ['FEED_LIST', 'LINKS_LIST'];
+
+  selectedItem: MenuItemFlat;
+
+  @Output() selectedEvent: EventEmitter<MenuItemFlat> = new EventEmitter<MenuItemFlat>();
+
+  //
 
   /* Drag and drop */
   dragNode: any;
@@ -369,6 +390,9 @@ export class MenuRegistryComponent implements OnInit, AfterViewInit {
     flatNode.level = level;
     flatNode.id = node.id;
     flatNode.expandable = (node.children && node.children.length > 0);
+    if (this.initialSelectedId && node.id === this.initialSelectedId) {
+      this.selectedItem = flatNode;
+    }
     this.flatNodeMap.set(flatNode, node);
     this.nestedNodeMap.set(node, flatNode);
     return flatNode;

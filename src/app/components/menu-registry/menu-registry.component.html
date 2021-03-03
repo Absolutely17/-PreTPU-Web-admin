@@ -9,7 +9,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <div class="add-menu-item">
+      <div class="add-menu-item" *ngIf="!isDialogView">
         <button *ngIf="currentLanguage" mat-button (click)="addNewItem()">
           <mat-icon>add</mat-icon>
           Добавить пункт меню
@@ -26,17 +26,23 @@
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
           <div [ngClass]="{'drop-above': dragNodeExpandOverArea === 'above' && dragNodeExpandOverNode === node,
                               'drop-below': dragNodeExpandOverArea === 'below' && dragNodeExpandOverNode === node,
-                              'drop-center': dragNodeExpandOverArea === 'center' && dragNodeExpandOverNode === node}"
-               draggable="true"
+                              'drop-center': dragNodeExpandOverArea === 'center' && dragNodeExpandOverNode === node,
+                              'moving': !isDialogView}"
+               [draggable]="!isDialogView"
                (dragstart)="handleDragStart($event, node)"
                (drop)="handleDrop($event, node)"
                (dragover)="handleDragOver($event, node)"
                (dragend)="handleDragEnd($event)" class="tree-node">
+            <mat-checkbox [checked]="selectedItem && selectedItem.id === node.id"
+                          (change)="selectedItem = node; selectedEvent.emit(selectedItem)"
+                          class="tree-node-checkbox" *ngIf="isDialogView && typesForSelected.includes(node.type)">
+
+            </mat-checkbox>
             <div class="tree-node-content">
               <button mat-icon-button disabled></button>
               {{node.name}} [{{getMenuType(node.type)}}]
             </div>
-            <div class="buttons">
+            <div class="buttons" *ngIf="!isDialogView">
               <button class="edit-btn" mat-button (click)="edit(node)">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -55,12 +61,19 @@
                        matTreeNodePadding>
           <div [ngClass]="{'drop-above': dragNodeExpandOverArea === 'above' && dragNodeExpandOverNode === node,
                               'drop-below': dragNodeExpandOverArea === 'below' && dragNodeExpandOverNode === node,
-                              'drop-center': dragNodeExpandOverArea === 'center' && dragNodeExpandOverNode === node}"
+                              'drop-center': dragNodeExpandOverArea === 'center' && dragNodeExpandOverNode === node,
+                              'moving': !isDialogView}"
+               [draggable]="!isDialogView"
                draggable="true"
                (dragstart)="handleDragStart($event, node)"
                (drop)="handleDrop($event, node)"
                (dragover)="handleDragOver($event, node)"
                (dragend)="handleDragEnd($event)" class="tree-node">
+            <mat-checkbox [checked]="selectedItem && selectedItem.id === node.id"
+                          (change)="selectedItem = node; selectedEvent.emit(selectedItem)"
+                          class="tree-node-checkbox" *ngIf="isDialogView && typesForSelected.includes(node.type)">
+
+            </mat-checkbox>
             <div class="tree-node-content">
               <button mat-icon-button matTreeNodeToggle
                       [attr.aria-label]="'toggle ' + node.filename">
@@ -70,7 +83,7 @@
               </button>
               {{node.name}} [{{getMenuType(node.type)}}]
             </div>
-            <div class="buttons">
+            <div class="buttons" *ngIf="!isDialogView">
               <button class="edit-btn" mat-button (click)="edit(node)">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -91,7 +104,7 @@
     </app-save-form-button>
     <span #emptyItem></span>
   </div>
-  <div class="log-container">
+  <div class="log-container" *ngIf="!isDialogView">
     <mat-expansion-panel (opened)="true">
       <mat-expansion-panel-header>
         <mat-panel-title>

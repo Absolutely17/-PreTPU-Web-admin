@@ -123,7 +123,7 @@ export class MenuEditingDialogComponent implements OnInit {
     this.dialogService.show(ArticleChooseDialogComponent, {
       selectedArticles: this.selectedArticles,
       multiple: multiple
-    }, '1400px').afterClosed().subscribe(it => {
+    }, '', '', true).afterClosed().subscribe(it => {
       if (it) {
         this.selectedArticles = it;
       }

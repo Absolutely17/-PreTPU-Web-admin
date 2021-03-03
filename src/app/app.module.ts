@@ -47,7 +47,6 @@ import {CalendarEventEditingDialogComponent} from './components/dialog/calendar-
 import {NGX_MAT_DATE_FORMATS, NgxMatDateFormats, NgxMatDatetimePickerModule} from '@angular-material-components/datetime-picker';
 import {NgxMatMomentModule} from '@angular-material-components/moment-adapter';
 import {MAT_DATE_LOCALE} from '@angular/material/core';
-import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
 import {StudyGroupService} from "./services/studyGroup/study-group.service";
 import {StudyGroupRegistryComponent} from "./components/study-group-registry/study-group-registry.component";
 import {StudyGroupDialogComponent} from "./components/dialog/study-group-dialog/study-group-dialog.component";
@@ -64,6 +63,9 @@ import {CalendarModule, DateAdapter} from "angular-calendar";
 import {adapterFactory} from "angular-calendar/date-adapters/date-fns";
 import localeRu from '@angular/common/locales/ru';
 import { registerLocaleData } from '@angular/common';
+import {NgxCkeditorComponent} from "./components/common/ckeditor/ngx-ckeditor.component";
+import {CkeditorService} from "./services/ckeditor/ckeditor.service";
+import {MenuItemChooseDialogComponent} from "./components/dialog/menu-item-choose-dialog/menu-item-choose-dialog.component";
 
 export const commonServices = [
   AppConfig,
@@ -127,7 +129,9 @@ registerLocaleData(localeRu);
     MenuRegistryReferenceComponent,
     UserChooseDialogComponent,
     UserAttachContentComponent,
-    CalendarEventRegistryComponent
+    CalendarEventRegistryComponent,
+    NgxCkeditorComponent,
+    MenuItemChooseDialogComponent
   ],
   imports: [
     HttpClientModule,
@@ -136,7 +140,6 @@ registerLocaleData(localeRu);
     CommonImportsModule,
     NgxMatDatetimePickerModule,
     NgxMatMomentModule,
-    CKEditorModule,
     QuillModule.forRoot({
       modules: {
         imageResize: true
@@ -164,7 +167,8 @@ registerLocaleData(localeRu);
     SystemConfigService,
     LanguageService,
     StudyGroupService,
-    CanDeactivateGuard
+    CanDeactivateGuard,
+    CkeditorService
   ],
   bootstrap: [RootComponent]
 })

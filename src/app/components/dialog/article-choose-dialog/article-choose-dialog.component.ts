@@ -1,5 +1,4 @@
 import {Component, HostListener, Inject, ViewChild} from '@angular/core';
-import {ArticleRegistryComponent} from '../../article-registry/article-registry.component';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../../services/error/error.service';
 import {Identifable} from "../../../models/identifable";
@@ -16,16 +15,27 @@ export class ArticleChooseDialogComponent {
   multiple: boolean;
 
   constructor(
-    private dialogRef: MatDialogRef<ArticleRegistryComponent>,
+    private dialogRef: MatDialogRef<ArticleChooseDialogComponent>,
     private errorService: ErrorService,
     @Inject(MAT_DIALOG_DATA) data: any,
   ) {
-    if (data.selectedArticles) {
-      this.selectedArticles = data.selectedArticles.map(s => {
-        return {id: s}
-      });
+    if (data) {
+      if (data.selectedArticles) {
+        if (data.selectedArticles instanceof Array) {
+          this.selectedArticles = data.selectedArticles.map(s => {
+            return {id: s}
+          });
+        } else {
+          this.selectedArticles = [];
+          this.selectedArticles.push({id: data.selectedArticles});
+        }
+      } else {
+        this.selectedArticles = [];
+      }
+      this.multiple = data.multiple;
+    } else {
+      this.selectedArticles = [];
     }
-    this.multiple = data.multiple;
   }
 
   accept(): void {

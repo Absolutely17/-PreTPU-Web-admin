@@ -52,9 +52,12 @@
 .mat-tree-node {
   color: white;
   user-select: none;
-  cursor: move;
   width: fit-content;
   margin-top: 20px;
+
+  .moving {
+    cursor: move;
+  }
 
   .tree-node {
     border: 1px solid white;
@@ -62,6 +65,11 @@
     align-items: center;
     min-height: 48px;
     flex: 1;
+
+    .tree-node-checkbox {
+      margin-left: -27px;
+      padding-right: 7px;
+    }
 
     .tree-node-content {
       display: flex;

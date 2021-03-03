@@ -32,6 +32,8 @@ export class UserChooseDialogComponent {
         this.selectedUsers = [];
       }
       this.multiple = data.multiple;
+    } else {
+      this.selectedUsers = [];
     }
   }
 

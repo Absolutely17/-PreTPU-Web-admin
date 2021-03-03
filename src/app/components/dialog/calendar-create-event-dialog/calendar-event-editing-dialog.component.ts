@@ -6,10 +6,8 @@ import {TdLoadingService} from '@covalent/core/loading';
 import {AutocompleteSelectComponent} from '../../common/autocomplete-select/autocomplete-select.component';
 import {ErrorService} from '../../../services/error/error.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {CkEditorImageUploadComponent} from "../../common/ckeditor/ckeditor-image-upload.component";
 import {ImageService} from "../../../services/image/image.service";
 import {AppConfig} from "../../../app.config";
-import * as ClassicEditor from 'ckeditor-custom/packages/ckeditor5-build-classic';
 import {transformResultTextToHtml} from "../../common/ckeditor/utils-function";
 import {MatStepper} from "@angular/material/stepper";
 import {DialogService} from "../../../services/dialog/dialog.service";
@@ -41,8 +39,6 @@ export class CalendarEventEditingDialogComponent implements OnInit {
   generalInfoForm: FormGroup;
 
   detailedMessageControl: FormControl;
-
-  public Editor = ClassicEditor;
 
   loaderName = 'calendarEventLoader';
 
@@ -141,12 +137,6 @@ export class CalendarEventEditingDialogComponent implements OnInit {
     this.generalInfoForm.addControl('sendNotification', new FormControl(false, null));
     this.generalInfoForm.addControl("onlineMeetingLink", new FormControl(null, null));
     this.detailedMessageControl = new FormControl(null, null);
-  }
-
-  onReady(editor: any) {
-    editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-      return new CkEditorImageUploadComponent(loader, this.imageService, this.appConfig);
-    }
   }
 
   cancel() {

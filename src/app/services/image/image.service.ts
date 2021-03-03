@@ -16,7 +16,7 @@ export class ImageService {
   upload(image: File): Observable<any> {
     const headers = new HttpHeaders();
     const formData: FormData = new FormData();
-    formData.append('file', image);
+    formData.append('image', image);
     return this.http.post(this.appConfig.webServiceApi('/media/admin/img/upload'), formData, {
       headers, responseType: 'text'
     });

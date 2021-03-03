@@ -8,11 +8,11 @@ import {ArticleService} from '../../../services/article/article.service';
 import {DialogMode} from '../dialog-mode';
 import {Article} from '../../../models/article/article';
 import {AppConfig} from '../../../app.config';
-import * as ClassicEditor from 'ckeditor-custom/packages/ckeditor5-build-classic';
-import {CkEditorImageUploadComponent} from '../../common/ckeditor/ckeditor-image-upload.component';
 import {TdLoadingService} from '@covalent/core/loading';
 import {transformResultTextToHtml} from "../../common/ckeditor/utils-function";
 import {MatStepper} from "@angular/material/stepper";
+import {DialogService} from "../../../services/dialog/dialog.service";
+import {TokenStorageService} from "../../../services/token/token-storage.service";
 
 export interface ArticleEditingDialogData {
   articleId: string;
@@ -43,10 +43,6 @@ export class ArticleEditingDialogComponent implements OnInit {
 
   loaderName = 'loader';
 
-  public Editor = ClassicEditor;
-
-  ckConfig = {};
-
   constructor(
     private dialogRef: MatDialogRef<ArticleEditingDialogComponent>,
     private errorService: ErrorService,
@@ -65,7 +61,7 @@ export class ArticleEditingDialogComponent implements OnInit {
       this.articleService.getArticleById(data.articleId).subscribe(it => {
         if(it) {
           this.generalInfoForm.patchValue(it);
-          if (this.hasBackgroundStyle(it.text)) {
+          if(this.hasBackgroundStyle(it.text)) {
             this.generalInfoForm.patchValue({useBackground: true});
           }
           this.textControl.patchValue(it.text)
@@ -84,7 +80,7 @@ export class ArticleEditingDialogComponent implements OnInit {
     this.generalInfoForm.addControl('briefText', new FormControl('', null));
     this.generalInfoForm.addControl('language', new FormControl('', Validators.required));
     this.generalInfoForm.addControl('useBackground', new FormControl(false, Validators.required));
-    this.textControl= new FormControl(null, Validators.required);
+    this.textControl = new FormControl(null, Validators.required);
   }
 
   isInvalid(name: string): boolean {
@@ -112,7 +108,7 @@ export class ArticleEditingDialogComponent implements OnInit {
   accept(): void {
     let htmlText = transformResultTextToHtml(this.textControl.value);
     const useBackground = this.generalInfoForm.get('useBackground').value;
-    if (useBackground && !this.hasBackgroundStyle(htmlText)) {
+    if(useBackground && !this.hasBackgroundStyle(htmlText)) {
       htmlText = this.addBackgroundStyle(htmlText);
     }
     const articleInfo: Article = {
@@ -135,9 +131,9 @@ export class ArticleEditingDialogComponent implements OnInit {
   }
 
   private addBackgroundStyle(text: string): string {
-    if (!this.hasBackgroundStyle(text)) {
+    if(!this.hasBackgroundStyle(text)) {
       const lastIndexStyles = text.search('</style>');
-      if (lastIndexStyles !== -1) {
+      if(lastIndexStyles !== -1) {
         return text.slice(0, lastIndexStyles) + this.backgroundImageStyle + text.slice(lastIndexStyles);
       }
     }
@@ -145,12 +141,6 @@ export class ArticleEditingDialogComponent implements OnInit {
 
   private hasBackgroundStyle(text: string): boolean {
     return text.indexOf(this.backgroundImageStyle) !== -1;
-  }
-
-  onReady(editor: any) {
-    editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-      return new CkEditorImageUploadComponent(loader, this.imageService, this.appConfig);
-    }
   }
 
   delete() {

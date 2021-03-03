@@ -50,17 +50,19 @@
                   </mat-select>
                 </mat-form-field>
 
-                 <mat-checkbox color="primary" formControlName="useBackground">
-                   Установить стандартный фон
-                 </mat-checkbox>
+                <mat-checkbox color="primary" formControlName="useBackground">
+                  Установить стандартный фон
+                </mat-checkbox>
 
               </div>
             </form>
           </div>
         </mat-step>
         <mat-step label="Текст статьи">
-          <ckeditor [formControl]="textControl" (ready)="onReady($event)" [config]="ckConfig"
-                    [editor]="Editor" data="<p>Hello, world!</p>"></ckeditor>
+          <ngx-ckeditor
+            [formControl]="textControl"
+            data="<p>Здесь может быть Ваш текст!</p>"
+          ></ngx-ckeditor>
         </mat-step>
       </mat-horizontal-stepper>
     </td-dialog-content>
