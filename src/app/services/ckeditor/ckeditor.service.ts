@@ -83,7 +83,7 @@ export class CkeditorService {
 
   private changeStateBackgroundCKEditor(enable: boolean) {
     this.setZIndexElements('cke_dialog_background_cover', enable ? 10000 : 1);
-    this.setZIndexElements('cke_reset_all cke_dialog_container cke_1 cke_editor_editor1_dialog ', enable ? 10010 : 1);
+    this.setZIndexElements('cke_reset_all cke_dialog_container', enable ? 10010 : 1);
   }
 
   private setZIndexElements(classForSearch: string, zIndex: number) {
