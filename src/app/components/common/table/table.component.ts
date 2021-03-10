@@ -5,12 +5,10 @@ import {TdLoadingService} from '@covalent/core/loading';
 import {ISbDataTableColumn, ISbDataTableSortingOrder, SbDataTableComponent} from '../sb-data-table/data-table.component';
 import {ISbDataTableSortChangeEvent} from '../sb-data-table/data-table-column/data-table-column.component';
 import {Observable} from 'rxjs';
+import * as moment from "moment";
 
 export enum TableActionType {
-  SendOnUsersNotification = 'SendOnUsersNotification',
-  SendOnGroupNotification = 'SendOnGroupNotification',
-  AddRow = 'AddRow',
-  CalendarCreateEvent = 'CalendarCreateEvent'
+  AddRow = 'AddRow'
 }
 
 export interface TableActionConfig {
@@ -134,12 +132,6 @@ export abstract class TableComponent implements OnInit {
   ngOnInit(): void {
     this.loadingService.register(this.loaderName);
     this.initTableData();
-    // todo Тут подумать. Надо выделять статьи тогда, когда компонент уже загрузился.
-    setTimeout(() => {
-      if (this.dataTable) {
-        this.dataTable.doInitSelection(this.defaultSelected);
-      }
-    }, 1000);
   }
 
   initTableData() {
@@ -203,7 +195,24 @@ export abstract class TableComponent implements OnInit {
         const compA: any = a[sortBy];
         const compB: any = b[sortBy];
         let direction: number = 0;
-        if (!Number.isNaN(Number.parseFloat(compA)) && !Number.isNaN(Number.parseFloat(compB))) {
+        const momentCompA = moment(compA, 'HH:mm DD.MM.YYYY', true);
+        const momentCompB = moment(compB, 'HH:mm DD.MM.YYYY', true);
+        if (this.selectedRows && (this.selectedRows.find((row) => row.id === a.id) || this.selectedRows.find((row) => row.id === b.id))) {
+          if (this.selectedRows.find((row) => row.id === a.id) && !this.selectedRows.find((row) => row.id === b.id)) {
+            direction = 1;
+          } else if (!this.selectedRows.find((row) => row.id === a.id) && this.selectedRows.find((row) => row.id === b.id)) {
+            direction = -1;
+          }
+        } else if (momentCompA.isValid() || momentCompB.isValid()) {
+          if (momentCompB.isValid() && !momentCompA.isValid()) {
+            direction = -1;
+          } else if (!momentCompB.isValid() && momentCompA.isValid()) {
+            direction = 1;
+          } else {
+            // @ts-ignore
+            direction = momentCompA.toDate() - momentCompB.toDate();
+          }
+        } else if (!Number.isNaN(Number.parseFloat(compA)) && !Number.isNaN(Number.parseFloat(compB))) {
           direction = Number.parseFloat(compA) - Number.parseFloat(compB);
         } else {
           if (!compA && compB) {

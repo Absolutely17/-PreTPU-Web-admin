@@ -50,8 +50,11 @@ export class StudyGroupDialogComponent {
 
   ngOnInit(): void {
     this.form = new FormGroup({}, null, null);
-    this.form.addControl('name', new FormControl('', Validators.required));
-    this.form.addControl('internalID', new FormControl('', Validators.required));
+    this.form.addControl('name', new FormControl(null, Validators.required));
+    this.form.addControl('scheduleUrl', new FormControl(null, null));
+    this.form.addControl('academicPlanUrl', new FormControl(null, null));
+    this.form.get('scheduleUrl').valueChanges.subscribe((text) => this.changeScheduleUrl(text));
+    this.form.get('academicPlanUrl').valueChanges.subscribe((text) => this.changeAcademicPlanUrl(text));
   }
 
   isInvalid(name: string): boolean {
@@ -68,6 +71,9 @@ export class StudyGroupDialogComponent {
     if (error) {
       if (error.required) {
         return 'Обязательно для заполнения';
+      }
+      if (error.system) {
+        return error.system;
       }
     }
   }
@@ -101,6 +107,27 @@ export class StudyGroupDialogComponent {
             error => this.errorService.handleServiceError(error));
       }
     });
+  }
+
+  changeScheduleUrl(text: any) {
+    const regex = /https:\/\/rasp\.tpu\.ru\/gruppa_\d+\/\d{4}\/\d{1,2}\/view\.html(?:\?is_archive=0)?/
+    const regexForCheck = /^https:\/\/rasp\.tpu\.ru\/gruppa_\d+$/;
+    const control = this.get('scheduleUrl');
+    if (text.match(regex)) {
+      const resultRegex = /https:\/\/rasp\.tpu\.ru\/gruppa_\d+/;
+      control.setValue(text.match(resultRegex)[0]);
+    }
+    if (!regexForCheck.test(control.value)) {
+      control.setErrors({system: 'Неправильный формат ссылки'})
+    }
+  }
+
+  changeAcademicPlanUrl(text: any) {
+    const resultRegex = /^https:\/\/up\.tpu\.ru\/view\/detali\.html\?id=\d+$/;
+    const control = this.get('academicPlanUrl');
+    if (!resultRegex.test(control.value)) {
+      control.setErrors({system: 'Неправильный формат ссылки'})
+    }
   }
 
   @HostListener('window:keyup.esc')

@@ -17,8 +17,8 @@ export class MenuItemChooseDialogComponent {
   constructor(
     private dialogRef: MatDialogRef<MenuItemChooseDialogComponent>,
     @Inject(MAT_DIALOG_DATA) data: any
-    ) {
-    if (data) {
+  ) {
+    if(data) {
       this.initialSelectedId = data.selectedMenuItem;
     }
   }

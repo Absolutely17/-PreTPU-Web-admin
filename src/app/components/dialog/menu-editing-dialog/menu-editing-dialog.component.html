@@ -26,13 +26,13 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
-              <div>
+              <div style="display: flex;">
                 <td-custom-file-input [style]="'display: inline-block'" class="push-bottom-md" formControlName="image"
                                color="primary" (select)="selectImage()">
                   <mat-icon>attach_file</mat-icon>
                   <span>Выбрать изображение</span>
                 </td-custom-file-input>
-                <div style="display:inline-block" *ngIf="imageId">
+                <div style="margin-left: 5px; display:inline-block" *ngIf="imageId">
                   <mat-label>Текущее изображение:</mat-label>
                   <button matTooltip="Открыть в новой вкладке" type="button" mat-icon-button (click)="openImage()">
                     <mat-icon mat-button>open_in_new</mat-icon>

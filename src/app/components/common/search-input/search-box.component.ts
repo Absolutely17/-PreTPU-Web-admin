@@ -150,6 +150,9 @@ export class TdSearchBoxComponent extends _TdSearchBoxMixinBase implements ICont
 
   toggleVisibility(): void {
     this._searchVisible = !this._searchVisible;
+    if (this._searchVisible) {
+      this._searchInput.focus();
+    }
     this._changeDetectorRef.markForCheck();
   }
 

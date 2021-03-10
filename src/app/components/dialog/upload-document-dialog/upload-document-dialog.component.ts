@@ -23,6 +23,8 @@ export class UploadDocumentDialogComponent implements OnInit {
 
   selectedUsers: string[] = [];
 
+  isChildDialogOpened = false;
+
   constructor(
     private dialogRef: MatDialogRef<UploadDocumentDialogComponent>,
     private docService: DocumentService,
@@ -60,6 +62,7 @@ export class UploadDocumentDialogComponent implements OnInit {
   }
 
   selectUsers() {
+    this.isChildDialogOpened = true;
     this.diagService.show(UserChooseDialogComponent, {
       selectedUsers: this.selectedUsers,
       multiple: true
@@ -67,7 +70,7 @@ export class UploadDocumentDialogComponent implements OnInit {
       if(it) {
         this.selectedUsers = it;
       }
-    })
+    }).add(() => this.isChildDialogOpened = false);
   }
 
   accept(): void {
@@ -94,7 +97,9 @@ export class UploadDocumentDialogComponent implements OnInit {
 
   @HostListener('window:keyup.esc')
   onKeyUp(): void {
-    this.cancel();
+    if (!this.isChildDialogOpened) {
+      this.cancel();
+    }
   }
 
 }

@@ -1,4 +1,4 @@
-import {Component, HostListener, Inject, ViewChild} from '@angular/core';
+import {Component, HostListener, Inject, Input, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../../services/error/error.service';
 import {Identifable} from "../../../models/identifable";
@@ -9,6 +9,8 @@ import {Identifable} from "../../../models/identifable";
   templateUrl: './article-choose-dialog.component.html'
 })
 export class ArticleChooseDialogComponent {
+
+  allowEdit: boolean = false;
 
   selectedArticles: Identifable[];
 
@@ -33,6 +35,7 @@ export class ArticleChooseDialogComponent {
         this.selectedArticles = [];
       }
       this.multiple = data.multiple;
+      this.allowEdit = data.allowEdit;
     } else {
       this.selectedArticles = [];
     }

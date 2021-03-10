@@ -4,5 +4,5 @@ export interface Article {
   briefText: string;
   text: string;
   language: string;
-
+  imageId: string;
 }

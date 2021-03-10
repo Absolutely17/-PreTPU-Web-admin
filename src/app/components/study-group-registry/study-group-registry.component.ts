@@ -17,7 +17,8 @@ export class StudyGroupRegistryComponent extends TableComponent {
 
   columns: ISbDataTableColumn[] = [
     {name: 'name', label: 'Название группы', sortable: true, filter: true, width: 200},
-    {name: 'internalID', label: 'Внутренний номер группы', sortable: true, filter: true, width: 200}
+    {name: 'scheduleUrl', label: 'Ссылка на расписание', sortable: false, filter: true, width: 200},
+    {name: 'academicPlanUrl', label: 'Ссылка на учебный план', sortable: false, filter: true, width: 200}
   ];
 
   menuItemList = [

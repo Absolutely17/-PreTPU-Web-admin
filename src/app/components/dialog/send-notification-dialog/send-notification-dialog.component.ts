@@ -44,6 +44,8 @@ export class SendNotificationDialogComponent implements OnInit {
 
   loaderName = "loader";
 
+  isChildDialogOpened = false;
+
   constructor(
     private dialogRef: MatDialogRef<SendNotificationDialogComponent>,
     private notificationService: NotificationService,
@@ -100,6 +102,7 @@ export class SendNotificationDialogComponent implements OnInit {
   }
 
   selectUsers() {
+    this.isChildDialogOpened = true;
     this.diagService.show(UserChooseDialogComponent, {
       selectedUsers: this.selectedUsers,
       multiple: true
@@ -107,7 +110,7 @@ export class SendNotificationDialogComponent implements OnInit {
       if(it) {
         this.selectedUsers = it;
       }
-    })
+    }).add(() => this.isChildDialogOpened = false);
   }
 
   accept(): void {
@@ -152,7 +155,9 @@ export class SendNotificationDialogComponent implements OnInit {
 
   @HostListener('window:keyup.esc')
   onKeyUp(): void {
-    this.cancel();
+    if (!this.isChildDialogOpened) {
+      this.cancel();
+    }
   }
 
 }

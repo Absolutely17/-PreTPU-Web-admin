@@ -8,7 +8,6 @@ import {ErrorService} from '../../../services/error/error.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ImageService} from "../../../services/image/image.service";
 import {AppConfig} from "../../../app.config";
-import {transformResultTextToHtml} from "../../common/ckeditor/utils-function";
 import {MatStepper} from "@angular/material/stepper";
 import {DialogService} from "../../../services/dialog/dialog.service";
 import {UserChooseDialogComponent} from "../user-choose-dialog/user-choose-dialog.component";
@@ -27,6 +26,8 @@ export enum CalendarEventGroupTarget {
   templateUrl: './calendar-event-editing-dialog.component.html'
 })
 export class CalendarEventEditingDialogComponent implements OnInit {
+
+  @ViewChild("myEditor", { static: false }) myEditor: any;
 
   @ViewChild(AutocompleteSelectComponent) groupSelect: AutocompleteSelectComponent;
 
@@ -57,6 +58,8 @@ export class CalendarEventEditingDialogComponent implements OnInit {
   currentMode: DialogMode;
 
   prevSendNotification: boolean;
+
+  isChildDialogOpened = false;
 
   constructor(
     private dialogRef: MatDialogRef<CalendarEventEditingDialogComponent>,
@@ -148,6 +151,7 @@ export class CalendarEventEditingDialogComponent implements OnInit {
   }
 
   selectUsers() {
+    this.isChildDialogOpened = true;
     this.diagService.show(UserChooseDialogComponent, {
       selectedUsers: this.selectedUsers,
       multiple: true
@@ -155,7 +159,7 @@ export class CalendarEventEditingDialogComponent implements OnInit {
       if(it) {
         this.selectedUsers = it;
       }
-    })
+    }).add(() => this.isChildDialogOpened = false);
   }
 
   isAcceptBtnDisabled(): boolean {
@@ -169,13 +173,21 @@ export class CalendarEventEditingDialogComponent implements OnInit {
 
   accept() {
     this.loadingService.register(this.loaderName);
+    if (this.detailedMessageControl.value) {
+      // @ts-ignore
+      this.myEditor.instance.setData(this.detailedMessageControl.value, () => {
+        this.doActionWithCalendarEvent();
+      });
+    } else {
+      this.doActionWithCalendarEvent();
+    }
+  }
+
+  doActionWithCalendarEvent() {
     const description = this.get('description').value ? this.get('description').value : null;
     const group = this.groupSelect && this.groupSelect.control.value ? this.groupSelect.control.value : [];
     const selectedUsersVal = this.get('groupTarget').value === 'SELECTED_USERS' ? this.selectedUsers : [];
-    let resultDetailedMessageText;
-    if(this.detailedMessageControl.value) {
-      resultDetailedMessageText = transformResultTextToHtml(this.detailedMessageControl.value);
-    }
+    const resultDetailedMessageText = this.detailedMessageControl.value;
     const createEventRequest = {
       title: this.get('title').value,
       description: description,
@@ -209,7 +221,6 @@ export class CalendarEventEditingDialogComponent implements OnInit {
         })
 
     }
-
   }
 
   isInvalid(name: string) {
@@ -236,6 +247,8 @@ export class CalendarEventEditingDialogComponent implements OnInit {
 
   @HostListener('window:keyup.esc')
   onKeyUp(): void {
-    this.cancel();
+    if (!this.isChildDialogOpened) {
+      this.cancel();
+    }
   }
 }

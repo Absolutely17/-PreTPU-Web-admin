@@ -364,6 +364,7 @@ export class MenuRegistryComponent implements OnInit, AfterViewInit {
     this.menuService.getDicts().subscribe(it => {
       if (it) {
         this.dicts = it;
+        this.selectDefaultLanguage();
       }
     });
     this.deletedItems = [];
@@ -427,6 +428,16 @@ export class MenuRegistryComponent implements OnInit, AfterViewInit {
       ],
       id: 'creating'
     }]);
+  }
+
+  private selectDefaultLanguage() {
+    if (this.dicts.languages) {
+      const lang = this.dicts.languages.find(it => it.name === 'Русский');
+      if (lang) {
+        this.currentLanguage = lang.id;
+        this.languageChange();
+      }
+    }
   }
 
   ngAfterViewInit(): void {

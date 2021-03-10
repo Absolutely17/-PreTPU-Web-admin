@@ -29,7 +29,7 @@ export class ArticleRegistryComponent extends TableComponent {
         }
       }
     },
-    {name: 'countView', label: 'Число просмотров', sortable: true, width: 100},
+    {name: 'countView', label: 'Число просмотров', sortable: true, width: 150},
     {name: 'createDate', label: 'Дата создания', sortable: true, filter: true, width: 200}
   ];
 
@@ -39,7 +39,7 @@ export class ArticleRegistryComponent extends TableComponent {
   }
   ];
 
-  sortBy = 'name';
+  sortBy = 'createDate';
 
   iconColumn = true;
 

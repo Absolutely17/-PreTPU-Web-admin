@@ -19,12 +19,25 @@
               </mat-form-field>
 
               <mat-form-field class="fullwidth push-bottom-sm">
-                <mat-label>Внутренний номер группы</mat-label>
+                <mat-label>Ссылка на расписание</mat-label>
                 <input matInput tdAutoTrim autocomplete="off"
                        type="text"
-                       formControlName="internalID"
+                       formControlName="scheduleUrl"
                        [maxlength]="500"/>
-                <span class="error-label" *ngIf="isInvalid('internalID')" matTooltip="{{getError('internalID')}}">
+                <mat-icon class="info-label" matTooltip="Формат должен соответствовать примеру. Пример ссылки: https://rasp.tpu.ru/gruppa_35086">info</mat-icon>
+                <span class="error-label" *ngIf="isInvalid('scheduleUrl')" matTooltip="{{getError('scheduleUrl')}}">
+                  <mat-icon color="warn">warning</mat-icon>
+                </span>
+              </mat-form-field>
+
+              <mat-form-field class="fullwidth push-bottom-sm">
+                <mat-label>Ссылка на учебный план</mat-label>
+                <input matInput tdAutoTrim autocomplete="off"
+                       type="text"
+                       formControlName="academicPlanUrl"
+                       [maxlength]="500"/>
+                <mat-icon class="info-label" matTooltip="Формат должен соответствовать примеру. Пример ссылки: https://up.tpu.ru/view/detali.html?id=22169">info</mat-icon>
+                <span class="error-label" *ngIf="isInvalid('academicPlanUrl')" matTooltip="{{getError('academicPlanUrl')}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>
               </mat-form-field>
