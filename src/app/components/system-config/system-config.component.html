@@ -7,7 +7,7 @@
         <ng-container matColumnDef="edit">
           <th mat-header-cell *matHeaderCellDef [style.width.%]="1"></th>
           <td mat-cell *matCellDef="let row; let index = index">
-            <a (click)="removeRow(index)">
+            <a [ngClass]="getByIndex(index, 'disabled').value ? 'disabled' : ''" (click)="removeRow(index)">
               <mat-icon color="warn">remove_circle_outline</mat-icon>
             </a>
           </td>
@@ -24,7 +24,7 @@
 
             <ng-container *ngIf="formInitialized">
               <mat-form-field class="fullwidth">
-                <input matInput tdAutoTrim formControlName="name" type="text" autocomplete="false"/>
+                <input [readonly]="getByIndex(index, 'disabled').value" matInput tdAutoTrim formControlName="name" type="text" autocomplete="false"/>
                 <span class="error-label" *ngIf="isInvalid('name', index)" matTooltip="{{getError('name', index)}}">
                         <mat-icon color="warn">warning</mat-icon>
                       </span>
@@ -40,8 +40,28 @@
 
             <ng-container *ngIf="formInitialized">
               <mat-form-field class="fullwidth">
-                <input matInput tdAutoTrim formControlName="key" type="text" autocomplete="false"/>
+                <input [readonly]="getByIndex(index, 'disabled').value" matInput tdAutoTrim formControlName="key" type="text" autocomplete="false"/>
                 <span class="error-label" *ngIf="isInvalid('key', index)" matTooltip="{{getError('key', index)}}">
+                        <mat-icon color="warn">warning</mat-icon>
+                      </span>
+              </mat-form-field>
+            </ng-container>
+          </td>
+          <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Тип</th>
+          <td mat-cell *matCellDef="let row; let index = index" [formGroupName]="index">
+
+            <ng-container *ngIf="formInitialized">
+              <mat-form-field class="fullwidth">
+                <mat-select [disabled]="getByIndex(index, 'disabled').value" formControlName="type">
+                  <mat-option *ngFor="let type of types" [value]="type">
+                    {{type}}
+                  </mat-option>
+                </mat-select>
+                <span class="error-label" *ngIf="isInvalid('type', index)" matTooltip="{{getError('type', index)}}">
                         <mat-icon color="warn">warning</mat-icon>
                       </span>
               </mat-form-field>
@@ -55,12 +75,23 @@
           <td mat-cell *matCellDef="let row; let index = index" [formGroupName]="index">
 
             <ng-container *ngIf="formInitialized">
-              <mat-form-field class="fullwidth">
-                <input matInput tdAutoTrim formControlName="value" type="text" autocomplete="false"/>
-                <span class="error-label" *ngIf="isInvalid('value', index)" matTooltip="{{getError('value', index)}}">
+              <mat-form-field *ngIf="getByIndex(index, 'type').value === type.TEXT" class="fullwidth">
+                  <input matInput tdAutoTrim formControlName="value" type="text" autocomplete="false"/>
+                  <span class="error-label" *ngIf="isInvalid('value', index)" matTooltip="{{getError('value', index)}}">
                         <mat-icon color="warn">warning</mat-icon>
                       </span>
               </mat-form-field>
+              <ng-container *ngIf="getByIndex(index, 'type').value === type.IMAGE">
+                <td-custom-file-input [compactView]="true" [style]="'display: inline-block'" formControlName="value"
+                                      color="primary" (select)="selectImage(index)">
+                  <mat-icon>attach_file</mat-icon>
+                </td-custom-file-input>
+                <ng-container *ngIf="getByIndex(index, 'value').value">
+                  <button matTooltip="Открыть в новой вкладке" type="button" mat-icon-button (click)="openImage(index)">
+                    <mat-icon mat-button>open_in_new</mat-icon>
+                  </button>
+                </ng-container>
+              </ng-container>
             </ng-container>
           </td>
           <td mat-footer-cell *matFooterCellDef></td>
@@ -72,7 +103,7 @@
 
             <ng-container *ngIf="formInitialized">
               <mat-form-field class="fullwidth">
-                <input matInput tdAutoTrim formControlName="description" type="text" autocomplete="false"/>
+                <input [readonly]="getByIndex(index, 'disabled').value" matInput tdAutoTrim formControlName="description" type="text" autocomplete="false"/>
                 <span class="error-label" *ngIf="isInvalid('description', index)"
                       matTooltip="{{getError('description', index)}}">
                         <mat-icon color="warn">warning</mat-icon>

@@ -25,4 +25,4 @@
   />
   <input *ngIf="showFileNameInput" [readonly]="true" class="file-input-name" matInput [formControl]="fileInputName"/>
 </div>
-<span class="info-span">Макс. размер файла {{maxSize ? maxSize : '20'}} МБ</span>
+<span *ngIf="!compactView" class="info-span">Макс. размер файла {{maxSize ? maxSize : '20'}} МБ</span>

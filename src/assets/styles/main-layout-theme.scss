@@ -468,7 +468,9 @@
     font-size: 14px !important;
     transform: scale(1.43);
   }
-
+  input[readonly] {
+    color: rgba(0, 0, 0, 0.38);
+  }
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;

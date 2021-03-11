@@ -65,6 +65,8 @@ export class TdFileInputComponent extends _TdFileInputMixinBase implements ICont
    */
   @Input() color: 'accent' | 'primary' | 'warn';
 
+  @Input() compactView: boolean = false;
+
   /**
    * Max size file in Mb
    */

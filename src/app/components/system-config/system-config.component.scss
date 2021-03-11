@@ -5,3 +5,16 @@
 .mat-column-value {
   width: 300px;
 }
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+
+  > a {
+    pointer-events: none;
+  }
+}
+
+td {
+  text-align: center;
+}
