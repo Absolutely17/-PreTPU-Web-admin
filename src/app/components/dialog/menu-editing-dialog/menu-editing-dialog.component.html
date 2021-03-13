@@ -12,7 +12,7 @@
                 <input matInput tdAutoTrim autocomplete="off"
                        type="text"
                        formControlName="name"
-                       [maxlength]="500"/>
+                       [maxlength]="50"/>
                 <span class="error-label" *ngIf="isInvalid('name')" matTooltip="{{getError('name')}}">
                   <mat-icon color="warn">warning</mat-icon>
                 </span>

@@ -25,11 +25,12 @@ CKEDITOR.editorConfig = function( config ) {
   config.autoGrow_minHeight = 250;
   config.autoGrow_maxHeight = 600;
 
-  config.extraPlugins = 'link,fakeobjects,colorbutton,panelbutton';
+  config.extraPlugins = 'link,fakeobjects,colorbutton,panelbutton,responsiveTable';
 
   config.linkDefaultProtocol = 'https://';
 
   config.format_tags = 'p;h1;h2;h3;h4;h5;h6;address;div';
+  config.extraAllowedContent = 'div{overflow-x}';
 };
 
 CKEDITOR.on( 'instanceReady', function( ev ) {
