@@ -28,7 +28,7 @@ export class CkeditorService {
       formData.append('image', fileLoader.file);
       fileLoader.xhr.send(formData);
       event.stop();
-    } catch (e) {
+    } catch(e) {
       console.warn(e);
     }
   }
@@ -39,13 +39,13 @@ export class CkeditorService {
       const data = event.data;
       const xhr = data.fileLoader.xhr;
       const response = xhr.responseText;
-      if (xhr.status > 300) {
+      if(xhr.status > 300) {
         data.message = 'upload fail';
         event.cancel();
       } else {
         data.url = this.appConfig.webServiceFullUrl + '/media/img/' + response;
       }
-    } catch (e) {
+    } catch(e) {
       console.warn(e);
     }
   }
@@ -54,10 +54,11 @@ export class CkeditorService {
     this.changeStateBackgroundCKEditor(false);
     this.dialogService.show(ArticleChooseDialogComponent, {
         multiple: false,
-        selectedArticles: event.data.itemId.getValue()
+        selectedArticles: event.data.itemId.getValue(),
+        loaderName: 'selectArticleCkEditor'
       }, null, null, true
     ).afterClosed().subscribe(it => {
-      if (it) {
+      if(it) {
         event.data.itemId.setValue(it);
         event.data.type.setValue('article');
       }
@@ -72,7 +73,7 @@ export class CkeditorService {
         selectedMenuItem: event.data.itemId.getValue()
       }, null, null, true
     ).afterClosed().subscribe(it => {
-      if (it) {
+      if(it) {
         event.data.itemId.setValue(it.id);
         const type = it.type === 'FEED_LIST' ? 'articleList' : 'linksList';
         event.data.type.setValue(type);
@@ -88,7 +89,7 @@ export class CkeditorService {
 
   private setZIndexElements(classForSearch: string, zIndex: number) {
     const items: any = document.getElementsByClassName(classForSearch);
-    for (let i = 0; i < items.length; i++) {
+    for(let i = 0; i < items.length; i++) {
       items[i].style.zIndex = zIndex;
     }
   }

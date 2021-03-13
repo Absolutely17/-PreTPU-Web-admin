@@ -39,12 +39,6 @@ CKEDITOR.on( 'instanceReady', function( ev ) {
     elements: {
       table: function (e) {
         e.attributes.style = 'max-width: 100%;' + e.attributes.style;
-      },
-      td: function(e) {
-        if (e.attributes.style) {
-          e.attributes.style = e.attributes.style.replace(/width:\d+px/, '');
-          e.attributes.style = e.attributes.style.replace(/height:\d+px/, '');
-        }
       }
     }
   });
@@ -52,12 +46,6 @@ CKEDITOR.on( 'instanceReady', function( ev ) {
     elements: {
       table: function (e) {
         e.attributes.style = 'max-width: 100%;' + e.attributes.style;
-      },
-      td: function(e) {
-        if (e.attributes.style) {
-          e.attributes.style = e.attributes.style.replace(/width:\d+px/, '');
-          e.attributes.style = e.attributes.style.replace(/height:\d+px/, '');
-        }
       }
     }
   });

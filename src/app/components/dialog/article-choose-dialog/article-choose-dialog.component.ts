@@ -16,6 +16,8 @@ export class ArticleChooseDialogComponent {
 
   multiple: boolean;
 
+  loaderName: string = 'selectArticle';
+
   constructor(
     private dialogRef: MatDialogRef<ArticleChooseDialogComponent>,
     private errorService: ErrorService,
@@ -36,6 +38,9 @@ export class ArticleChooseDialogComponent {
       }
       this.multiple = data.multiple;
       this.allowEdit = data.allowEdit;
+      if (data.loaderName) {
+        this.loaderName = data.loaderName;
+      }
     } else {
       this.selectedArticles = [];
     }
