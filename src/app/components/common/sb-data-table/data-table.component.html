@@ -79,8 +79,8 @@
         (keyup.shift)="enableTextSelection()"
       >
         <td sb-data-table-cell class="sb-cell-for-button" *ngIf="iconColumn">
-          <a matTooltip="Редактировать" (click)="iconColumnClick(row)">
-            <mat-icon color="accent">{{iconImg}}</mat-icon>
+          <a matTooltip="{{iconTooltip || 'Редактировать'}}" (click)="iconColumnClick(row)">
+            <mat-icon color="{{iconColor || 'accent'}}">{{iconImg}}</mat-icon>
           </a>
         </td>
         <td sb-data-table-cell class="mat-checkbox-cell" *ngIf="selectable">

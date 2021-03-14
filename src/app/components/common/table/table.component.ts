@@ -111,6 +111,10 @@ export abstract class TableComponent implements OnInit {
    */
   iconAction: (row: any, _this: TableComponent) => void;
 
+  iconTooltip: string;
+
+  iconColor: string;
+
   @Input('isDialogView') isDialogView: boolean;
 
   constructor(

@@ -25,4 +25,8 @@ export class LanguageService {
     return this.http.get<Language[]>(this.appConfig.webServiceApi('/language/admin/allAvailableForCreate'));
   }
 
+  delete(id: string): Observable<any> {
+    return this.http.delete(this.appConfig.webServiceApi(`language/admin/${id}`));
+  }
+
 }

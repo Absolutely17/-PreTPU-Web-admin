@@ -159,6 +159,10 @@ export class SbDataTableComponent
     return this._iconColumn;
   }
 
+  @Input('iconTooltip') iconTooltip: string;
+
+  @Input('iconColor') iconColor: string;
+
   @Input('iconColumn')
   set iconColumn(iconColumn: boolean) {
     this._iconColumn = iconColumn;

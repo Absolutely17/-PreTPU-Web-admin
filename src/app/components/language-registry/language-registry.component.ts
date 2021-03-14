@@ -39,6 +39,16 @@ export class LanguageRegistryComponent extends TableComponent {
 
   tableName = 'Реестр языков';
 
+  iconColumn = true;
+
+  iconImg = 'remove';
+
+  iconTooltip = 'Удалить';
+
+  iconColor = 'warn';
+
+  iconAction = this.deleteLanguage;
+
   constructor(
     protected dataTableService: TdDataTableService,
     private sanitizer: DomSanitizer,
@@ -70,6 +80,23 @@ export class LanguageRegistryComponent extends TableComponent {
 
   create(): void {
     this.dialogService.show(LanguageCreateDialogComponent, {}, '500px').afterClosed().subscribe(() => this.refreshTable());
+  }
+
+  deleteLanguage(row: any, _this: LanguageRegistryComponent): void {
+    _this.delete(row.id);
+  }
+
+  delete(id: string): void {
+   this.dialogService.showConfirmDialog({
+     title: 'Удаление языка',
+     message: 'Вы уверены, что хотите удалить язык из системы?',
+     acceptButton: 'Удалить',
+     cancelButton: 'Отмена'
+   }).afterClosed().subscribe(it => {
+     if (it) {
+       this.languageService.delete(id).subscribe(() => this.refreshTable());
+     }
+   })
   }
 
 }
